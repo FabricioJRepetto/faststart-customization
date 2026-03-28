@@ -1,0 +1,16 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "npm",
+            "script": "dev",
+            "problemMatcher": [],
+            "label": "Run Dev",
+            "detail": "Run Hot Reload (HMR) dev mode",
+            "icon": {
+                "id": "flame",
+                "color": "terminal.ansiGreen"
+            }
+        }
+    ]
+}
