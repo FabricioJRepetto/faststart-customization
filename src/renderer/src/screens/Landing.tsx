@@ -6,6 +6,7 @@ import {
     BaseDirectoryAtom,
     CurrentScreenAtom,
     DefaultLanguageDataAtom,
+    EditedLanguageDataAtom,
     LanguageDataStructureAtom
 } from '@renderer/utils/context/context'
 import { Screens } from '@renderer/utils/types'
@@ -19,6 +20,7 @@ const Landing = (): React.JSX.Element => {
     const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
     const setScreen = useSetAtom(CurrentScreenAtom)
     const setLangData = useSetAtom(DefaultLanguageDataAtom)
+    const setNweLangData = useSetAtom(EditedLanguageDataAtom)
     const setLangDataStructure = useSetAtom(LanguageDataStructureAtom)
     const [baseDir, setBaseDir] = useAtom(BaseDirectoryAtom)
     const [versionDir, setVersionDir] = useAtom(AppVersionDirectoryAtom)
@@ -39,8 +41,8 @@ const Landing = (): React.JSX.Element => {
             versionDir + DEFAULT_LANGUAGE_DATA_DIR
         )
         if (res.data) {
-            console.log(res.data)
             setLangData(res.data)
+            setNweLangData(res.data)
             setLangDataStructure(langDataShell(res.data))
             setScreen(Screens.main)
         } else {

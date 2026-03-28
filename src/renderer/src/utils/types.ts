@@ -4,7 +4,8 @@ export enum Screens {
     colors = 'colors',
     icons = 'icons',
     backgrounds = 'backgrounds',
-    languages = 'languages'
+    languages = 'languages',
+    thirdScreen = 'thirdScreen'
 }
 
 export type LanguageData = Record<string, Record<string, string>>

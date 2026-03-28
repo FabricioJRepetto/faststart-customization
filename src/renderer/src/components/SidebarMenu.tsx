@@ -8,6 +8,7 @@ import IconsSvg from '../assets/sticker.svg?react'
 import ColorsSvg from '../assets/palette.svg?react'
 import BackgroundsSvg from '../assets/image.svg?react'
 import LanguageSvg from '../assets/dictionary.svg?react'
+import ScreenSvg from '../assets/screen.svg?react'
 import ExitSvg from '../assets/door.svg?react'
 
 const SidebarMenu = (): React.JSX.Element => {
@@ -29,7 +30,7 @@ const SidebarMenu = (): React.JSX.Element => {
                 className={screen === Screens.icons ? 'selected' : ''}
             >
                 <IconsSvg />
-                {isOpen ? <span>Icons</span> : ''}
+                {isOpen ? <span>Iconos</span> : ''}
             </a>
             <a
                 target="_blank"
@@ -38,7 +39,7 @@ const SidebarMenu = (): React.JSX.Element => {
                 className={screen === Screens.colors ? 'selected' : ''}
             >
                 <ColorsSvg />
-                {isOpen ? <span>Colors</span> : null}
+                {isOpen ? <span>Colores</span> : null}
             </a>
             <a
                 target="_blank"
@@ -47,7 +48,7 @@ const SidebarMenu = (): React.JSX.Element => {
                 className={screen === Screens.backgrounds ? 'selected' : ''}
             >
                 <BackgroundsSvg />
-                {isOpen ? <span>Backgrounds</span> : null}
+                {isOpen ? <span>Fondos</span> : null}
             </a>
             <a
                 target="_blank"
@@ -56,7 +57,16 @@ const SidebarMenu = (): React.JSX.Element => {
                 className={screen === Screens.languages ? 'selected' : ''}
             >
                 <LanguageSvg />
-                {isOpen ? <span>Languages</span> : null}
+                {isOpen ? <span>Lenguajes</span> : null}
+            </a>
+            <a
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => setScreen(Screens.thirdScreen)}
+                className={screen === Screens.thirdScreen ? 'selected' : ''}
+            >
+                <ScreenSvg />
+                {isOpen ? <span>Tercera Pantalla</span> : null}
             </a>
 
             <a target="_blank" rel="noreferrer" onClick={() => setScreen(Screens.landing)}>

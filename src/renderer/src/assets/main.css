@@ -26,6 +26,41 @@ code {
     font-size: 85%;
 }
 
+input {
+    cursor: text;
+    display: inline-block;
+    border: 1px solid transparent;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+    border-radius: 20px;
+    padding: 0 20px;
+    line-height: 38px;
+    font-size: 14px;
+
+    &:focus {
+        outline: none;
+    }
+}
+
+.input-wrapper {
+    position: relative;
+    width: fit-content;
+    height: auto;
+    align-self: center;
+
+    svg {
+        cursor: pointer;
+        padding: 5px;
+        margin-right: 5px;
+        position: absolute;
+        display: inline-block;
+        top: 0;
+        right: 0;
+        color: var(--color-background-mute);
+    }
+}
+
 #root {
     display: flex;
     align-items: center;
@@ -77,7 +112,7 @@ code {
 
 .actions {
     display: flex;
-    padding-top: 32px;
+    /* padding-top: 32px; */
     margin: -6px;
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -91,7 +126,9 @@ code {
 .action a {
     cursor: pointer;
     text-decoration: none;
-    display: inline-block;
+    display: flex;
+    gap: 4px;
+    align-items: center;
     border: 1px solid transparent;
     text-align: center;
     font-weight: 600;
@@ -103,6 +140,12 @@ code {
     border-color: var(--ev-button-alt-border);
     color: var(--ev-button-alt-text);
     background-color: var(--ev-button-alt-bg);
+    align-self: baseline;
+
+    svg {
+        height: 24px;
+        width: 24px;
+    }
 }
 
 .action a:hover {
@@ -121,6 +164,18 @@ code {
     border-color: var(--ev-button-primary-hover-border);
     color: var(--ev-button-primary-hover-text);
     background-color: var(--ev-button-primary-hover-bg);
+}
+
+.action.tertiary a {
+    border-color: var(--ev-button-tertiary-border);
+    color: var(--ev-button-tertiary-text);
+    background-color: var(--ev-button-tertiary-bg);
+}
+
+.action.tertiary a:hover {
+    border-color: var(--ev-button-tertiary-hover-border);
+    color: var(--ev-button-tertiary-hover-text);
+    background-color: var(--ev-button-tertiary-hover-bg);
 }
 
 .versions {
@@ -169,11 +224,41 @@ code {
     }
 }
 
+/* : Screens : */
+.screen-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 40px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.screen-header {
+    width: 65vw;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+
+    .header-group {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+    }
+}
+
 /* : Sidebar : */
 .sidebar {
     position: absolute;
     top: 0;
     left: 0;
+    z-index: 99;
     height: 100vh;
     width: 200px;
     display: flex;
@@ -198,7 +283,7 @@ code {
         display: flex;
         align-items: center;
         gap: 12px;
-        color: var(--ev-c-text-1);
+        color: var(--ev-c-green-1);
         text-decoration: none;
         border-left: 1px solid transparent;
 
@@ -210,6 +295,7 @@ code {
 
         span {
             text-overflow: clip;
+            text-wrap: nowrap;
             opacity: 0;
             animation: fadeIn 0.15s ease-in-out 0.3s forwards;
         }
@@ -226,8 +312,7 @@ code {
     }
 
     .selected {
-        border-left: 1px solid var(--ev-c-green-1);
-        color: var(--ev-c-green-1);
+        color: var(--ev-c-text-1);
     }
 }
 @keyframes fadeIn {
@@ -245,21 +330,29 @@ code {
     margin-top: calc(10ch - 50px);
     /* margin-left: calc(10vw + 200px); */
     height: 80vh;
-    width: 60vw;
+    width: 65vw;
     overflow-y: scroll;
+    position: relative;
 
     .lang-row {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
         border: 1px solid var(--ev-c-green-3);
         border-top: none;
+
         &:first-child {
+            position: sticky;
+            top: 0;
             background-color: var(--ev-c-green-3);
         }
 
         p {
             overflow-wrap: break-word;
             padding: 6px 12px;
+        }
+
+        .edited {
+            background-color: var(--ev-c-red-1);
         }
 
         .edited {
@@ -272,6 +365,7 @@ code {
     position: absolute;
     top: 50%;
     left: 50%;
+    z-index: 101;
     transform: translate(-50%, -50%);
     background-color: var(--ev-c-black);
     border: 1px solid var(--ev-c-green-3);
@@ -306,6 +400,7 @@ code {
     position: absolute;
     top: 0;
     left: 0;
+    z-index: 100;
     width: 100%;
     height: 100%;
     background-color: #00000080;

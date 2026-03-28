@@ -6,8 +6,8 @@ type ScreenContainerProps = {
 const ScreenWrapper = ({ children }: ScreenContainerProps): React.JSX.Element => {
     return (
         <>
-            <SidebarMenu />
             {children}
+            <SidebarMenu />
         </>
     )
 }
