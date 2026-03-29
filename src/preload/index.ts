@@ -14,8 +14,8 @@ if (process.contextIsolated) {
         contextBridge.exposeInMainWorld('electronAPI', {
             selectDirectory: () => ipcRenderer.invoke('select-directory'),
             selectFile: () => ipcRenderer.invoke('select-file'),
-            getDefaultLanguageData: (filePath: string) =>
-                ipcRenderer.invoke('get-default-language-data', filePath)
+            getFilesList: (dirPath: string) => ipcRenderer.invoke('get-files-list', dirPath),
+            getJsonData: (filePath: string) => ipcRenderer.invoke('get-json-data', filePath)
         })
     } catch (error) {
         console.error(error)

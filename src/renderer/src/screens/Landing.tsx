@@ -2,16 +2,24 @@ import { useAtom, useSetAtom } from 'jotai'
 import NATL from '../assets/NATL-logo.svg'
 import Versions from '../components/Versions'
 import {
+    AppSettingsAtom,
     AppVersionDirectoryAtom,
+    AssetsDataAtom,
     BaseDirectoryAtom,
     CurrentScreenAtom,
     DefaultLanguageDataAtom,
+    EditedAppSettingsAtom,
     EditedLanguageDataAtom,
     LanguageDataStructureAtom
 } from '@renderer/utils/context/context'
-import { Screens } from '@renderer/utils/types'
+import { AppSettingsData, AssetList, LanguageData, Screens } from '@renderer/utils/types'
 import { langDataShell } from '@renderer/utils/LangStructureBuilder'
-import { DEFAULT_LANGUAGE_DATA_DIR } from '../utils/CONSTANTS'
+import {
+    DEFAULT_ASSETS_DIR,
+    DEFAULT_LANGUAGE_DATA_DIR,
+    SERVICES_APPSETTINGS_DIR
+} from '../utils/CONSTANTS'
+import RightSvg from '../assets/right.svg?react'
 
 // TODO Seleccionar solo el directio base y buscar las versiones de cliente, luego abrir un dialogo para que el usuario seleccione la que desea administrar
 // TODO Checkear que los directorios seleccionados tienen la estructura correcta antes de avanzar
@@ -20,8 +28,14 @@ const Landing = (): React.JSX.Element => {
     const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
     const setScreen = useSetAtom(CurrentScreenAtom)
     const setLangData = useSetAtom(DefaultLanguageDataAtom)
-    const setNweLangData = useSetAtom(EditedLanguageDataAtom)
+    const setNewLangData = useSetAtom(EditedLanguageDataAtom)
     const setLangDataStructure = useSetAtom(LanguageDataStructureAtom)
+
+    const setAppsettings = useSetAtom(AppSettingsAtom)
+    const setNewAppsettings = useSetAtom(EditedAppSettingsAtom)
+
+    const setAssetList = useSetAtom(AssetsDataAtom)
+
     const [baseDir, setBaseDir] = useAtom(BaseDirectoryAtom)
     const [versionDir, setVersionDir] = useAtom(AppVersionDirectoryAtom)
 
@@ -34,19 +48,50 @@ const Landing = (): React.JSX.Element => {
     }
 
     const continueHandler = async (): Promise<void> => {
-        if (!baseDir || !versionDir)
-            return alert('Por favor, seleccione ambos directorios para continuar')
+        try {
+            if (!baseDir || !versionDir)
+                return alert('Por favor, seleccione ambos directorios para continuar')
 
-        const res = await window.electronAPI.getDefaultLanguageData(
-            versionDir + DEFAULT_LANGUAGE_DATA_DIR
-        )
-        if (res.data) {
-            setLangData(res.data)
-            setNweLangData(res.data)
-            setLangDataStructure(langDataShell(res.data))
+            //* language_default.json
+            const res = await window.electronAPI.getJsonData(versionDir + DEFAULT_LANGUAGE_DATA_DIR)
+            if (res.data) {
+                console.log('language_default.json data OK')
+
+                setLangData(res.data as LanguageData)
+                setNewLangData(res.data as LanguageData)
+                setLangDataStructure(langDataShell(res.data as LanguageData))
+            } else {
+                console.error('Error al cargar archivo de idioma por defecto: ' + res.error)
+                throw res.error
+            }
+
+            //* appsettings.json TS
+            const resSettings = await window.electronAPI.getJsonData(
+                baseDir + SERVICES_APPSETTINGS_DIR
+            )
+            if (resSettings.data) {
+                console.log('appsettings.json data OK')
+
+                setAppsettings(resSettings.data as AppSettingsData)
+                setNewAppsettings(resSettings.data as AppSettingsData)
+            } else {
+                console.error('Error al cargar archivo appsettings: ' + resSettings.error)
+                throw resSettings.error
+            }
+
+            //* assets
+            const resAssets = await window.electronAPI.getFilesList(versionDir + DEFAULT_ASSETS_DIR)
+            if (resAssets.data) {
+                console.log('assets data OK')
+                console.log(resAssets.data)
+                setAssetList(resAssets.data as AssetList)
+            } else {
+                console.error('Error al cargar assets: ' + resAssets.error)
+                throw resAssets.error
+            }
             setScreen(Screens.main)
-        } else {
-            alert('Error al cargar los datos de idioma por defecto: ' + res.error)
+        } catch (error) {
+            alert('Error al cargar archivos: ' + error)
         }
     }
 
@@ -66,7 +111,7 @@ const Landing = (): React.JSX.Element => {
             <p className="tip">
                 versionDir: <code>{versionDir}</code>
             </p>
-            <div className="actions">
+            <div className="actions landing-buttons">
                 <div className="action">
                     <input type="file" id="base-dir-input" style={{ display: 'none' }} />
                     <a
@@ -96,6 +141,7 @@ const Landing = (): React.JSX.Element => {
                 <div className="action primary">
                     <a target="_blank" rel="noreferrer" onClick={continueHandler}>
                         Continuar
+                        <RightSvg />
                     </a>
                 </div>
             </div>

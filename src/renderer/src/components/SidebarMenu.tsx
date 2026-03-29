@@ -9,11 +9,12 @@ import ColorsSvg from '../assets/palette.svg?react'
 import BackgroundsSvg from '../assets/image.svg?react'
 import LanguageSvg from '../assets/dictionary.svg?react'
 import ScreenSvg from '../assets/screen.svg?react'
+import AudioSvg from '../assets/audio.svg?react'
 import ExitSvg from '../assets/door.svg?react'
 
 const SidebarMenu = (): React.JSX.Element => {
     const [screen, setScreen] = useAtom(CurrentScreenAtom)
-    const [isOpen, setIsOpen] = useState<boolean>(true)
+    const [isOpen, setIsOpen] = useState<boolean>(false)
     const renderSidebar = screen !== Screens.landing
 
     return renderSidebar ? (
@@ -67,6 +68,15 @@ const SidebarMenu = (): React.JSX.Element => {
             >
                 <ScreenSvg />
                 {isOpen ? <span>Tercera Pantalla</span> : null}
+            </a>
+            <a
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => setScreen(Screens.audio)}
+                className={screen === Screens.audio ? 'selected' : ''}
+            >
+                <AudioSvg />
+                {isOpen ? <span>Sonidos</span> : null}
             </a>
 
             <a target="_blank" rel="noreferrer" onClick={() => setScreen(Screens.landing)}>

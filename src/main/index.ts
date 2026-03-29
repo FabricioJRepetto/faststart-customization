@@ -1,7 +1,7 @@
 import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
-import { join } from 'path'
+import { extname, join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import { readFileSync } from 'fs'
+import { readdirSync, readFileSync } from 'fs'
 import icon from '../../resources/icon.png?asset'
 
 function createWindow(): void {
@@ -74,7 +74,7 @@ app.whenReady().then(() => {
     })
 
     ipcMain.handle(
-        'get-default-language-data',
+        'get-json-data',
         async (
             _event,
             filePath: string
@@ -98,6 +98,63 @@ app.whenReady().then(() => {
             }
         }
     )
+
+    ipcMain.handle('get-files-list', async (_event, dirPath: string): Promise<unknown> => {
+        try {
+            const types = ['icon', 'background', 'audio', 'thirdscreen', 'other']
+            const aux = {
+                icon: [],
+                background: [],
+                audio: [],
+                thirdscreen: [],
+                other: []
+            }
+            readdirSync(dirPath, { withFileTypes: true })
+                .filter((entry) => !entry.isDirectory())
+                .map((entry) => {
+                    const auxType = entry.name.split('_')[0]
+                    const assetType = types.includes(auxType) ? auxType : 'other'
+                    const filePath = dirPath + '/' + entry.name
+
+                    let base64 = ''
+                    let mime = ''
+                    if (assetType !== 'other') {
+                        const buffer = readFileSync(filePath)
+                        const ext = extname(filePath).slice(1).toLowerCase()
+
+                        const mimeTypes: Record<string, string> = {
+                            png: 'image/png',
+                            jpg: 'image/jpeg',
+                            jpeg: 'image/jpeg',
+                            webp: 'image/webp',
+                            svg: 'image/svg+xml',
+                            gif: 'image/gif',
+                            webm: 'video/webm',
+                            mp4: 'video/mp4',
+                            mp3: 'audio/mpeg',
+                            wav: 'audio/wav'
+                        }
+
+                        mime = mimeTypes[ext] ?? 'application/octet-stream'
+                        const _base64 = buffer.toString('base64')
+
+                        base64 = `data:${mime};base64,${_base64}`
+                    }
+
+                    aux[assetType].push({
+                        name: entry.name,
+                        customDir: '',
+                        assetType,
+                        filePath,
+                        base64,
+                        mimeType: mime
+                    })
+                })
+            return { success: true, data: aux }
+        } catch (error) {
+            return { success: false, error: (error as Error).message }
+        }
+    })
 
     createWindow()
 

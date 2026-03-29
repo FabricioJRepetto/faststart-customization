@@ -7,10 +7,22 @@ declare global {
         electronAPI: {
             selectDirectory: () => Promise<string | null>
             selectFile: () => Promise<string | null>
-            getDefaultLanguageData: (filePath: string) => Promise<
+            getFilesList: (dirPath: string) => Promise<
                 | {
                       success: boolean
-                      data: Record<string, Record<string, string>>
+                      data: unknown
+                      error?: undefined
+                  }
+                | {
+                      success: boolean
+                      error: string
+                      data?: undefined
+                  }
+            >
+            getJsonData: (filePath: string) => Promise<
+                | {
+                      success: boolean
+                      data: unknown
                       error?: undefined
                   }
                 | {
