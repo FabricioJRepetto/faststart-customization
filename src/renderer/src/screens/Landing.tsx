@@ -25,7 +25,6 @@ import {
 import RightSvg from '../assets/right.svg?react'
 import { useEffect, useState } from 'react'
 
-// TODO Guardar versiones de supervisor y tercera pantalla
 // TODO Checkear que los directorios seleccionados tienen la estructura correcta antes de avanzar
 
 interface modalData {

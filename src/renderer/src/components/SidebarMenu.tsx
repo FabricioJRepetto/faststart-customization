@@ -10,6 +10,7 @@ import { useAtom, useAtomValue } from 'jotai'
 import { useState } from 'react'
 import CloseSvg from '../assets/left.svg'
 import OpenSvg from '../assets/right.svg'
+import MainSvg from '../assets/main.svg?react'
 import IconsSvg from '../assets/sticker.svg?react'
 import ColorsSvg from '../assets/palette.svg?react'
 import BackgroundsSvg from '../assets/image.svg?react'
@@ -35,6 +36,15 @@ const SidebarMenu = (): React.JSX.Element => {
                 src={isOpen ? CloseSvg : OpenSvg}
                 onClick={() => setIsOpen((v) => !v)}
             />
+            <a
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => setScreen(Screens.main)}
+                className={screen === Screens.main ? 'selected' : ''}
+            >
+                <MainSvg />
+                {isOpen ? <span>Main</span> : ''}
+            </a>
             <a
                 target="_blank"
                 rel="noreferrer"
