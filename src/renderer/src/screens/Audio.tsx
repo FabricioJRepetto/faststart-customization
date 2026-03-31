@@ -10,8 +10,8 @@ const Audio = (): React.JSX.Element => {
     return (
         <>
             <h1>Audio</h1>
-            {asset.map((audio, i) => (
-                <div key={audio.name + '_' + i} className="audio-asset-container">
+            {asset.map((audio) => (
+                <div key={audio.name} className="assets-container audio-asset-container">
                     <p>{assetName(audio.name)}</p>
                     <audio src={audio.base64} controls />
 

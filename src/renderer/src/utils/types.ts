@@ -17,32 +17,41 @@ export interface AppSettingsData {
         Options?: AppSettingsConfigModule
     }[]
 }
-interface ContextEntryData {
+interface ContextDataEntry {
     Type: string
     Value: string
 }
+export interface ConfigContextData {
+    Environment: ContextDataEntry
+    AudioEnabled: ContextDataEntry
+    TimerRetryQR: ContextDataEntry
+    TimerRefreshQR: ContextDataEntry
+    CustomStylesEnabled: ContextDataEntry
+    PrimaryColor: ContextDataEntry
+    SecondaryColor: ContextDataEntry
+    ErrorMessageColor: ContextDataEntry
+}
 export interface AppSettingsConfigModule {
     Contexts: {
-        Data: {
-            Environment: ContextEntryData
-            AudioEnabled: ContextEntryData
-            TimerRetryQR: ContextEntryData
-            TimerRefreshQR: ContextEntryData
-            CustomStylesEnabled: ContextEntryData
-            PrimaryColor: ContextEntryData
-            SecondaryColor: ContextEntryData
-            ErrorMessageColor: ContextEntryData
-        }
+        Data: ConfigContextData
     }[]
 }
 
+export const DefaultColorsData = {
+    PrimaryColor: '',
+    SecondaryColor: '',
+    ErrorMessageColor: ''
+} as const
+export type ColorsData = Record<keyof typeof DefaultColorsData, string>
+
 type AssetType = 'icon' | 'background' | 'audio' | 'thirdscreen' | 'other'
-interface AssetData {
+export interface AssetData {
     name: string
     assetType: AssetType
     filePath: string
-    customDir: string
+    customPath: string
     base64: string
+    customBase64: string
     mimeType: string
 }
 export interface AssetList {
@@ -51,4 +60,11 @@ export interface AssetList {
     audio: AssetData[]
     thirdscreen: AssetData[]
     other: AssetData[]
+}
+
+export enum filterType {
+    Imagenes = 'Imagenes',
+    Videos = 'Videos',
+    Audio = 'Audio',
+    Todos = 'Todos'
 }

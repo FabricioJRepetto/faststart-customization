@@ -1,11 +1,11 @@
 import './assets/main.css'
-
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
+import { Provider } from 'jotai'
+import { store } from './utils/context/context'
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>
+    <Provider store={store}>
+        <App />
+    </Provider>
 )

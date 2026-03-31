@@ -12,6 +12,7 @@ const ThirdScreen = (): React.JSX.Element => {
     return (
         <div className="screen-content">
             <div>ThirdScreen</div>
+
             {asset.map((e, i) => (
                 <div key={e.name + '_' + i} className="thirscreen-asset-container">
                     {e.mimeType.match('video') ? (

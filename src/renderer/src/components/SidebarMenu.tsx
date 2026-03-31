@@ -1,6 +1,12 @@
-import { CurrentScreenAtom } from '@renderer/utils/context/context'
+import {
+    ClientAppVersionDirAtom,
+    CurrentScreenAtom,
+    RootDirectoryAtom,
+    SupervisorAppVersionDirAtom,
+    ThirdAppVersionDirAtom
+} from '@renderer/utils/context/context'
 import { Screens } from '@renderer/utils/types'
-import { useAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import { useState } from 'react'
 import CloseSvg from '../assets/left.svg'
 import OpenSvg from '../assets/right.svg'
@@ -16,6 +22,11 @@ const SidebarMenu = (): React.JSX.Element => {
     const [screen, setScreen] = useAtom(CurrentScreenAtom)
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const renderSidebar = screen !== Screens.landing
+
+    const rootDir = useAtomValue(RootDirectoryAtom)
+    const [clientVersionDir, setClientVersionDir] = useAtom(ClientAppVersionDirAtom)
+    const [superVersionDir, setSuperVersionDir] = useAtom(SupervisorAppVersionDirAtom)
+    const [thirdVersionDir, setThirdVersionDir] = useAtom(ThirdAppVersionDirAtom)
 
     return renderSidebar ? (
         <div className={`sidebar ${isOpen ? '' : 'closed'}`}>
@@ -79,7 +90,21 @@ const SidebarMenu = (): React.JSX.Element => {
                 {isOpen ? <span>Sonidos</span> : null}
             </a>
 
-            <a target="_blank" rel="noreferrer" onClick={() => setScreen(Screens.landing)}>
+            {isOpen ? <span>{rootDir}</span> : null}
+            {isOpen ? <span>{clientVersionDir.split('/').pop()}</span> : null}
+            {isOpen ? <span>{superVersionDir.split('/').pop()}</span> : null}
+            {isOpen ? <span>{thirdVersionDir.split('/').pop()}</span> : null}
+
+            <a
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => {
+                    setClientVersionDir('')
+                    setSuperVersionDir('')
+                    setThirdVersionDir('')
+                    setScreen(Screens.landing)
+                }}
+            >
                 <ExitSvg />
                 {isOpen ? <span>Salir</span> : null}
             </a>

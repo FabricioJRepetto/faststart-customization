@@ -10,13 +10,7 @@ const Backgrounds = (): React.JSX.Element => {
     return (
         <div className="screen-content">
             <h1>Backgrounds</h1>
-            <ul>
-                <li>idle</li>
-                <li>user_action</li>
-                <li>info</li>
-                <li>supervisor</li>
-                <li>out_of_service</li>
-            </ul>
+
             {background.map((bg, i) => (
                 <div key={bg.name + '_' + i} className="bg-asset-container">
                     <img src={bg.base64} />

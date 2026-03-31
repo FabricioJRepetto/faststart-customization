@@ -1,18 +1,31 @@
 import { atom, createStore } from 'jotai'
-import { AppSettingsData, AssetList, LanguageData, Screens } from '../types'
+import {
+    AppSettingsData,
+    AssetData,
+    AssetList,
+    ColorsData,
+    DefaultColorsData,
+    LanguageData,
+    Screens
+} from '../types'
 
 export const store = createStore()
 
 /** Pantalla actual a renderizar */
 export const CurrentScreenAtom = atom<Screens>(Screens.landing)
 
-/** Directorio base de la version de faststart seleccionada */
-export const AppVersionDirectoryAtom = atom<string>('')
 /** Directorio base de la aplicación. @example 'C:\ncr-cc' */
-export const BaseDirectoryAtom = atom<string>('C:\\ncr-cc')
+export const RootDirectoryAtom = atom<string>('C:\\ncr-cc')
+/** Directorio base de la version de Cliente */
+export const ClientAppVersionDirAtom = atom<string>('')
+/** Directorio base de la version de Supervisor */
+export const SupervisorAppVersionDirAtom = atom<string>('')
+/** Directorio base de la version de ThirdScreen */
+export const ThirdAppVersionDirAtom = atom<string>('')
 
-/** Estructura de datos del archivo de idioma por default, se usa para mostrar los campos a editar aunque no tengan valor */
-export const LanguageDataStructureAtom = atom<LanguageData>({})
+/** Lista de Assets actuales en la versión indicada */
+export const AssetsDataAtom = atom<AssetList>()
+
 /** Datos del archivo language por default */
 export const DefaultLanguageDataAtom = atom<LanguageData>({})
 /** Datos del archivo language que se están editando actualmente, se guardan aquí los cambios antes de generar el nuevo archivo */
@@ -23,5 +36,8 @@ export const AppSettingsAtom = atom<AppSettingsData>()
 /** Edited TerminalServices appsettings */
 export const EditedAppSettingsAtom = atom<AppSettingsData>()
 
-/** Lista de Assets actuales en la versión indicada */
-export const AssetsDataAtom = atom<AssetList>()
+/** Nuenos Iconos indicados por el usuario */
+export const EditedIconsDataAtom = atom<AssetData[]>()
+
+/** Nuenos Colores indicados por el usuario */
+export const EditedColorsDataAtom = atom<ColorsData>(DefaultColorsData)

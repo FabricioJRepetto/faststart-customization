@@ -13,8 +13,9 @@ if (process.contextIsolated) {
         contextBridge.exposeInMainWorld('api', api)
         contextBridge.exposeInMainWorld('electronAPI', {
             selectDirectory: () => ipcRenderer.invoke('select-directory'),
-            selectFile: () => ipcRenderer.invoke('select-file'),
-            getFilesList: (dirPath: string) => ipcRenderer.invoke('get-files-list', dirPath),
+            selectFile: (filterType?: string) => ipcRenderer.invoke('select-file', filterType),
+            getFilesList: (dirPaths: string[]) => ipcRenderer.invoke('get-files-list', dirPaths),
+            getFoldersList: (dirPath: string) => ipcRenderer.invoke('get-folders-list', dirPath),
             getJsonData: (filePath: string) => ipcRenderer.invoke('get-json-data', filePath)
         })
     } catch (error) {

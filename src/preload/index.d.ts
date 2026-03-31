@@ -1,36 +1,28 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
+import { filterType } from '@renderer/utils/types'
 
+type IpcResponse<T> = Promise<
+    | {
+          success: true
+          data: T
+          error?: undefined
+      }
+    | {
+          success: false
+          error: string
+          data?: undefined
+      }
+>
 declare global {
     interface Window {
         electron: ElectronAPI
         api: unknown
         electronAPI: {
             selectDirectory: () => Promise<string | null>
-            selectFile: () => Promise<string | null>
-            getFilesList: (dirPath: string) => Promise<
-                | {
-                      success: boolean
-                      data: unknown
-                      error?: undefined
-                  }
-                | {
-                      success: boolean
-                      error: string
-                      data?: undefined
-                  }
-            >
-            getJsonData: (filePath: string) => Promise<
-                | {
-                      success: boolean
-                      data: unknown
-                      error?: undefined
-                  }
-                | {
-                      success: boolean
-                      error: string
-                      data?: undefined
-                  }
-            >
+            selectFile: (filter?: filterType) => IpcResponse<{ base64: string; filePath: string }>
+            getFilesList: (dirPaths: string[]) => IpcResponse<unknown>
+            getFoldersList: (dirPath: string) => IpcResponse<string[]>
+            getJsonData: (filePath: string) => IpcResponse<unknown>
         }
     }
 }

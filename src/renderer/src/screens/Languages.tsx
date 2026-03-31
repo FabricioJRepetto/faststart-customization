@@ -1,14 +1,10 @@
-import {
-    DefaultLanguageDataAtom,
-    EditedLanguageDataAtom,
-    LanguageDataStructureAtom
-} from '@renderer/utils/context/context'
-import { LanguageData } from '@renderer/utils/types'
-import { useAtom, useSetAtom } from 'jotai'
+import { DefaultLanguageDataAtom, EditedLanguageDataAtom } from '@renderer/utils/context/context'
+import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import SearchSvg from '../assets/search.svg?react'
 import CancelSvg from '../assets/cancel.svg?react'
 import ClearSvg from '../assets/clear.svg?react'
+import { langDataShell } from '@renderer/utils/LangStructureBuilder'
 
 // TODO Considerar que ya exista un archivo modificado previamente y cargarlo para seguir editando desde ahi en lugar de cargar siempre el default
 // TODO Scroll touch
@@ -18,11 +14,7 @@ const Languages = (): React.JSX.Element => {
     //* Original
     const [OGLangData] = useAtom(DefaultLanguageDataAtom)
     //* Nuevo
-    const setNewLangData = useSetAtom(EditedLanguageDataAtom)
-    //* Estructura para el Temporal
-    const [langDataStructure] = useAtom(LanguageDataStructureAtom)
-    //* Temporal
-    const [tempLang, setTempLang] = useState<LanguageData>(langDataStructure)
+    const [newLangData, setNewLangData] = useAtom(EditedLanguageDataAtom)
 
     const [modal, setModal] = useState<{ key: string; lang: string } | null>(null)
     const [modalValue, setModalValue] = useState<string>('')
@@ -44,15 +36,10 @@ const Languages = (): React.JSX.Element => {
 
     const resetValue = (): void => {
         const { key, lang } = modal!
-
-        // borra valor del temporal
-        setTempLang((prev) => ({ ...prev, [lang]: { ...prev[lang], [key]: '' } }))
-
-        // setea valor del og en el nuevo
-        setNewLangData((prev) => ({
-            ...prev,
-            [lang]: { ...prev[lang], [key]: OGLangData[lang][key] }
-        }))
+        setNewLangData((prev) => {
+            delete prev[lang][key]
+            return prev
+        })
 
         closeModal()
     }
@@ -61,9 +48,6 @@ const Languages = (): React.JSX.Element => {
     const saveValue = (): void => {
         const { key, lang } = modal!
         const newValue = modalValue
-
-        // actualiza temporal
-        setTempLang((prev) => ({ ...prev, [lang]: { ...prev[lang], [key]: newValue } }))
 
         // actualiza nuevo
         setNewLangData((prev) => ({
@@ -80,20 +64,17 @@ const Languages = (): React.JSX.Element => {
     }
 
     const openModal = (key: string, lang: string): void => {
-        if (tempLang[lang][key]) setModalValue(tempLang[lang][key])
+        if (newLangData[lang][key]) setModalValue(newLangData[lang][key])
         setModal({ key, lang })
     }
 
     const resetAllValues = (): void => {
-        // reset temp a 0
-        setTempLang(langDataStructure)
-        // reset new a og
-        setNewLangData(OGLangData)
+        setNewLangData(langDataShell(OGLangData))
     }
 
     /** Define un estilo a la casilla dependiendo si existe en el original o si se editó */
     const valueStyle = (key: string, lang: string): string => {
-        if (tempLang[lang][key]) return 'edited'
+        if (newLangData[lang][key]) return 'edited'
         if (!OGLangData[lang][key]) return 'missing'
         return ''
     }
@@ -119,7 +100,7 @@ const Languages = (): React.JSX.Element => {
         }
 
         return () => removeEventListener('keydown', keysListener)
-    }, [modal, saveValue, OGLangData, tempLang])
+    }, [modal, saveValue, OGLangData, newLangData])
 
     return (
         <div className="screen-content">
@@ -168,7 +149,7 @@ const Languages = (): React.JSX.Element => {
                                 onClick={() => openModal(key, lang)}
                                 className={valueStyle(key, lang)}
                             >
-                                {tempLang[lang][key] || OGLangData[lang][key] || '-'}
+                                {newLangData[lang][key] || OGLangData[lang][key] || '-'}
                             </p>
                         ))}
                     </div>

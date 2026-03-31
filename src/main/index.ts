@@ -1,8 +1,9 @@
 import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
-import { extname, join } from 'path'
+import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { readdirSync, readFileSync } from 'fs'
 import icon from '../../resources/icon.png?asset'
+import { getBase64 } from './utils'
 
 function createWindow(): void {
     // Create the browser window.
@@ -64,42 +65,59 @@ app.whenReady().then(() => {
         return result.filePaths[0]
     })
 
-    ipcMain.handle('select-file', async () => {
-        const result = await dialog.showOpenDialog({
-            properties: ['openFile']
-        })
+    ipcMain.handle('select-file', async (_, filter?: string) => {
+        try {
+            console.log('select-file', filter)
 
-        if (result.canceled) return null
-        return result.filePaths[0]
+            const auxFilters = {
+                Imagenes: {
+                    name: 'Imágenes',
+                    extensions: ['png', 'jpg', 'jpeg', 'webp', 'svg', 'gif']
+                },
+                Videos: { name: 'Videos', extensions: ['webm', 'mp4'] },
+                Audio: { name: 'Audio', extensions: ['mp3', 'wav'] },
+                Todos: { name: 'Todos', extensions: ['*'] }
+            }
+
+            const result = await dialog.showOpenDialog({
+                properties: ['openFile'],
+                filters: [auxFilters[filter || 'Todos']]
+            })
+
+            if (result.canceled) return null
+
+            const filePath = result.filePaths[0]
+            const { base64 } = getBase64(filePath)
+
+            return { success: true, data: { filePath, base64 } }
+        } catch (error) {
+            console.error(error)
+            return { success: false, error: (error as Error).message }
+        }
     })
 
-    ipcMain.handle(
-        'get-json-data',
-        async (
-            _event,
-            filePath: string
-        ): Promise<
-            | {
-                  success: boolean
-                  data: Record<string, Record<string, string>>
-                  error?: undefined
-              }
-            | {
-                  success: boolean
-                  error: string
-                  data?: undefined
-              }
-        > => {
-            try {
-                const content = readFileSync(filePath, 'utf-8')
-                return { success: true, data: JSON.parse(content) }
-            } catch (error) {
-                return { success: false, error: (error as Error).message }
-            }
+    ipcMain.handle('get-json-data', async (_event, filePath: string): Promise<unknown> => {
+        try {
+            const content = readFileSync(filePath, 'utf-8')
+            return { success: true, data: JSON.parse(content) }
+        } catch (error) {
+            return { success: false, error: (error as Error).message }
         }
-    )
+    })
 
-    ipcMain.handle('get-files-list', async (_event, dirPath: string): Promise<unknown> => {
+    ipcMain.handle('get-folders-list', async (_event, dirPath: string): Promise<unknown> => {
+        try {
+            const aux = readdirSync(dirPath, { withFileTypes: true })
+                .filter((entry) => entry.isDirectory())
+                .map((e) => e.name)
+
+            return { success: true, data: aux }
+        } catch (error) {
+            return { success: false, error: (error as Error).message }
+        }
+    })
+
+    ipcMain.handle('get-files-list', async (_event, dirPaths: string[]): Promise<unknown> => {
         try {
             const types = ['icon', 'background', 'audio', 'thirdscreen', 'other']
             const aux = {
@@ -109,47 +127,35 @@ app.whenReady().then(() => {
                 thirdscreen: [],
                 other: []
             }
-            readdirSync(dirPath, { withFileTypes: true })
-                .filter((entry) => !entry.isDirectory())
-                .map((entry) => {
-                    const auxType = entry.name.split('_')[0]
-                    const assetType = types.includes(auxType) ? auxType : 'other'
-                    const filePath = dirPath + '/' + entry.name
+            const read = (dirPath: string): void => {
+                readdirSync(dirPath, { withFileTypes: true })
+                    .filter((entry) => !entry.isDirectory())
+                    .map((entry) => {
+                        const auxType = entry.name.split('_')[0]
+                        const assetType = types.includes(auxType) ? auxType : 'other'
+                        const filePath = dirPath + '/' + entry.name
 
-                    let base64 = ''
-                    let mime = ''
-                    if (assetType !== 'other') {
-                        const buffer = readFileSync(filePath)
-                        const ext = extname(filePath).slice(1).toLowerCase()
-
-                        const mimeTypes: Record<string, string> = {
-                            png: 'image/png',
-                            jpg: 'image/jpeg',
-                            jpeg: 'image/jpeg',
-                            webp: 'image/webp',
-                            svg: 'image/svg+xml',
-                            gif: 'image/gif',
-                            webm: 'video/webm',
-                            mp4: 'video/mp4',
-                            mp3: 'audio/mpeg',
-                            wav: 'audio/wav'
+                        let base64 = ''
+                        let mime = ''
+                        if (assetType !== 'other') {
+                            const { base64: b, mime: m } = getBase64(filePath)
+                            base64 = b
+                            mime = m
                         }
 
-                        mime = mimeTypes[ext] ?? 'application/octet-stream'
-                        const _base64 = buffer.toString('base64')
-
-                        base64 = `data:${mime};base64,${_base64}`
-                    }
-
-                    aux[assetType].push({
-                        name: entry.name,
-                        customDir: '',
-                        assetType,
-                        filePath,
-                        base64,
-                        mimeType: mime
+                        aux[assetType].push({
+                            name: entry.name,
+                            assetType,
+                            filePath,
+                            base64,
+                            customPath: '',
+                            customBase64: '',
+                            mimeType: mime
+                        })
                     })
-                })
+            }
+            for (const dir of dirPaths) read(dir)
+
             return { success: true, data: aux }
         } catch (error) {
             return { success: false, error: (error as Error).message }

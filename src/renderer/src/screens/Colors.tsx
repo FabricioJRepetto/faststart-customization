@@ -1,61 +1,77 @@
-import { APPSETTINGS_CONFIGURATION_MODULE } from '@renderer/utils/CONSTANTS'
-import { AppSettingsAtom } from '@renderer/utils/context/context'
+import { getColorData } from '@renderer/utils/appSettings.utils'
+import { useState } from 'react'
+import ClearSvg from '../assets/clear.svg?react'
 import { useAtom } from 'jotai'
+import { EditedColorsDataAtom } from '@renderer/utils/context/context'
+import { DefaultColorsData } from '@renderer/utils/types'
 
 const Colors = (): React.JSX.Element => {
-    const [appsettings] = useAtom(AppSettingsAtom)
+    const [ogColors] = useState(getColorData())
+    const [customColors, setCustomColors] = useAtom(EditedColorsDataAtom)
 
-    const { PrimaryColor, SecondaryColor, ErrorMessageColor } = appsettings?.Modules.find(
-        (e) => e.Assembly === APPSETTINGS_CONFIGURATION_MODULE
-    )?.Options?.Contexts[0].Data
+    const updateCustom = (key: string, value: string): void => {
+        setCustomColors((prev) => ({ ...prev, [key]: value }))
+    }
+
+    const resetAllValues = (): void => {
+        setCustomColors(DefaultColorsData)
+    }
+
+    const resetValue = (key: string): void => {
+        setCustomColors((prev) => ({ ...prev, [key]: '' }))
+    }
 
     return (
         <div className="screen-content">
-            <h1>Colors</h1>
-
-            <div className="color-asset-container">
-                <div>
-                    <p>PrimaryColor: {PrimaryColor.Value}</p>
-                    <div
-                        className="color-sample"
-                        style={{ backgroundColor: PrimaryColor.Value }}
-                    ></div>
+            <div className="screen-header">
+                <h1>Colors</h1>
+                <div className="actions">
+                    <div className="action tertiary">
+                        <a onClick={resetAllValues}>
+                            <ClearSvg />
+                            Resetear todo
+                        </a>
+                    </div>
                 </div>
-
-                <label>
-                    <input type="color" />
-                    Seleccionar color
-                </label>
             </div>
 
-            <div className="color-asset-container">
-                <div>
-                    <span>SecondaryColor: {SecondaryColor.Value}</span>
-                    <div
-                        className="color-sample"
-                        style={{ backgroundColor: SecondaryColor.Value }}
-                    ></div>
-                </div>
+            <div className="assets-grid">
+                {Object.entries(ogColors).map(([k, v]) => (
+                    <div className="assets-container color-asset-container" key={k}>
+                        <div>
+                            <p>{k}</p>
+                            <p onClick={() => resetValue(k)}>reset</p>
+                        </div>
 
-                <label>
-                    <input type="color" />
-                    Seleccionar color
-                </label>
-            </div>
+                        <p className="tag">Original</p>
+                        <div className="original-color-sample">
+                            <p>{v || 'Sin indicar'}</p>
+                            <div className="color-sample" style={{ backgroundColor: v }}></div>
+                        </div>
 
-            <div className="color-asset-container">
-                <div>
-                    <p>ErrorMessageColor: {ErrorMessageColor.Value}</p>
-                    <div
-                        className="color-sample"
-                        style={{ backgroundColor: ErrorMessageColor.Value }}
-                    ></div>
-                </div>
-
-                <label>
-                    <input type="color" />
-                    Seleccionar color
-                </label>
+                        <p className="tag">Custom</p>
+                        <div className="input-wrapper">
+                            <input
+                                type="text"
+                                placeholder="Sin indicar"
+                                className="color-input"
+                                value={customColors?.[k]}
+                                onChange={(e) => updateCustom(k, e.target.value)}
+                            ></input>
+                            <label
+                                className="custom-color-sample"
+                                style={{ backgroundColor: customColors?.[k] }}
+                            >
+                                <input
+                                    hidden
+                                    type="color"
+                                    value={customColors?.[k]}
+                                    onChange={(e) => updateCustom(k, e.target.value)}
+                                />
+                            </label>
+                        </div>
+                    </div>
+                ))}
             </div>
         </div>
     )
