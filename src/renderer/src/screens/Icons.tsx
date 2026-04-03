@@ -1,4 +1,4 @@
-import { assetName } from '@renderer/utils/assetName'
+import { assetName } from '@renderer/utils/assetsUtils'
 import { AssetsDataAtom, EditedIconsDataAtom } from '@renderer/utils/context/context'
 import { useAtom, useAtomValue } from 'jotai'
 import ClearSvg from '../assets/clear.svg?react'

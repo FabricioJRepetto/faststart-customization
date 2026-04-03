@@ -1,9 +1,9 @@
 import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import { readdirSync, readFileSync } from 'fs'
+import { readdirSync, readFileSync, writeFileSync } from 'fs'
 import icon from '../../resources/icon.png?asset'
-import { getBase64 } from './utils'
+import { CustomConfig, getBase64, manageRawCustomConfig } from './utils'
 
 function createWindow(): void {
     // Create the browser window.
@@ -76,6 +76,10 @@ app.whenReady().then(() => {
                 },
                 Videos: { name: 'Videos', extensions: ['webm', 'mp4'] },
                 Audio: { name: 'Audio', extensions: ['mp3', 'wav'] },
+                ImgVideo: {
+                    name: 'Imagenes y video',
+                    extensions: ['png', 'jpg', 'jpeg', 'webp', 'svg', 'gif', 'webm', 'mp4']
+                },
                 Todos: { name: 'Todos', extensions: ['*'] }
             }
 
@@ -104,6 +108,28 @@ app.whenReady().then(() => {
             return { success: false, error: (error as Error).message }
         }
     })
+
+    ipcMain.handle(
+        'write-json-file',
+        async (
+            _event,
+            fileData: CustomConfig,
+            clientDir: string,
+            thirdDir: string
+        ): Promise<unknown> => {
+            try {
+                const finalData = await manageRawCustomConfig(fileData, clientDir, thirdDir)
+                const jsonName = '/customConfig.json'
+
+                writeFileSync(clientDir + jsonName, JSON.stringify(finalData, null, 2), 'utf-8')
+
+                return { success: true }
+            } catch (error) {
+                console.error(error)
+                return { success: false }
+            }
+        }
+    )
 
     ipcMain.handle('get-folders-list', async (_event, dirPath: string): Promise<unknown> => {
         try {

@@ -1,6 +1,7 @@
 import { useAtomValue } from 'jotai'
 import Video from '../assets/cmofmwygunmg1.mp4'
 import {
+    ClientAppVersionDirAtom,
     DefaultLanguageDataAtom,
     EditedAudiosDataAtom,
     EditedBackgroundsDataAtom,
@@ -8,19 +9,24 @@ import {
     EditedIconsDataAtom,
     EditedLanguageDataAtom,
     EditedThirdScreenDataAtom,
-    store
+    store,
+    ThirdAppVersionDirAtom
 } from '@renderer/utils/context/context'
-import { AssetData, ColorsData, LanguageData } from '@renderer/utils/types'
+import {
+    AssetData,
+    ColorsData,
+    CustomConfig,
+    FinalAssetData,
+    LanguageData
+} from '@renderer/utils/types'
 import { getColorData } from '@renderer/utils/appSettings.utils'
 import { langDataFullStructure } from '@renderer/utils/LangStructureBuilder'
-
-interface FinalAssetData {
-    name: string
-    custom: string
-    original: string
-}
+import { assetExtention } from '@renderer/utils/assetsUtils'
 
 export const MainScreen = (): React.JSX.Element => {
+    const clientDir = useAtomValue(ClientAppVersionDirAtom)
+    const thirdDir = useAtomValue(ThirdAppVersionDirAtom)
+
     const newIcons = useAtomValue(EditedIconsDataAtom)
     const newBgs = useAtomValue(EditedBackgroundsDataAtom)
     const newThird = useAtomValue(EditedThirdScreenDataAtom)
@@ -31,8 +37,10 @@ export const MainScreen = (): React.JSX.Element => {
     const dataParser = (newDataList: AssetData[]): FinalAssetData[] => {
         return newDataList.map((e) => ({
             name: e.name,
-            custom: e.customPath,
-            original: e.filePath
+            original: { path: e.filePath, fileType: assetExtention(e.filePath) },
+            custom: e.customPath
+                ? { path: e.customPath, fileType: assetExtention(e.filePath) }
+                : undefined
         }))
     }
 
@@ -63,8 +71,8 @@ export const MainScreen = (): React.JSX.Element => {
         return aux
     }
 
-    const testConfig = (): void => {
-        const aux = {
+    const testConfig = async (): Promise<void> => {
+        const aux: CustomConfig = {
             icon: dataParser(newIcons!),
             color: colorDataParser(newColors),
             background: dataParser(newBgs!),
@@ -74,6 +82,12 @@ export const MainScreen = (): React.JSX.Element => {
         }
 
         console.log('[TEST] Testing new config data:\n', aux)
+        console.log('[TEST] Destination path for customConfig.json:\n', clientDir)
+
+        const res = await window.electronAPI.writeJsonData(aux, clientDir, thirdDir)
+
+        if (res.success) console.log('[TEST] Custom config file witen')
+        else console.error('[TEST] Custom config file creation failed')
     }
 
     return (

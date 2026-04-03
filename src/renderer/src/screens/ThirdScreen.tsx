@@ -1,4 +1,4 @@
-import { assetName } from '@renderer/utils/assetName'
+import { assetName } from '@renderer/utils/assetsUtils'
 import { AssetsDataAtom, EditedThirdScreenDataAtom } from '@renderer/utils/context/context'
 import { filterType } from '@renderer/utils/types'
 import { useAtom, useAtomValue } from 'jotai'
@@ -24,7 +24,7 @@ const ThirdScreen = (): React.JSX.Element => {
 
     const setValue = async (key: string): Promise<void> => {
         console.log(key)
-        const res = await window.electronAPI.selectFile(filterType.Videos)
+        const res = await window.electronAPI.selectFile(filterType.ImgVideo)
         console.log(res)
 
         if (res.success) {

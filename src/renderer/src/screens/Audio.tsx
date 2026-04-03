@@ -1,4 +1,4 @@
-import { assetName } from '@renderer/utils/assetName'
+import { assetName } from '@renderer/utils/assetsUtils'
 import { AssetsDataAtom, EditedAudiosDataAtom } from '@renderer/utils/context/context'
 import { filterType } from '@renderer/utils/types'
 import { useAtom, useAtomValue } from 'jotai'

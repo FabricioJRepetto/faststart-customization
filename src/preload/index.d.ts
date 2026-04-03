@@ -1,5 +1,5 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
-import { filterType } from '@renderer/utils/types'
+import { CustomConfig, filterType } from '@renderer/utils/types'
 
 type IpcResponse<T> = Promise<
     | {
@@ -23,6 +23,11 @@ declare global {
             getFilesList: (dirPaths: string[]) => IpcResponse<unknown>
             getFoldersList: (dirPath: string) => IpcResponse<string[]>
             getJsonData: (filePath: string) => IpcResponse<unknown>
+            writeJsonData: (
+                data: CustomConfig,
+                clientDir: string,
+                thirdDir: string
+            ) => IpcResponse<unknown>
         }
     }
 }

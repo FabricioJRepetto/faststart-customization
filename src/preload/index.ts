@@ -16,7 +16,9 @@ if (process.contextIsolated) {
             selectFile: (filterType?: string) => ipcRenderer.invoke('select-file', filterType),
             getFilesList: (dirPaths: string[]) => ipcRenderer.invoke('get-files-list', dirPaths),
             getFoldersList: (dirPath: string) => ipcRenderer.invoke('get-folders-list', dirPath),
-            getJsonData: (filePath: string) => ipcRenderer.invoke('get-json-data', filePath)
+            getJsonData: (filePath: string) => ipcRenderer.invoke('get-json-data', filePath),
+            writeJsonData: (data: unknown, clientDir: string, thirdDir: string) =>
+                ipcRenderer.invoke('write-json-file', data, clientDir, thirdDir)
         })
     } catch (error) {
         console.error(error)

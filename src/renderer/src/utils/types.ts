@@ -66,5 +66,21 @@ export enum filterType {
     Imagenes = 'Imagenes',
     Videos = 'Videos',
     Audio = 'Audio',
-    Todos = 'Todos'
+    Todos = 'Todos',
+    ImgVideo = 'ImgVideo'
+}
+
+export interface FinalAssetData {
+    name: string
+    original: { path: string; fileType: string } | string
+    custom?: { path: string; fileType: string } | string
+}
+
+export interface CustomConfig {
+    icon: FinalAssetData[]
+    color: FinalAssetData[]
+    background: FinalAssetData[]
+    thirdscreen: FinalAssetData[]
+    audio: FinalAssetData[]
+    language: LanguageData
 }
