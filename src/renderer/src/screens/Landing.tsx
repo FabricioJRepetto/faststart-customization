@@ -12,7 +12,10 @@ import {
     EditedLanguageDataAtom,
     SupervisorAppVersionDirAtom,
     ThirdAppVersionDirAtom,
-    EditedIconsDataAtom
+    EditedIconsDataAtom,
+    EditedBackgroundsDataAtom,
+    EditedAudiosDataAtom,
+    EditedThirdScreenDataAtom
 } from '@renderer/utils/context/context'
 import { AppSettingsData, AssetData, AssetList, LanguageData, Screens } from '@renderer/utils/types'
 import { langDataShell } from '@renderer/utils/LangStructureBuilder'
@@ -42,6 +45,9 @@ const Landing = (): React.JSX.Element => {
 
     const setAssetList = useSetAtom(AssetsDataAtom)
     const setIconsList = useSetAtom(EditedIconsDataAtom)
+    const setBackgroundList = useSetAtom(EditedBackgroundsDataAtom)
+    const setAudioList = useSetAtom(EditedAudiosDataAtom)
+    const setThirdList = useSetAtom(EditedThirdScreenDataAtom)
 
     const [baseDir, setBaseDir] = useAtom(RootDirectoryAtom)
     const [clientVersionDir, setClientVersionDir] = useAtom(ClientAppVersionDirAtom)
@@ -102,9 +108,9 @@ const Landing = (): React.JSX.Element => {
                 console.log(data)
                 setAssetList(data as AssetList)
                 setIconsList([...data.icon] as AssetData[])
-                // setBackgroundList([...data.background] as AssetData[])
-                // setAudioList([...data.audio] as AssetData[])
-                // setThirdList([...data.thirdscreen] as AssetData[])
+                setBackgroundList([...data.background] as AssetData[])
+                setAudioList([...data.audio] as AssetData[])
+                setThirdList([...data.thirdscreen] as AssetData[])
             } else {
                 console.error('Error al cargar assets: ' + resAssets.error)
                 throw resAssets.error

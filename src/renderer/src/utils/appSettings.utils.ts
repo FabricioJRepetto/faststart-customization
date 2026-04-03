@@ -30,8 +30,6 @@ export const getColorData = (): ColorsData => {
 
     try {
         const configData = getConfigData()
-        console.log(configData)
-
         if (!configData) return defaultData
 
         return {

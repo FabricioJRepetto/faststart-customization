@@ -1,22 +1,78 @@
 import { assetName } from '@renderer/utils/assetName'
-import { AssetsDataAtom } from '@renderer/utils/context/context'
-import { useAtom } from 'jotai'
-import { useState } from 'react'
+import { AssetsDataAtom, EditedBackgroundsDataAtom } from '@renderer/utils/context/context'
+import { filterType } from '@renderer/utils/types'
+import { useAtom, useAtomValue } from 'jotai'
+import ClearSvg from '../assets/clear.svg?react'
+import ResetSvg from '../assets/cancel.svg?react'
+
+// TODO Aceptar videos tambien
 
 const Backgrounds = (): React.JSX.Element => {
-    const [assets, setAssets] = useAtom(AssetsDataAtom)
-    const [background, setBackground] = useState([...assets!.background])
+    const OgAssets = useAtomValue(AssetsDataAtom)
+    const [backgrounds, setBackgrounds] = useAtom(EditedBackgroundsDataAtom)
+
+    const resetAllValues = (): void => {
+        setBackgrounds([...OgAssets!.background])
+    }
+
+    const resetValue = (key: string): void => {
+        setBackgrounds((prev) =>
+            prev!.map((e) => (e.name === key ? { ...e, customPath: '', customBase64: '' } : e))
+        )
+    }
+
+    const setValue = async (key: string): Promise<void> => {
+        console.log(key)
+        const res = await window.electronAPI.selectFile(filterType.Imagenes)
+        console.log(res)
+
+        if (res.success) {
+            const { filePath, base64 } = res.data
+            console.log(filePath)
+
+            setBackgrounds((prev) =>
+                prev!.map((e) =>
+                    e.name === key ? { ...e, customPath: filePath, customBase64: base64 } : e
+                )
+            )
+        }
+    }
 
     return (
         <div className="screen-content">
-            <h1>Backgrounds</h1>
-
-            {background.map((bg, i) => (
-                <div key={bg.name + '_' + i} className="bg-asset-container">
-                    <img src={bg.base64} />
-                    <p>{assetName(bg.name)}</p>
+            <div className="screen-header">
+                <h1>Backgrounds</h1>
+                <div className="actions">
+                    <div className="action tertiary">
+                        <a onClick={resetAllValues}>
+                            <ClearSvg />
+                            Resetear todo
+                        </a>
+                    </div>
                 </div>
-            ))}
+            </div>
+
+            <div className="assets-grid grid-bg scrolleable">
+                {backgrounds!.map((bg) => (
+                    <div key={bg.name} className="assets-container bg-asset-container">
+                        <p>{assetName(bg.name)}</p>
+
+                        <div className="bg-container">
+                            <img src={bg.base64} />
+                            {bg.customBase64 ? (
+                                <div className="custom-bg-container">
+                                    <img src={bg.customBase64} />
+                                    <ResetSvg onClick={() => resetValue(bg.name)} />
+                                </div>
+                            ) : (
+                                <div className="bg-placeholder" onClick={() => setValue(bg.name)}>
+                                    <p>Seleccionar</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                ))}
+            </div>
         </div>
     )
 }

@@ -35,7 +35,7 @@ const Colors = (): React.JSX.Element => {
                 </div>
             </div>
 
-            <div className="assets-grid">
+            <div className="assets-grid scrolleable">
                 {Object.entries(ogColors).map(([k, v]) => (
                     <div className="assets-container color-asset-container" key={k}>
                         <div>

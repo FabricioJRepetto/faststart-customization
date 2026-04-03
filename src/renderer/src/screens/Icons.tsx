@@ -49,7 +49,7 @@ const Icons = (): React.JSX.Element => {
                 </div>
             </div>
 
-            <div className="assets-grid">
+            <div className="assets-grid scrolleable">
                 {icons!.map((icon) => (
                     <div key={icon.name} className="assets-container icon-asset-container">
                         <p>{assetName(icon.name)}</p>

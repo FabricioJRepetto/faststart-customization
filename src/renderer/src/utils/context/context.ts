@@ -36,8 +36,17 @@ export const AppSettingsAtom = atom<AppSettingsData>()
 /** Edited TerminalServices appsettings */
 export const EditedAppSettingsAtom = atom<AppSettingsData>()
 
-/** Nuenos Iconos indicados por el usuario */
+/** Nuevos Iconos indicados por el usuario */
 export const EditedIconsDataAtom = atom<AssetData[]>()
 
-/** Nuenos Colores indicados por el usuario */
+/** Nuevos Colores indicados por el usuario */
 export const EditedColorsDataAtom = atom<ColorsData>(DefaultColorsData)
+
+/** Nuevos Backgrounds indicados por el usuario */
+export const EditedBackgroundsDataAtom = atom<AssetData[]>()
+
+/** Nueva meda para mostrar en la Tercera pantalla indicada por el usuario */
+export const EditedThirdScreenDataAtom = atom<AssetData[]>()
+
+/** Nuenos Backgrounds indicados por el usuario */
+export const EditedAudiosDataAtom = atom<AssetData[]>()
