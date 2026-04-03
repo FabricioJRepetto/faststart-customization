@@ -1,6 +1,6 @@
 {
     "name": "faststart-customization",
-    "version": "0.0.3-test",
+    "version": "0.0.3-beta",
     "description": "An Electron application with React and TypeScript",
     "main": "./out/main/index.js",
     "author": "Fabo",
