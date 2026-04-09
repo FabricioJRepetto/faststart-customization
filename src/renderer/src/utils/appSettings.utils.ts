@@ -23,19 +23,20 @@ export const getConfigData = (): ConfigContextData | undefined => {
 /** Retorna los datos de colores seteados en el appSettings deTerminalServices */
 export const getColorData = (): ColorsData => {
     const defaultData = {
-        PrimaryColor: '',
-        SecondaryColor: '',
-        ErrorMessageColor: ''
+        primaryColor: '',
+        secondaryColor: '',
+        errorMessageColor: ''
     }
 
     try {
+        // TODO cambiar esto, no debe usar el appSettings
         const configData = getConfigData()
         if (!configData) return defaultData
 
         return {
-            PrimaryColor: configData?.PrimaryColor?.Value || '',
-            SecondaryColor: configData?.SecondaryColor?.Value || '',
-            ErrorMessageColor: configData?.ErrorMessageColor?.Value || ''
+            primaryColor: configData?.PrimaryColor?.Value || '',
+            secondaryColor: configData?.SecondaryColor?.Value || '',
+            errorMessageColor: configData?.ErrorMessageColor?.Value || ''
         }
     } catch (error) {
         console.error('getColorData', error)

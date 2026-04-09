@@ -134,9 +134,9 @@ const Landing = (): React.JSX.Element => {
 
                 console.log('Lista Versiones obtenidas.\nPotenciales versiones:', res.data.length)
                 console.log(res.data)
-                const potentialClientApps = res.data.filter((v) => v.match('client'))
-                const potentialSupervisorApps = res.data.filter((v) => v.match('supervisor'))
-                const potentialThirdApps = res.data.filter((v) => v.match('thirdscreen'))
+                const potentialClientApps = res.data.filter((v) => v.match(/client/g))
+                const potentialSupervisorApps = res.data.filter((v) => v.match(/supervisor/g))
+                const potentialThirdApps = res.data.filter((v) => v.match(/thirdscreen/g))
 
                 if (!potentialClientApps.length || !potentialThirdApps.length) {
                     return alert(

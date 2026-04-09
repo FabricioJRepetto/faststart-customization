@@ -160,6 +160,7 @@ app.whenReady().then(() => {
                         const auxType = entry.name.split('_')[0]
                         const assetType = types.includes(auxType) ? auxType : 'other'
                         const filePath = dirPath + '/' + entry.name
+                        const _name = entry.name.replace(/\.[\w\d]*$/g, '') || entry.name
 
                         let base64 = ''
                         let mime = ''
@@ -170,7 +171,7 @@ app.whenReady().then(() => {
                         }
 
                         aux[assetType].push({
-                            name: entry.name,
+                            name: _name,
                             assetType,
                             filePath,
                             base64,

@@ -38,9 +38,9 @@ export interface AppSettingsConfigModule {
 }
 
 export const DefaultColorsData = {
-    PrimaryColor: '',
-    SecondaryColor: '',
-    ErrorMessageColor: ''
+    primaryColor: '',
+    secondaryColor: '',
+    errorMessageColor: ''
 } as const
 export type ColorsData = Record<keyof typeof DefaultColorsData, string>
 
