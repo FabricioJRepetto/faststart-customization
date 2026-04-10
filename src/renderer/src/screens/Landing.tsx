@@ -66,15 +66,44 @@ const Landing = (): React.JSX.Element => {
 
     const continueHandler = async (): Promise<void> => {
         try {
-            if (!clientVersionDir)
-                return alert('Por favor, seleccione las aplicaciones para continuar')
+            let _clientVer = ''
+            let _thirdVer = ''
+
+            if (!clientVersionDir || !thirdVersionDir) {
+                console.log('no versions, checking')
+
+                const versions = await getVersions()
+
+                console.log(versions)
+
+                if (!versions) {
+                    console.log('no versions')
+                    return
+                }
+                if (versions.modalList.length) {
+                    console.log('open versions modal')
+                    setModal(versions.modalList)
+                    return
+                }
+                if (!versions.readyVersions.client || !versions.readyVersions.third) {
+                    console.log('no client || third')
+                    return
+                }
+                _clientVer = versions.readyVersions.client
+                _thirdVer = versions.readyVersions.third
+            }
+            console.log('continuing...')
 
             //* language.json
+            console.log(
+                'language.json ...',
+                (_clientVer || clientVersionDir) + DEFAULT_LANGUAGE_DATA_DIR
+            )
             const res = await window.electronAPI.getJsonData(
-                clientVersionDir + DEFAULT_LANGUAGE_DATA_DIR
+                (_clientVer || clientVersionDir) + DEFAULT_LANGUAGE_DATA_DIR
             )
             if (res.success) {
-                console.log('language_default.json data OK')
+                console.log('languages.json data OK')
 
                 setLangData(res.data as LanguageData)
                 setNewLangData(langDataShell(res.data as LanguageData))
@@ -84,6 +113,7 @@ const Landing = (): React.JSX.Element => {
             }
 
             //* appsettings.json TS
+            console.log('appsettings.json TS...', baseDir + SERVICES_APPSETTINGS_DIR)
             const resSettings = await window.electronAPI.getJsonData(
                 baseDir + SERVICES_APPSETTINGS_DIR
             )
@@ -98,9 +128,16 @@ const Landing = (): React.JSX.Element => {
             }
 
             //* assets
+            console.log(
+                'assets...',
+                (_clientVer || clientVersionDir) + DEFAULT_ASSETS_DIR,
+                ' - ',
+                _thirdVer || thirdVersionDir
+            )
+
             const resAssets = await window.electronAPI.getFilesList([
-                clientVersionDir + DEFAULT_ASSETS_DIR,
-                thirdVersionDir
+                (_clientVer || clientVersionDir) + DEFAULT_ASSETS_DIR,
+                _thirdVer || thirdVersionDir
             ])
             if (resAssets.success) {
                 console.log('assets data OK')
@@ -121,11 +158,18 @@ const Landing = (): React.JSX.Element => {
         }
     }
 
-    const getVersions = async (): Promise<void> => {
+    const getVersions = async (): Promise<
+        | {
+              modalList: modalData[]
+              readyVersions: { client: string; supervisor: string; third: string }
+          }
+        | undefined
+        | void
+    > => {
         try {
-            if (!baseDir) return alert('Por favor, seleccione el directorio base para continuar')
-
+            console.log('checking versions')
             const res = await window.electronAPI.getFoldersList(baseDir + VERSIONS_DIR)
+            console.log('res', res)
             if (res.success) {
                 if (!res.data.length)
                     return alert(
@@ -144,37 +188,48 @@ const Landing = (): React.JSX.Element => {
                     )
                 }
 
-                const aux: modalData[] = []
+                const modalList: modalData[] = []
+                const readyVersions = {
+                    client: '',
+                    supervisor: '',
+                    third: ''
+                }
 
                 if (potentialClientApps.length > 1) {
-                    aux.push({
+                    modalList.push({
                         version_name: 'cliente',
                         versions: potentialClientApps
                     })
                 } else if (potentialClientApps.length) {
                     setClientVersionDir(baseDir + VERSIONS_DIR + potentialClientApps[0])
+                    readyVersions.client = baseDir + VERSIONS_DIR + potentialClientApps[0]
                 }
 
                 if (potentialSupervisorApps.length > 1) {
-                    aux.push({
+                    modalList.push({
                         version_name: 'supervisor',
                         versions: potentialSupervisorApps
                     })
                 } else if (potentialSupervisorApps.length) {
                     setSuperVersionDir(baseDir + VERSIONS_DIR + potentialSupervisorApps[0])
+                    readyVersions.supervisor = baseDir + VERSIONS_DIR + potentialSupervisorApps[0]
                 }
 
                 if (potentialThirdApps.length > 1) {
-                    aux.push({
+                    modalList.push({
                         version_name: 'tercera pantalla',
                         versions: potentialThirdApps
                     })
                 } else if (potentialThirdApps.length) {
                     setThirdVersionDir(baseDir + VERSIONS_DIR + potentialThirdApps[0])
-                    console.warn('Guardar versiones de tercera pantalla')
+                    readyVersions.third = baseDir + VERSIONS_DIR + potentialThirdApps[0]
                 }
 
-                setModal(aux.length ? aux : null)
+                console.log('found versions', { modalList, readyVersions })
+
+                // if (!aux.length) continueHandler()
+                // else setModal(aux)
+                return { modalList, readyVersions }
             }
         } catch (error) {
             console.error(error)
@@ -235,7 +290,7 @@ const Landing = (): React.JSX.Element => {
                     </a>
                 </div>
                 <div className="action primary">
-                    <a target="_blank" rel="noreferrer" onClick={getVersions}>
+                    <a target="_blank" rel="noreferrer" onClick={continueHandler}>
                         Continuar
                         <RightSvg />
                     </a>
