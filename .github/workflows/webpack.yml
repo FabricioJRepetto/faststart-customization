@@ -36,5 +36,6 @@ jobs:
               uses: actions/upload-artifact@v4
               with:
                   name: FSC-portable-v${{ env.APP_VERSION }}
-                  path: dist/FSC-portable-v${{ env.APP_VERSION }}
+                  # path: dist/FSC-portable-v${{ env.APP_VERSION }}
+                  path: dist/win-unpacked/*
                   retention-days: 30
