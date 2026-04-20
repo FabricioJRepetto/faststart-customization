@@ -1,5 +1,5 @@
 import ClearSvg from '../assets/clear.svg?react'
-import { useAtom } from 'jotai'
+import { useSetAtom } from 'jotai'
 import { DefaultConfigAtom, EditedStylesDataAtom, store } from '@renderer/utils/context/context'
 import { DefaultStylesData } from '@renderer/utils/types'
 import StyleCard from '@renderer/components/StyleCard'
@@ -8,7 +8,7 @@ const Styles = (): React.JSX.Element => {
     // const [ogStyles] = useState(getStylesData())
     const defStyles = store.get(DefaultConfigAtom)
     const ogStyles = defStyles!.styles
-    const [customStyles, setCustomStyles] = useAtom(EditedStylesDataAtom)
+    const setCustomStyles = useSetAtom(EditedStylesDataAtom)
 
     const updateCustom = (key: string, value: string): void => {
         console.log(key, value)

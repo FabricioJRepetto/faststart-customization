@@ -25,8 +25,7 @@ import {
     AssetList,
     CustomConfig,
     LanguageData,
-    Screens,
-    StylesData
+    Screens
 } from '@renderer/utils/types'
 import { langDataShell } from '@renderer/utils/LangStructureBuilder'
 import {
