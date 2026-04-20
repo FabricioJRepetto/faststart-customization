@@ -15,11 +15,22 @@ import {
     EditedIconsDataAtom,
     EditedBackgroundsDataAtom,
     EditedAudiosDataAtom,
-    EditedThirdScreenDataAtom
+    EditedThirdScreenDataAtom,
+    DefaultConfigAtom,
+    EditedStylesDataAtom
 } from '@renderer/utils/context/context'
-import { AppSettingsData, AssetData, AssetList, LanguageData, Screens } from '@renderer/utils/types'
+import {
+    AppSettingsData,
+    AssetData,
+    AssetList,
+    CustomConfig,
+    LanguageData,
+    Screens,
+    StylesData
+} from '@renderer/utils/types'
 import { langDataShell } from '@renderer/utils/LangStructureBuilder'
 import {
+    CUSTOM_CONFIG_GILE_NAME,
     DEFAULT_ASSETS_DIR,
     DEFAULT_LANGUAGE_DATA_DIR,
     SERVICES_APPSETTINGS_DIR,
@@ -42,6 +53,9 @@ const Landing = (): React.JSX.Element => {
 
     const setAppsettings = useSetAtom(AppSettingsAtom)
     const setNewAppsettings = useSetAtom(EditedAppSettingsAtom)
+
+    const setDefaultCustomConfig = useSetAtom(DefaultConfigAtom)
+    const setDefaultStyles = useSetAtom(EditedStylesDataAtom)
 
     const setAssetList = useSetAtom(AssetsDataAtom)
     const setIconsList = useSetAtom(EditedIconsDataAtom)
@@ -125,6 +139,22 @@ const Landing = (): React.JSX.Element => {
             } else {
                 console.error('Error al cargar archivo appsettings: ' + resSettings.error)
                 throw resSettings.error
+            }
+
+            //* default customConfig.json
+            console.log('customConfig.json...', _clientVer || clientVersionDir)
+            const resCustoms = await window.electronAPI.getJsonData(
+                (_clientVer || clientVersionDir) + '/' + CUSTOM_CONFIG_GILE_NAME
+            )
+            if (resCustoms.success) {
+                console.log('default customConfig.json data OK')
+                const aux = resCustoms.data as CustomConfig
+                console.log(aux)
+                setDefaultCustomConfig(aux)
+                setDefaultStyles(aux.styles)
+            } else {
+                console.error('Error al cargar archivo appsettings: ' + resCustoms.error)
+                throw resCustoms.error
             }
 
             //* assets

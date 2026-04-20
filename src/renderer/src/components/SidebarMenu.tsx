@@ -57,11 +57,11 @@ const SidebarMenu = (): React.JSX.Element => {
             <a
                 target="_blank"
                 rel="noreferrer"
-                onClick={() => setScreen(Screens.colors)}
-                className={screen === Screens.colors ? 'selected' : ''}
+                onClick={() => setScreen(Screens.styles)}
+                className={screen === Screens.styles ? 'selected' : ''}
             >
                 <ColorsSvg />
-                {isOpen ? <span>Colores</span> : null}
+                {isOpen ? <span>Estilos</span> : null}
             </a>
             <a
                 target="_blank"

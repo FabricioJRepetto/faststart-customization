@@ -1,7 +1,7 @@
 export enum Screens {
     landing = 'landing',
     main = 'main',
-    colors = 'colors',
+    styles = 'styles',
     icons = 'icons',
     backgrounds = 'backgrounds',
     languages = 'languages',
@@ -10,6 +10,16 @@ export enum Screens {
 }
 
 export type LanguageData = Record<string, Record<string, string>>
+
+// export interface CustomConfigData {
+//     primaryColor: string
+//     secondaryColor: string
+//     errorMessageColor: string
+//     buttonBorder: string
+//     buttonBorderRadius: string
+//     buttonColor: string
+//     buttonBackground: string
+// }
 
 export interface AppSettingsData {
     Modules: {
@@ -37,12 +47,16 @@ export interface AppSettingsConfigModule {
     }[]
 }
 
-export const DefaultColorsData = {
+export const DefaultStylesData = {
     primaryColor: '',
     secondaryColor: '',
-    errorMessageColor: ''
+    errorMessageColor: '',
+    buttonBorder: '',
+    buttonBorderRadius: '',
+    buttonColor: '',
+    buttonBackground: ''
 } as const
-export type ColorsData = Record<keyof typeof DefaultColorsData, string>
+export type StylesData = Record<keyof typeof DefaultStylesData, string>
 
 type AssetType = 'icon' | 'background' | 'audio' | 'thirdscreen' | 'other'
 export interface AssetData {
@@ -78,9 +92,9 @@ export interface FinalAssetData {
 
 export interface CustomConfig {
     icon: FinalAssetData[]
-    color: FinalAssetData[]
     background: FinalAssetData[]
     thirdscreen: FinalAssetData[]
     audio: FinalAssetData[]
+    styles: StylesData
     language: LanguageData
 }

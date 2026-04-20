@@ -3,10 +3,11 @@ import {
     AppSettingsData,
     AssetData,
     AssetList,
-    ColorsData,
-    DefaultColorsData,
+    StylesData,
+    DefaultStylesData,
     LanguageData,
-    Screens
+    Screens,
+    CustomConfig
 } from '../types'
 
 export const store = createStore()
@@ -31,16 +32,19 @@ export const DefaultLanguageDataAtom = atom<LanguageData>({})
 /** Datos del archivo language que se están editando actualmente, se guardan aquí los cambios antes de generar el nuevo archivo */
 export const EditedLanguageDataAtom = atom<LanguageData>({})
 
-/** Original TerminalServices appsettings */
+/** @deprecated Original TerminalServices appsettings */
 export const AppSettingsAtom = atom<AppSettingsData>()
-/** Edited TerminalServices appsettings */
+/** @deprecated Edited TerminalServices appsettings */
 export const EditedAppSettingsAtom = atom<AppSettingsData>()
+
+/** Archivo de configuración por defecto encontrado en el directorio de la aplicación cliente */
+export const DefaultConfigAtom = atom<CustomConfig>()
 
 /** Nuevos Iconos indicados por el usuario */
 export const EditedIconsDataAtom = atom<AssetData[]>()
 
 /** Nuevos Colores indicados por el usuario */
-export const EditedColorsDataAtom = atom<ColorsData>(DefaultColorsData)
+export const EditedStylesDataAtom = atom<StylesData>(DefaultStylesData)
 
 /** Nuevos Backgrounds indicados por el usuario */
 export const EditedBackgroundsDataAtom = atom<AssetData[]>()

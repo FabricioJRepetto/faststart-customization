@@ -1,9 +1,9 @@
 import { APPSETTINGS_CONFIGURATION_MODULE } from './CONSTANTS'
-import { AppSettingsAtom, store } from './context/context'
-import { ColorsData, ConfigContextData } from './types'
+import { AppSettingsAtom, DefaultConfigAtom, store } from './context/context'
+import { StylesData, ConfigContextData } from './types'
 
-/** Retorna todos los datos seteados en el appSettings deTerminalServices */
-export const getConfigData = (): ConfigContextData | undefined => {
+/** Retorna todos los datos seteados en el appSettings de TerminalServices */
+export const getAppSettingsData = (): ConfigContextData | undefined => {
     try {
         const appsettings = store.get(AppSettingsAtom)
 
@@ -20,23 +20,47 @@ export const getConfigData = (): ConfigContextData | undefined => {
     }
 }
 
+/** Retorna todos los datos seteados en el CustomConfig por defecto */
+export const getConfigData = (): StylesData | undefined => {
+    try {
+        const config = store.get(DefaultConfigAtom)
+
+        if (!config) {
+            console.error('Default CustomConfig not found in store')
+            return
+        }
+
+        return config.styles
+    } catch (error) {
+        console.error('getConfigData', error)
+        return
+    }
+}
+
 /** Retorna los datos de colores seteados en el appSettings deTerminalServices */
-export const getColorData = (): ColorsData => {
+export const getStylesData = (): StylesData => {
     const defaultData = {
         primaryColor: '',
         secondaryColor: '',
-        errorMessageColor: ''
+        errorMessageColor: '',
+        buttonBorder: '',
+        buttonBorderRadius: '',
+        buttonColor: '',
+        buttonBackground: ''
     }
 
     try {
-        // TODO cambiar esto, no debe usar el appSettings
         const configData = getConfigData()
         if (!configData) return defaultData
 
         return {
-            primaryColor: configData?.PrimaryColor?.Value || '',
-            secondaryColor: configData?.SecondaryColor?.Value || '',
-            errorMessageColor: configData?.ErrorMessageColor?.Value || ''
+            primaryColor: configData?.primaryColor || '',
+            secondaryColor: configData?.secondaryColor || '',
+            errorMessageColor: configData?.errorMessageColor || '',
+            buttonBorder: configData?.buttonBorder || '',
+            buttonBorderRadius: configData?.buttonBorderRadius || '',
+            buttonColor: configData?.buttonColor || '',
+            buttonBackground: configData?.buttonBackground || ''
         }
     } catch (error) {
         console.error('getColorData', error)

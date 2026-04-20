@@ -35,8 +35,9 @@ interface FinalAssetData {
     custom?: { path: string; fileType: string } | string
 }
 export interface CustomConfig {
+    version: string
     icon: FinalAssetData[]
-    color: FinalAssetData[]
+    styles: FinalAssetData[]
     background: FinalAssetData[]
     thirdscreen: FinalAssetData[]
     audio: FinalAssetData[]
@@ -54,8 +55,9 @@ export const manageRawCustomConfig = async (
         const keys = Object.keys(rawConfig)
 
         const aux: CustomConfig = {
+            version: '1.0.0',
             icon: [],
-            color: [],
+            styles: [],
             background: [],
             thirdscreen: [],
             audio: [],
@@ -68,7 +70,7 @@ export const manageRawCustomConfig = async (
                 break
             }
             for await (const entry of rawConfig[key]) {
-                if (key === 'color') {
+                if (key === 'styles') {
                     aux[key] = rawConfig[key]
                     break
                 } else {

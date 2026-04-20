@@ -6,7 +6,7 @@ import Backgrounds from '@renderer/screens/Backgrounds'
 import Languages from '@renderer/screens/Languages'
 import { Screens } from '../types'
 import ScreenWrapper from '@renderer/components/ScreenWrapper'
-import Colors from '@renderer/screens/Colors'
+import Styles from '@renderer/screens/Styles'
 import ThirdScreen from '@renderer/screens/ThirdScreen'
 import Audio from '@renderer/screens/Audio'
 import MainScreen from '@renderer/screens/MainScreen'
@@ -22,7 +22,7 @@ const useCurrentScreen = (): React.JSX.Element => {
         [Screens.landing]: <Landing />,
         [Screens.main]: <MainScreen />,
         [Screens.icons]: <Icons />,
-        [Screens.colors]: <Colors />,
+        [Screens.styles]: <Styles />,
         [Screens.backgrounds]: <Backgrounds />,
         [Screens.languages]: <Languages />,
         [Screens.thirdScreen]: <ThirdScreen />,

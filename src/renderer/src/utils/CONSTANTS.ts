@@ -9,4 +9,4 @@ export const SERVICES_APPSETTINGS_DIR = `/TerminalServices/appsettings.json`
 /** Modulo del appsettings que contiene la confguración de estilos */
 export const APPSETTINGS_CONFIGURATION_MODULE = `TerminalServices.Services.ConfigurationSettings.dll`
 /** Nombre del archivo final de configuracion */
-export const CUSTOM_CONFIG_GILE_NAME = 'customCongif.json'
+export const CUSTOM_CONFIG_GILE_NAME = 'customConfig.json'

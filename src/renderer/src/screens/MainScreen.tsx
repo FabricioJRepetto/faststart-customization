@@ -5,7 +5,7 @@ import {
     DefaultLanguageDataAtom,
     EditedAudiosDataAtom,
     EditedBackgroundsDataAtom,
-    EditedColorsDataAtom,
+    EditedStylesDataAtom,
     EditedIconsDataAtom,
     EditedLanguageDataAtom,
     EditedThirdScreenDataAtom,
@@ -14,12 +14,12 @@ import {
 } from '@renderer/utils/context/context'
 import {
     AssetData,
-    ColorsData,
+    StylesData,
     CustomConfig,
     FinalAssetData,
     LanguageData
 } from '@renderer/utils/types'
-import { getColorData } from '@renderer/utils/appSettings.utils'
+import { getStylesData } from '@renderer/utils/appSettings.utils'
 import { langDataFullStructure } from '@renderer/utils/LangStructureBuilder'
 import { assetExtention } from '@renderer/utils/assetsUtils'
 
@@ -31,7 +31,7 @@ export const MainScreen = (): React.JSX.Element => {
     const newBgs = useAtomValue(EditedBackgroundsDataAtom)
     const newThird = useAtomValue(EditedThirdScreenDataAtom)
     const newAudios = useAtomValue(EditedAudiosDataAtom)
-    const newColors = useAtomValue(EditedColorsDataAtom)
+    const newColors = useAtomValue(EditedStylesDataAtom)
     const newLangs = useAtomValue(EditedLanguageDataAtom)
 
     const dataParser = (newDataList: AssetData[]): FinalAssetData[] => {
@@ -44,8 +44,8 @@ export const MainScreen = (): React.JSX.Element => {
         }))
     }
 
-    const colorDataParser = (newList: ColorsData): FinalAssetData[] => {
-        const ogColors = Object.entries(getColorData())
+    const colorDataParser = (newList: StylesData): FinalAssetData[] => {
+        const ogColors = Object.entries(getStylesData())
         console.log(newList)
 
         return ogColors.map(([k, v]) => ({
