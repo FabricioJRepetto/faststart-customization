@@ -29,6 +29,17 @@ export const getBase64 = (filePath: string): { base64: string; mime: string } =>
     }
 }
 
+const DefaultStylesData = {
+    primaryColor: '',
+    secondaryColor: '',
+    errorMessageColor: '',
+    buttonBorder: '',
+    buttonBorderRadius: '',
+    buttonColor: '',
+    buttonBackground: ''
+} as const
+type StylesData = Record<keyof typeof DefaultStylesData, string>
+
 interface FinalAssetData {
     name: string
     original: { path: string; fileType: string } | string
@@ -37,10 +48,10 @@ interface FinalAssetData {
 export interface CustomConfig {
     version: string
     icon: FinalAssetData[]
-    styles: FinalAssetData[]
     background: FinalAssetData[]
     thirdscreen: FinalAssetData[]
     audio: FinalAssetData[]
+    styles: StylesData
     language: Record<string, Record<string, string>>
 }
 export const manageRawCustomConfig = async (
@@ -57,10 +68,18 @@ export const manageRawCustomConfig = async (
         const aux: CustomConfig = {
             version: '1.0.0',
             icon: [],
-            styles: [],
             background: [],
             thirdscreen: [],
             audio: [],
+            styles: {
+                primaryColor: '',
+    secondaryColor: '',
+    errorMessageColor: '',
+    buttonBorder: '',
+    buttonBorderRadius: '',
+    buttonColor: '',
+    buttonBackground: ''
+            },
             language: {}
         }
 

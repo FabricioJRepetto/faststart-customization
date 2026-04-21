@@ -12,14 +12,7 @@ import {
     store,
     ThirdAppVersionDirAtom
 } from '@renderer/utils/context/context'
-import {
-    AssetData,
-    StylesData,
-    CustomConfig,
-    FinalAssetData,
-    LanguageData
-} from '@renderer/utils/types'
-import { getStylesData } from '@renderer/utils/appSettings.utils'
+import { AssetData, CustomConfig, FinalAssetData, LanguageData } from '@renderer/utils/types'
 import { langDataFullStructure } from '@renderer/utils/LangStructureBuilder'
 import { assetExtention } from '@renderer/utils/assetsUtils'
 
@@ -44,16 +37,16 @@ export const MainScreen = (): React.JSX.Element => {
         }))
     }
 
-    const colorDataParser = (newList: StylesData): FinalAssetData[] => {
-        const ogColors = Object.entries(getStylesData())
-        console.log(newList)
+    // const colorDataParser = (newList: StylesData): FinalAssetData[] => {
+    //     const ogColors = Object.entries(getStylesData())
+    //     console.log(newList)
 
-        return ogColors.map(([k, v]) => ({
-            name: k,
-            original: v,
-            custom: newList[k] || ''
-        }))
-    }
+    //     return ogColors.map(([k, v]) => ({
+    //         name: k,
+    //         original: v,
+    //         custom: newList[k] || ''
+    //     }))
+    // }
 
     const languageParser = (newLang: LanguageData): LanguageData => {
         const ogLang = store.get(DefaultLanguageDataAtom)
@@ -74,7 +67,8 @@ export const MainScreen = (): React.JSX.Element => {
     const testConfig = async (): Promise<void> => {
         const aux: CustomConfig = {
             icon: dataParser(newIcons!),
-            color: colorDataParser(newColors),
+            // styles: colorDataParser(newColors),
+            styles: newColors,
             background: dataParser(newBgs!),
             thirdscreen: dataParser(newThird!),
             audio: dataParser(newAudios!),
