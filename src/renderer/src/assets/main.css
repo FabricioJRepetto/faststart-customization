@@ -26,7 +26,8 @@ code {
     font-size: 85%;
 }
 
-input[type='text'] {
+input[type='text'],
+input[type='number'] {
     cursor: text;
     display: inline-block;
     border: 1px solid transparent;
@@ -430,11 +431,17 @@ input[type='text'] {
 
 /* : Assets : */
 .assets-grid {
-    width: 65%;
+    width: 85%;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     justify-items: center;
     gap: 10px;
+}
+.grid-divider {
+    margin: 5px 0;
+    grid-column: 1/-1;
+    width: 100%;
+    border-top: 1px solid var(--ev-c-green-3);
 }
 
 .grid-bg {
@@ -617,10 +624,25 @@ input[type='text'] {
 
 .color-asset-container {
     margin: 1px;
-    min-width: 250px;
+    min-width: 273px;
+    height: min-content;
     display: flex;
     flex-direction: column;
     gap: 10px;
+
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 30px;
+
+        svg {
+            height: 30px;
+            width: 30px;
+            color: var(--ev-c-red-1);
+            cursor: pointer;
+        }
+    }
 
     .original-color-sample {
         width: 100%;
@@ -639,6 +661,15 @@ input[type='text'] {
         border: var(--color-background) 2px solid;
     }
 
+    .custom-radius-sampler {
+        min-width: 150px;
+        padding: 40px;
+        background-color: white;
+        color: var(--ev-c-gray-1);
+        font-weight: 700;
+        text-align: center;
+    }
+
     .tag {
         margin-left: 20px;
         font-size: 12px;
@@ -647,13 +678,33 @@ input[type='text'] {
 
     .input-wrapper {
         width: 100%;
-    }
+        cursor: pointer;
 
-    .color-input {
-        position: relative;
-        width: 100%;
-        height: auto;
-        align-self: center;
+        button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 30px;
+            width: 30px;
+            border-radius: 50%;
+            border: none;
+            background: white;
+
+            svg {
+                top: -2px;
+                right: -6px;
+                height: 46px;
+                width: 46px;
+                color: var(--ev-c-green-1);
+            }
+            &.inactive svg {
+                color: var(--ev-c-red-1);
+            }
+
+            &:focus {
+                outline: none;
+            }
+        }
     }
 
     .custom-color-sample {
@@ -669,4 +720,57 @@ input[type='text'] {
 
 .fade-in {
     animation: fadeIn 1s ease;
+}
+
+/** PREVIEWER */
+.main-container {
+    gap: 25px;
+}
+.preview-container {
+    --preview-container-height-px: 400px;
+    --preview-container-height: 400;
+
+    --preview-res-h: 768;
+    --preview-res-h-px: 768px;
+    --preview-res-w: 1024;
+    --preview-res-w-px: 1024px;
+    --preview-container-zoom: calc(var(--preview-container-height) / var(--preview-res-h));
+
+    height: calc(var(--preview-container-height-px));
+    /* aspect-ratio: 16 / 9; */
+    aspect-ratio: 4 / 3;
+}
+
+.preview-content {
+    zoom: var(--preview-container-zoom);
+    position: relative;
+    width: var(--preview-res-w-px);
+    height: var(--preview-res-h-px);
+    overflow: hidden;
+
+    .preview-bg {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: auto;
+        transform: translateY(calc(-50% + calc(1080 / 2)));
+    }
+
+    .preview-logo {
+        position: absolute;
+        left: 5%;
+        top: 5%;
+        height: 60px;
+        width: auto;
+    }
+
+    .preview-start-btn {
+        position: absolute;
+        right: 5%;
+        bottom: 5%;
+        width: auto;
+        /* height: 40px; */
+        padding: 40px;
+        font-size: 32px;
+    }
 }

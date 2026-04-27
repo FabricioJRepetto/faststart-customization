@@ -8,7 +8,7 @@ import {
     LanguageData,
     Screens,
     CustomConfig
-} from '../types'
+} from '@shared/types'
 
 export const store = createStore()
 

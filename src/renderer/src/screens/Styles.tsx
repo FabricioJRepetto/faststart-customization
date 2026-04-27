@@ -1,8 +1,8 @@
 import ClearSvg from '../assets/clear.svg?react'
 import { useSetAtom } from 'jotai'
 import { DefaultConfigAtom, EditedStylesDataAtom, store } from '@renderer/utils/context/context'
-import { DefaultStylesData } from '@renderer/utils/types'
 import StyleCard from '@renderer/components/StyleCard'
+import { DefaultStylesData } from '@shared/types'
 
 const Styles = (): React.JSX.Element => {
     // const [ogStyles] = useState(getStylesData())
@@ -13,7 +13,7 @@ const Styles = (): React.JSX.Element => {
     const updateCustom = (key: string, value: string): void => {
         console.log(key, value)
         if (key === 'buttonBorder') {
-            setCustomStyles((prev) => ({ ...prev, [key]: prev.buttonBorder ? '' : 'true' }))
+            setCustomStyles((prev) => ({ ...prev, [key]: prev.buttonBorder ? 'false' : 'true' }))
         }
         if (key === 'buttonBorderRadius') {
             setCustomStyles((prev) => ({ ...prev, [key]: value + 'px' }))
@@ -44,8 +44,6 @@ const Styles = (): React.JSX.Element => {
             </div>
 
             <div className="assets-grid scrolleable">
-                {/* {Object.entries(ogStyles).map(([k, v]) => (
-                ))} */}
                 <StyleCard
                     key={'primaryColor'}
                     keyName={'primaryColor'}
@@ -68,6 +66,8 @@ const Styles = (): React.JSX.Element => {
                     update={updateCustom}
                 />
 
+                <div className="grid-divider"></div>
+
                 <StyleCard
                     key={'buttonColor'}
                     keyName={'buttonColor'}
@@ -82,6 +82,7 @@ const Styles = (): React.JSX.Element => {
                     reset={resetValue}
                     update={updateCustom}
                 />
+
                 <StyleCard
                     type="pixel"
                     key={'buttonBorderRadius'}
@@ -94,7 +95,7 @@ const Styles = (): React.JSX.Element => {
                     type="boolean"
                     key={'buttonBorder'}
                     keyName={'buttonBorder'}
-                    value={ogStyles.buttonBorder}
+                    value={ogStyles.buttonBorder ? 'true' : 'false'}
                     reset={resetValue}
                     update={updateCustom}
                 />

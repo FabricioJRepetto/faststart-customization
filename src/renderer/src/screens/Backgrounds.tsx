@@ -1,9 +1,9 @@
 import { assetName } from '@renderer/utils/assetsUtils'
 import { AssetsDataAtom, EditedBackgroundsDataAtom } from '@renderer/utils/context/context'
-import { filterType } from '@renderer/utils/types'
 import { useAtom, useAtomValue } from 'jotai'
 import ClearSvg from '../assets/clear.svg?react'
 import ResetSvg from '../assets/cancel.svg?react'
+import { filterType } from '@shared/types'
 
 // TODO Aceptar videos tambien
 
@@ -52,27 +52,34 @@ const Backgrounds = (): React.JSX.Element => {
                 </div>
             </div>
 
-            <div className="assets-grid grid-bg scrolleable">
-                {backgrounds!.map((bg) => (
-                    <div key={bg.name} className="assets-container bg-asset-container">
-                        <p>{assetName(bg.name)}</p>
+            {backgrounds?.length ? (
+                <div className="assets-grid grid-bg scrolleable">
+                    {backgrounds.map((bg) => (
+                        <div key={bg.name} className="assets-container bg-asset-container">
+                            <p>{assetName(bg.name)}</p>
 
-                        <div className="bg-container">
-                            <img src={bg.base64} />
-                            {bg.customBase64 ? (
-                                <div className="custom-bg-container">
-                                    <img src={bg.customBase64} />
-                                    <ResetSvg onClick={() => resetValue(bg.name)} />
-                                </div>
-                            ) : (
-                                <div className="bg-placeholder" onClick={() => setValue(bg.name)}>
-                                    <p>Seleccionar</p>
-                                </div>
-                            )}
+                            <div className="bg-container">
+                                <img src={bg.base64} />
+                                {bg.customBase64 ? (
+                                    <div className="custom-bg-container">
+                                        <img src={bg.customBase64} />
+                                        <ResetSvg onClick={() => resetValue(bg.name)} />
+                                    </div>
+                                ) : (
+                                    <div
+                                        className="bg-placeholder"
+                                        onClick={() => setValue(bg.name)}
+                                    >
+                                        <p>Seleccionar</p>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+            ) : (
+                <h2>No backgrounds</h2>
+            )}
         </div>
     )
 }

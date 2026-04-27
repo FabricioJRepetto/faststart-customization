@@ -1,9 +1,9 @@
 import { assetName } from '@renderer/utils/assetsUtils'
 import { AssetsDataAtom, EditedAudiosDataAtom } from '@renderer/utils/context/context'
-import { filterType } from '@renderer/utils/types'
 import { useAtom, useAtomValue } from 'jotai'
 import ClearSvg from '../assets/clear.svg?react'
 import ResetSvg from '../assets/cancel.svg?react'
+import { filterType } from '@shared/types'
 
 const Audio = (): React.JSX.Element => {
     const OgAssets = useAtomValue(AssetsDataAtom)
@@ -50,30 +50,34 @@ const Audio = (): React.JSX.Element => {
                 </div>
             </div>
 
-            <div className="assets-grid grid-audio scrolleable">
-                {audios!.map((audio) => (
-                    <div key={audio.name} className="assets-container audio-asset-container">
-                        <p>{assetName(audio.name)}</p>
-                        <audio src={audio.base64} controls />
-                        {audio.customBase64 ? (
-                            <audio src={audio.customBase64} controls />
-                        ) : (
-                            <div
-                                className="custom-placeholder"
-                                onClick={() => setValue(audio.name)}
-                            >
-                                Seleccionar
-                            </div>
-                        )}
-                        {audio.customBase64 && (
-                            <ResetSvg
-                                className="audio-reset-btn"
-                                onClick={() => resetValue(audio.name)}
-                            />
-                        )}
-                    </div>
-                ))}
-            </div>
+            {audios?.length ? (
+                <div className="assets-grid grid-audio scrolleable">
+                    {audios.map((audio) => (
+                        <div key={audio.name} className="assets-container audio-asset-container">
+                            <p>{assetName(audio.name)}</p>
+                            <audio src={audio.base64} controls />
+                            {audio.customBase64 ? (
+                                <audio src={audio.customBase64} controls />
+                            ) : (
+                                <div
+                                    className="custom-placeholder"
+                                    onClick={() => setValue(audio.name)}
+                                >
+                                    Seleccionar
+                                </div>
+                            )}
+                            {audio.customBase64 && (
+                                <ResetSvg
+                                    className="audio-reset-btn"
+                                    onClick={() => resetValue(audio.name)}
+                                />
+                            )}
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <h2>No audios</h2>
+            )}
         </div>
     )
 }

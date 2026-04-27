@@ -1,5 +1,5 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
-import { CustomConfig, filterType } from '@renderer/utils/types'
+import { CustomConfig, filterType } from 'shared/types'
 
 type IpcResponse<T> = Promise<
     | {

@@ -1,4 +1,4 @@
-import { LanguageData } from './types'
+import { LanguageData } from '@shared/types'
 
 /** Retorna la estructura completa del archivo language con todas las keys vacias ("") */
 export const langDataFullStructure = (langData: LanguageData): LanguageData => {

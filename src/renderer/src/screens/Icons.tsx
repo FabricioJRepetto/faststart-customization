@@ -2,7 +2,7 @@ import { assetName } from '@renderer/utils/assetsUtils'
 import { AssetsDataAtom, EditedIconsDataAtom } from '@renderer/utils/context/context'
 import { useAtom, useAtomValue } from 'jotai'
 import ClearSvg from '../assets/clear.svg?react'
-import { filterType } from '@renderer/utils/types'
+import { filterType } from '@shared/types'
 
 const Icons = (): React.JSX.Element => {
     const OgAssets = useAtomValue(AssetsDataAtom)
@@ -49,27 +49,31 @@ const Icons = (): React.JSX.Element => {
                 </div>
             </div>
 
-            <div className="assets-grid scrolleable">
-                {icons!.map((icon) => (
-                    <div key={icon.name} className="assets-container icon-asset-container">
-                        <p>{assetName(icon.name)}</p>
+            {icons?.length ? (
+                <div className="assets-grid scrolleable">
+                    {icons.map((icon) => (
+                        <div key={icon.name} className="assets-container icon-asset-container">
+                            <p>{assetName(icon.name)}</p>
 
-                        <div className="icons-container">
-                            <img src={icon.base64} />
-                            {icon.customBase64 && <img src={icon.customBase64} />}
-                        </div>
+                            <div className="icons-container">
+                                <img src={icon.base64} />
+                                {icon.customBase64 && <img src={icon.customBase64} />}
+                            </div>
 
-                        <div className="actions">
-                            <div className="action primary">
-                                <a onClick={() => setValue(icon.name)}>Cambiar</a>
-                            </div>
-                            <div className="action">
-                                <a onClick={() => resetValue(icon.name)}>Resetear</a>
+                            <div className="actions">
+                                <div className="action primary">
+                                    <a onClick={() => setValue(icon.name)}>Cambiar</a>
+                                </div>
+                                <div className="action">
+                                    <a onClick={() => resetValue(icon.name)}>Resetear</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+            ) : (
+                <h2>No icons</h2>
+            )}
         </div>
     )
 }

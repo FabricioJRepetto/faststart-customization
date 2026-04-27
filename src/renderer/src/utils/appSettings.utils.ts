@@ -1,6 +1,6 @@
 import { APPSETTINGS_CONFIGURATION_MODULE } from './CONSTANTS'
 import { AppSettingsAtom, DefaultConfigAtom, store } from './context/context'
-import { StylesData, ConfigContextData } from './types'
+import { StylesData, ConfigContextData } from '@shared/types'
 
 /** Retorna todos los datos seteados en el appSettings de TerminalServices */
 export const getAppSettingsData = (): ConfigContextData | undefined => {
@@ -30,7 +30,7 @@ export const getConfigData = (): StylesData | undefined => {
             return
         }
 
-        return config.styles
+        return { ...config.styles, buttonBorder: config.styles.buttonBorder ? 'true' : 'false' }
     } catch (error) {
         console.error('getConfigData', error)
         return

@@ -1,5 +1,4 @@
 import { useAtomValue } from 'jotai'
-import Video from '../assets/cmofmwygunmg1.mp4'
 import {
     ClientAppVersionDirAtom,
     DefaultLanguageDataAtom,
@@ -12,9 +11,17 @@ import {
     store,
     ThirdAppVersionDirAtom
 } from '@renderer/utils/context/context'
-import { AssetData, CustomConfig, FinalAssetData, LanguageData } from '@renderer/utils/types'
 import { langDataFullStructure } from '@renderer/utils/LangStructureBuilder'
 import { assetExtention } from '@renderer/utils/assetsUtils'
+import {
+    AssetData,
+    CustomConfig,
+    FinalAssetData,
+    FinalStylesData,
+    LanguageData,
+    StylesData
+} from '@shared/types'
+import { Previewer } from '@renderer/components/Previewer'
 
 export const MainScreen = (): React.JSX.Element => {
     const clientDir = useAtomValue(ClientAppVersionDirAtom)
@@ -24,7 +31,7 @@ export const MainScreen = (): React.JSX.Element => {
     const newBgs = useAtomValue(EditedBackgroundsDataAtom)
     const newThird = useAtomValue(EditedThirdScreenDataAtom)
     const newAudios = useAtomValue(EditedAudiosDataAtom)
-    const newColors = useAtomValue(EditedStylesDataAtom)
+    const newStyles = useAtomValue(EditedStylesDataAtom)
     const newLangs = useAtomValue(EditedLanguageDataAtom)
 
     const dataParser = (newDataList: AssetData[]): FinalAssetData[] => {
@@ -37,16 +44,9 @@ export const MainScreen = (): React.JSX.Element => {
         }))
     }
 
-    // const colorDataParser = (newList: StylesData): FinalAssetData[] => {
-    //     const ogColors = Object.entries(getStylesData())
-    //     console.log(newList)
-
-    //     return ogColors.map(([k, v]) => ({
-    //         name: k,
-    //         original: v,
-    //         custom: newList[k] || ''
-    //     }))
-    // }
+    const stylesDataParser = (newList: StylesData): FinalStylesData => {
+        return { ...newList, buttonBorder: newList.buttonBorder === 'true' }
+    }
 
     const languageParser = (newLang: LanguageData): LanguageData => {
         const ogLang = store.get(DefaultLanguageDataAtom)
@@ -66,9 +66,9 @@ export const MainScreen = (): React.JSX.Element => {
 
     const testConfig = async (): Promise<void> => {
         const aux: CustomConfig = {
+            version: '',
             icon: dataParser(newIcons!),
-            // styles: colorDataParser(newColors),
-            styles: newColors,
+            styles: stylesDataParser(newStyles),
             background: dataParser(newBgs!),
             thirdscreen: dataParser(newThird!),
             audio: dataParser(newAudios!),
@@ -85,15 +85,25 @@ export const MainScreen = (): React.JSX.Element => {
     }
 
     return (
-        <div className="screen-content">
+        <div className="screen-content main-container">
             <div className="scree-header">
-                <h1>hola con todo respeto</h1>
+                <h1>Preview</h1>
             </div>
-            <video src={Video} muted autoPlay loop></video>
+            {/* <video src={Video} muted autoPlay loop></video> */}
+            <Previewer />
 
             <div className="actions">
+                <div className="action primary">
+                    <a>Activar Customización</a>
+                </div>
+            </div>
+            <div className="actions">
                 <div className="action">
-                    <a onClick={testConfig}>test new config</a>
+                    <a>Guardar en libreria</a>
+                </div>
+
+                <div className="action">
+                    <a onClick={testConfig}>Aplicar Customización</a>
                 </div>
             </div>
         </div>

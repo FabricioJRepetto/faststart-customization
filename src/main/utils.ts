@@ -1,5 +1,6 @@
 import { copyFileSync, mkdirSync, readFileSync } from 'fs'
 import { basename, extname, join } from 'path'
+import { CustomConfig } from '../../shared/types'
 
 export const getBase64 = (filePath: string): { base64: string; mime: string } => {
     try {
@@ -29,31 +30,41 @@ export const getBase64 = (filePath: string): { base64: string; mime: string } =>
     }
 }
 
-const DefaultStylesData = {
-    primaryColor: '',
-    secondaryColor: '',
-    errorMessageColor: '',
-    buttonBorder: '',
-    buttonBorderRadius: '',
-    buttonColor: '',
-    buttonBackground: ''
-} as const
-type StylesData = Record<keyof typeof DefaultStylesData, string>
+// const DefaultStylesData = {
+//     primaryColor: '',
+//     secondaryColor: '',
+//     errorMessageColor: '',
+//     buttonBorder: '',
+//     buttonBorderRadius: '',
+//     buttonColor: '',
+//     buttonBackground: ''
+// } as const
+// type StylesData = Record<keyof typeof DefaultStylesData, string>
+//_______________________________
+// type StylesData = {
+//     primaryColor: string
+//     secondaryColor: string
+//     errorMessageColor: string
+//     buttonBorder: boolean
+//     buttonBorderRadius: string
+//     buttonColor: string
+//     buttonBackground: string
+// }
 
-interface FinalAssetData {
-    name: string
-    original: { path: string; fileType: string } | string
-    custom?: { path: string; fileType: string } | string
-}
-export interface CustomConfig {
-    version: string
-    icon: FinalAssetData[]
-    background: FinalAssetData[]
-    thirdscreen: FinalAssetData[]
-    audio: FinalAssetData[]
-    styles: StylesData
-    language: Record<string, Record<string, string>>
-}
+// interface FinalAssetData {
+//     name: string
+//     original: { path: string; fileType: string } | string
+//     custom?: { path: string; fileType: string } | string
+// }
+// export interface CustomConfig {
+//     version: string
+//     icon: FinalAssetData[]
+//     background: FinalAssetData[]
+//     thirdscreen: FinalAssetData[]
+//     audio: FinalAssetData[]
+//     styles: StylesData
+//     language: Record<string, Record<string, string>>
+// }
 export const manageRawCustomConfig = async (
     rawConfig: CustomConfig,
     clientDir: string,
@@ -73,12 +84,12 @@ export const manageRawCustomConfig = async (
             audio: [],
             styles: {
                 primaryColor: '',
-    secondaryColor: '',
-    errorMessageColor: '',
-    buttonBorder: '',
-    buttonBorderRadius: '',
-    buttonColor: '',
-    buttonBackground: ''
+                secondaryColor: '',
+                errorMessageColor: '',
+                buttonBorder: false,
+                buttonBorderRadius: '',
+                buttonColor: '',
+                buttonBackground: ''
             },
             language: {}
         }

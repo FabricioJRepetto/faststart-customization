@@ -3,7 +3,8 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { readdirSync, readFileSync, writeFileSync } from 'fs'
 import icon from '../../resources/icon.png?asset'
-import { CustomConfig, getBase64, manageRawCustomConfig } from './utils'
+import { getBase64, manageRawCustomConfig } from './utils'
+import { CustomConfig } from '../../shared/types'
 
 function createWindow(): void {
     // Create the browser window.

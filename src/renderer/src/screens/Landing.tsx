@@ -26,7 +26,7 @@ import {
     CustomConfig,
     LanguageData,
     Screens
-} from '@renderer/utils/types'
+} from '@shared/types'
 import { langDataShell } from '@renderer/utils/LangStructureBuilder'
 import {
     CUSTOM_CONFIG_GILE_NAME,
@@ -150,7 +150,10 @@ const Landing = (): React.JSX.Element => {
                 const aux = resCustoms.data as CustomConfig
                 console.log(aux)
                 setDefaultCustomConfig(aux)
-                setDefaultStyles(aux.styles)
+                setDefaultStyles({
+                    ...aux.styles,
+                    buttonBorder: aux.styles.buttonBorder.toString()
+                })
             } else {
                 console.error('Error al cargar archivo appsettings: ' + resCustoms.error)
                 throw resCustoms.error

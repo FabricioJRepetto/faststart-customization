@@ -5,7 +5,6 @@ import {
     SupervisorAppVersionDirAtom,
     ThirdAppVersionDirAtom
 } from '@renderer/utils/context/context'
-import { Screens } from '@renderer/utils/types'
 import { useAtom, useAtomValue } from 'jotai'
 import { useState } from 'react'
 import CloseSvg from '../assets/left.svg'
@@ -18,6 +17,7 @@ import LanguageSvg from '../assets/dictionary.svg?react'
 import ScreenSvg from '../assets/screen.svg?react'
 import AudioSvg from '../assets/audio.svg?react'
 import ExitSvg from '../assets/door.svg?react'
+import { Screens } from '@shared/types'
 
 const SidebarMenu = (): React.JSX.Element => {
     const [screen, setScreen] = useAtom(CurrentScreenAtom)

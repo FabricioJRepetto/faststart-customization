@@ -90,12 +90,22 @@ export interface FinalAssetData {
     original: { path: string; fileType: string } | string
     custom?: { path: string; fileType: string } | string
 }
+export interface FinalStylesData {
+    primaryColor: string
+    secondaryColor: string
+    errorMessageColor: string
+    buttonBorder: boolean
+    buttonBorderRadius: string
+    buttonColor: string
+    buttonBackground: string
+}
 
 export interface CustomConfig {
+    version: string
     icon: FinalAssetData[]
     background: FinalAssetData[]
     thirdscreen: FinalAssetData[]
     audio: FinalAssetData[]
-    styles: StylesData
+    styles: FinalStylesData
     language: LanguageData
 }
