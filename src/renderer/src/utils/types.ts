@@ -81,6 +81,7 @@ export enum filterType {
     Videos = 'Videos',
     Audio = 'Audio',
     Todos = 'Todos',
+    ImgSvg = 'ImgSvg',
     ImgVideo = 'ImgVideo'
 }
 

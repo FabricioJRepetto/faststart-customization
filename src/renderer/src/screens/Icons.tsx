@@ -20,7 +20,7 @@ const Icons = (): React.JSX.Element => {
 
     const setValue = async (key: string): Promise<void> => {
         console.log(key)
-        const res = await window.electronAPI.selectFile(filterType.Imagenes)
+        const res = await window.electronAPI.selectFile(filterType.ImgSvg)
         console.log(res)
 
         if (res.success) {

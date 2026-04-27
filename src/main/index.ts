@@ -72,10 +72,14 @@ app.whenReady().then(() => {
             const auxFilters = {
                 Imagenes: {
                     name: 'Imágenes',
-                    extensions: ['png', 'jpg', 'jpeg', 'webp', 'svg', 'gif']
+                    extensions: ['png', 'jpg', 'jpeg', 'webp', 'gif']
                 },
                 Videos: { name: 'Videos', extensions: ['webm', 'mp4'] },
                 Audio: { name: 'Audio', extensions: ['mp3', 'wav'] },
+                ImgSvg: {
+                    name: 'Imágenes',
+                    extensions: ['png', 'jpg', 'jpeg', 'webp', 'svg', 'gif']
+                },
                 ImgVideo: {
                     name: 'Imagenes y video',
                     extensions: ['png', 'jpg', 'jpeg', 'webp', 'svg', 'gif', 'webm', 'mp4']
