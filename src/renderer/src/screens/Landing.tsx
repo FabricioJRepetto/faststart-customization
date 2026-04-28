@@ -24,6 +24,7 @@ import {
     AssetData,
     AssetList,
     CustomConfig,
+    DefaultStylesData,
     LanguageData,
     Screens
 } from '@shared/types'
@@ -151,7 +152,7 @@ const Landing = (): React.JSX.Element => {
                 console.log(aux)
                 setDefaultCustomConfig(aux)
                 setDefaultStyles({
-                    ...aux.styles,
+                    ...DefaultStylesData,
                     buttonBorder: aux.styles.buttonBorder.toString()
                 })
             } else {

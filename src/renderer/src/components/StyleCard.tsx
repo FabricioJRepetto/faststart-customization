@@ -52,7 +52,7 @@ const StyleCard = ({ keyName, value, reset, update, type = 'color' }: Props): Re
                             type="number"
                             placeholder="Sin indicar"
                             min={0}
-                            value={parseInt(customStyles?.buttonBorderRadius) ?? ''}
+                            value={parseInt(customStyles?.buttonBorderRadius) || ''}
                             onChange={(e) => update(keyName, e.target.value)}
                         ></input>
                     </div>
@@ -82,12 +82,12 @@ const StyleCard = ({ keyName, value, reset, update, type = 'color' }: Props): Re
                         <input
                             type="text"
                             placeholder="Sin indicar"
-                            value={customStyles?.[keyName]}
+                            value={customStyles?.[keyName] || ''}
                             onChange={(e) => update(keyName, e.target.value)}
                         ></input>
                         <label
                             className="custom-color-sample"
-                            style={{ backgroundColor: customStyles?.[keyName] }}
+                            style={{ backgroundColor: customStyles?.[keyName] || '' }}
                         >
                             <input
                                 hidden

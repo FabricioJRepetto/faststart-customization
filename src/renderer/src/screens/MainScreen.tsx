@@ -88,16 +88,13 @@ export const MainScreen = (): React.JSX.Element => {
         <div className="screen-content main-container">
             <div className="scree-header">
                 <h1>Preview</h1>
+                <Previewer />
             </div>
-            {/* <video src={Video} muted autoPlay loop></video> */}
-            <Previewer />
 
             <div className="actions">
                 <div className="action primary">
                     <a>Activar Customización</a>
                 </div>
-            </div>
-            <div className="actions">
                 <div className="action">
                     <a>Guardar en libreria</a>
                 </div>

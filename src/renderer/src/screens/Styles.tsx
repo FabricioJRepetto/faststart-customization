@@ -11,7 +11,6 @@ const Styles = (): React.JSX.Element => {
     const setCustomStyles = useSetAtom(EditedStylesDataAtom)
 
     const updateCustom = (key: string, value: string): void => {
-        console.log(key, value)
         if (key === 'buttonBorder') {
             setCustomStyles((prev) => ({ ...prev, [key]: prev.buttonBorder ? 'false' : 'true' }))
         }
