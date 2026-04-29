@@ -71,7 +71,8 @@ export const manageRawCustomConfig = async (
     thirdDir: string
 ): Promise<CustomConfig | null> => {
     try {
-        const destDir = clientDir + '/customs'
+        const customsDir = 'customs'
+        const destDir = clientDir + '/' + customsDir
         mkdirSync(clientDir + '/customs', { recursive: true })
 
         const keys = Object.keys(rawConfig)
@@ -106,6 +107,7 @@ export const manageRawCustomConfig = async (
             for await (const entry of rawConfig[key]) {
                 const custom = entry.custom?.path
                 if (custom) {
+                    const originalPath = 'defaults/' + entry.original.path.split('/').pop()
                     const fileName = basename(custom)
                     const dest = join(key === 'thirdscreen' ? thirdDir : destDir, fileName)
                     console.log('file name:', fileName, '\ndest:\n', dest)
@@ -113,7 +115,11 @@ export const manageRawCustomConfig = async (
                     // renameSync(custom, dest) // mueve el archivo
                     copyFileSync(custom, dest)
 
-                    aux[key].push({ ...entry, custom: { ...entry.custom, path: dest } })
+                    aux[key].push({
+                        ...entry,
+                        original: { ...entry.original, path: originalPath },
+                        custom: { ...entry.custom, path: join(customsDir, fileName) }
+                    })
                 } else {
                     console.log('No custom for', entry.name)
                     aux[key].push(entry)
