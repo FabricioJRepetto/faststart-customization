@@ -99,25 +99,24 @@ export const manageRawCustomConfig = async (
                 aux[key] = rawConfig[key]
                 break
             }
+            if (key === 'styles') {
+                aux[key] = rawConfig[key]
+                break
+            }
             for await (const entry of rawConfig[key]) {
-                if (key === 'styles') {
-                    aux[key] = rawConfig[key]
-                    break
+                const custom = entry.custom?.path
+                if (custom) {
+                    const fileName = basename(custom)
+                    const dest = join(key === 'thirdscreen' ? thirdDir : destDir, fileName)
+                    console.log('file name:', fileName, '\ndest:\n', dest)
+
+                    // renameSync(custom, dest) // mueve el archivo
+                    copyFileSync(custom, dest)
+
+                    aux[key].push({ ...entry, custom: { ...entry.custom, path: dest } })
                 } else {
-                    const custom = entry.custom?.path
-                    if (custom) {
-                        const fileName = basename(custom)
-                        const dest = join(key === 'thirdscreen' ? thirdDir : destDir, fileName)
-                        console.log('file name:', fileName, '\ndest:\n', dest)
-
-                        // renameSync(custom, dest) // mueve el archivo
-                        copyFileSync(custom, dest)
-
-                        aux[key].push({ ...entry, custom: { ...entry.custom, path: dest } })
-                    } else {
-                        console.log('No custom for', entry.name)
-                        aux[key].push(entry)
-                    }
+                    console.log('No custom for', entry.name)
+                    aux[key].push(entry)
                 }
             }
         }
