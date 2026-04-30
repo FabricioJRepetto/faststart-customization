@@ -1,3 +1,21 @@
+export type IpcResponse<T> = Promise<
+    | {
+          success: true
+          data: T
+          error?: undefined
+      }
+    | {
+          success: false
+          error: string
+          data?: undefined
+      }
+>
+
+export interface IpcResponseFileData {
+    base64: string
+    filePath: string
+}
+
 export enum Screens {
     landing = 'landing',
     main = 'main',

@@ -1,10 +1,13 @@
-import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
+import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import { readdirSync, readFileSync, writeFileSync } from 'fs'
 import icon from '../../resources/icon.png?asset'
-import { getBase64, manageRawCustomConfig } from './utils'
-import { CustomConfig } from '../../shared/types'
+import { selectDirectory } from './handlers/selectDirectory'
+import { selectFile } from './handlers/selectFile'
+import { getJsonData } from './handlers/getJsonData'
+import { writeJsonFile } from './handlers/writeJsonFile'
+import { getFoldersList } from './handlers/getFoldersList'
+import { getFilesList } from './handlers/getFilesList'
 
 function createWindow(): void {
     // Create the browser window.
@@ -28,9 +31,6 @@ function createWindow(): void {
         shell.openExternal(details.url)
         return { action: 'deny' }
     })
-
-    // HMR for renderer base on electron-vite cli.
-    // Load the remote URL for development or the local html file for production.
     if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
         mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
     } else {
@@ -38,9 +38,6 @@ function createWindow(): void {
     }
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
     // Set app user model id for windows
     electronApp.setAppUserModelId('com.electron')
@@ -52,147 +49,19 @@ app.whenReady().then(() => {
         optimizer.watchWindowShortcuts(window)
     })
 
-    // IPC test
-    ipcMain.on('ping', () => console.log('pong'))
-
     //_ ============ IPC Handlers ============ _\\
 
-    ipcMain.handle('select-directory', async () => {
-        const result = await dialog.showOpenDialog({
-            properties: ['openDirectory']
-        })
+    ipcMain.handle('select-directory', selectDirectory)
 
-        if (result.canceled) return null
-        return result.filePaths[0]
-    })
+    ipcMain.handle('select-file', selectFile)
 
-    ipcMain.handle('select-file', async (_, filter?: string) => {
-        try {
-            console.log('select-file', filter)
+    ipcMain.handle('get-json-data', getJsonData)
 
-            const auxFilters = {
-                Imagenes: {
-                    name: 'Imágenes',
-                    extensions: ['png', 'jpg', 'jpeg', 'webp', 'gif']
-                },
-                Videos: { name: 'Videos', extensions: ['webm', 'mp4'] },
-                Audio: { name: 'Audio', extensions: ['mp3', 'wav'] },
-                ImgSvg: {
-                    name: 'Imágenes',
-                    extensions: ['png', 'jpg', 'jpeg', 'webp', 'svg', 'gif']
-                },
-                ImgVideo: {
-                    name: 'Imagenes y video',
-                    extensions: ['png', 'jpg', 'jpeg', 'webp', 'svg', 'gif', 'webm', 'mp4']
-                },
-                Todos: { name: 'Todos', extensions: ['*'] }
-            }
+    ipcMain.handle('write-json-file', writeJsonFile)
 
-            const result = await dialog.showOpenDialog({
-                properties: ['openFile'],
-                filters: [auxFilters[filter || 'Todos']]
-            })
+    ipcMain.handle('get-folders-list', getFoldersList)
 
-            if (result.canceled) return null
-
-            const filePath = result.filePaths[0]
-            const { base64 } = getBase64(filePath)
-
-            return { success: true, data: { filePath, base64 } }
-        } catch (error) {
-            console.error(error)
-            return { success: false, error: (error as Error).message }
-        }
-    })
-
-    ipcMain.handle('get-json-data', async (_event, filePath: string): Promise<unknown> => {
-        try {
-            const content = readFileSync(filePath, 'utf-8')
-            return { success: true, data: JSON.parse(content) }
-        } catch (error) {
-            return { success: false, error: (error as Error).message }
-        }
-    })
-
-    ipcMain.handle(
-        'write-json-file',
-        async (
-            _event,
-            fileData: CustomConfig,
-            clientDir: string,
-            thirdDir: string
-        ): Promise<unknown> => {
-            try {
-                const finalData = await manageRawCustomConfig(fileData, clientDir, thirdDir)
-                const jsonName = '/customConfig.json'
-
-                writeFileSync(clientDir + jsonName, JSON.stringify(finalData, null, 2), 'utf-8')
-
-                return { success: true }
-            } catch (error) {
-                console.error(error)
-                return { success: false }
-            }
-        }
-    )
-
-    ipcMain.handle('get-folders-list', async (_event, dirPath: string): Promise<unknown> => {
-        try {
-            const aux = readdirSync(dirPath, { withFileTypes: true })
-                .filter((entry) => entry.isDirectory())
-                .map((e) => e.name)
-
-            return { success: true, data: aux }
-        } catch (error) {
-            return { success: false, error: (error as Error).message }
-        }
-    })
-
-    ipcMain.handle('get-files-list', async (_event, dirPaths: string[]): Promise<unknown> => {
-        try {
-            const types = ['icon', 'background', 'audio', 'thirdscreen', 'other']
-            const aux = {
-                icon: [],
-                background: [],
-                audio: [],
-                thirdscreen: [],
-                other: []
-            }
-            const read = (dirPath: string): void => {
-                readdirSync(dirPath, { withFileTypes: true })
-                    .filter((entry) => !entry.isDirectory())
-                    .map((entry) => {
-                        const auxType = entry.name.split('_')[0]
-                        const assetType = types.includes(auxType) ? auxType : 'other'
-                        const filePath = dirPath + '/' + entry.name
-                        const _name = entry.name.replace(/\.[\w\d]*$/g, '') || entry.name
-
-                        let base64 = ''
-                        let mime = ''
-                        if (assetType !== 'other') {
-                            const { base64: b, mime: m } = getBase64(filePath)
-                            base64 = b
-                            mime = m
-                        }
-
-                        aux[assetType].push({
-                            name: _name,
-                            assetType,
-                            filePath,
-                            base64,
-                            customPath: '',
-                            customBase64: '',
-                            mimeType: mime
-                        })
-                    })
-            }
-            for (const dir of dirPaths) read(dir)
-
-            return { success: true, data: aux }
-        } catch (error) {
-            return { success: false, error: (error as Error).message }
-        }
-    })
+    ipcMain.handle('get-files-list', getFilesList)
 
     createWindow()
 

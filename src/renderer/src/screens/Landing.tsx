@@ -1,6 +1,9 @@
 import { useAtom, useSetAtom } from 'jotai'
-import NATL from '../assets/NATL-logo.svg'
+import { useEffect, useState } from 'react'
 import Versions from '../components/Versions'
+import NATL from '../assets/NATL-logo.svg'
+import RightSvg from '../assets/right.svg?react'
+import { langDataShell } from '@renderer/utils/LangStructureBuilder'
 import {
     AppSettingsAtom,
     ClientAppVersionDirAtom,
@@ -28,7 +31,6 @@ import {
     LanguageData,
     Screens
 } from '@shared/types'
-import { langDataShell } from '@renderer/utils/LangStructureBuilder'
 import {
     CUSTOM_CONFIG_GILE_NAME,
     DEFAULT_ASSETS_DIR,
@@ -36,8 +38,6 @@ import {
     SERVICES_APPSETTINGS_DIR,
     VERSIONS_DIR
 } from '../utils/CONSTANTS'
-import RightSvg from '../assets/right.svg?react'
-import { useEffect, useState } from 'react'
 
 // TODO Checkear que los directorios seleccionados tienen la estructura correcta antes de avanzar
 
