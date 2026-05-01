@@ -1,32 +1,28 @@
-import { useAtomValue } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import {
     ClientAppVersionDirAtom,
-    DefaultLanguageDataAtom,
     EditedAudiosDataAtom,
     EditedBackgroundsDataAtom,
     EditedStylesDataAtom,
     EditedIconsDataAtom,
     EditedLanguageDataAtom,
     EditedThirdScreenDataAtom,
-    store,
-    ThirdAppVersionDirAtom
+    AssetsDataAtom,
+    CustomEnabledAtom,
+    DefaultConfigAtom
 } from '@renderer/utils/context/context'
-import { langDataFullStructure } from '@renderer/utils/LangStructureBuilder'
-import { assetExtention } from '@renderer/utils/assetsUtils'
-import {
-    AssetData,
-    CustomConfig,
-    FinalAssetData,
-    FinalStylesData,
-    LanguageData,
-    StylesData
-} from '@shared/types'
+import { dataParser, languageParser, stylesDataParser } from '@renderer/utils/assetsUtils'
+import { CustomConfig } from '@shared/types'
 import { Previewer } from '@renderer/components/Previewer'
+import { useState } from 'react'
 
 export const MainScreen = (): React.JSX.Element => {
     const clientDir = useAtomValue(ClientAppVersionDirAtom)
-    const thirdDir = useAtomValue(ThirdAppVersionDirAtom)
+    // const thirdDir = useAtomValue(ThirdAppVersionDirAtom)
+    const [customEnabled, setCustomEnabled] = useAtom(CustomEnabledAtom)
 
+    const ogData = useAtomValue(AssetsDataAtom)!
+    const defCustomConfig = useAtomValue(DefaultConfigAtom)
     const newIcons = useAtomValue(EditedIconsDataAtom)
     const newBgs = useAtomValue(EditedBackgroundsDataAtom)
     const newThird = useAtomValue(EditedThirdScreenDataAtom)
@@ -34,54 +30,45 @@ export const MainScreen = (): React.JSX.Element => {
     const newStyles = useAtomValue(EditedStylesDataAtom)
     const newLangs = useAtomValue(EditedLanguageDataAtom)
 
-    const dataParser = (newDataList: AssetData[]): FinalAssetData[] => {
-        return newDataList.map((e) => ({
-            name: e.name,
-            original: { path: e.filePath, fileType: assetExtention(e.filePath) },
-            custom: e.customPath
-                ? { path: e.customPath, fileType: assetExtention(e.filePath) }
-                : undefined
-        }))
-    }
+    const [loading, setLoading] = useState<boolean>(false)
 
-    const stylesDataParser = (newList: StylesData): FinalStylesData => {
-        return { ...newList, buttonBorder: newList.buttonBorder === 'true' }
-    }
-
-    const languageParser = (newLang: LanguageData): LanguageData => {
-        const ogLang = store.get(DefaultLanguageDataAtom)
-        const aux = langDataFullStructure(ogLang)
-        const langKeys = Object.keys(aux)
-        const textKeys = Object.keys(aux[langKeys[0]])
-
-        textKeys.map((text) => {
-            langKeys.map((lang) => {
-                //: usar operador (??) o (||) ?
-                aux[lang][text] = newLang[lang][text] ?? ogLang[lang][text]
-            })
-        })
-
-        return aux
+    const toggleCustomEnabled = async (): Promise<void> => {
+        setLoading(true)
+        setCustomEnabled(!customEnabled)
+        if (defCustomConfig) {
+            const aux = { ...defCustomConfig, customEnabled: !customEnabled }
+            const res = await window.electronAPI.toggleEnabled(aux, clientDir)
+            res.success
+                ? console.log('Customs enabled correctly')
+                : console.error('Error enabling customs')
+        } else {
+            console.log('No custom config loaded. Save one first.')
+        }
+        setLoading(false)
     }
 
     const testConfig = async (): Promise<void> => {
+        setLoading(true)
         const aux: CustomConfig = {
             version: '',
-            icon: dataParser(newIcons!),
-            styles: stylesDataParser(newStyles),
-            background: dataParser(newBgs!),
-            thirdscreen: dataParser(newThird!),
-            audio: dataParser(newAudios!),
+            customEnabled: customEnabled,
+            icon: dataParser(ogData.icon, newIcons!),
+            background: dataParser(ogData.background, newBgs!),
+            thirdscreen: dataParser(ogData.thirdscreen, newThird!),
+            audio: dataParser(ogData.audio, newAudios!),
+            styles: stylesDataParser(newStyles!),
             language: languageParser(newLangs)
         }
 
         console.log('[TEST] Testing new config data:\n', aux)
         console.log('[TEST] Destination path for customConfig.json:\n', clientDir)
 
-        const res = await window.electronAPI.writeJsonData(aux, clientDir, thirdDir)
+        const res = await window.electronAPI.writeJsonData(aux, clientDir)
 
         if (res.success) console.log('[TEST] Custom config file witen')
         else console.error('[TEST] Custom config file creation failed')
+
+        setLoading(false)
     }
 
     return (
@@ -92,15 +79,27 @@ export const MainScreen = (): React.JSX.Element => {
             </div>
 
             <div className="actions">
-                <div className="action primary">
-                    <a>Activar Customización</a>
+                <div className={`action ${customEnabled ? 'green' : 'red'}`}>
+                    <a
+                        onClick={() => {
+                            if (!loading) toggleCustomEnabled()
+                        }}
+                    >
+                        Activar Customización
+                    </a>
                 </div>
                 <div className="action">
                     <a>Guardar en libreria</a>
                 </div>
 
-                <div className="action">
-                    <a onClick={testConfig}>Aplicar Customización</a>
+                <div className="action primary">
+                    <a
+                        onClick={() => {
+                            if (!loading) testConfig()
+                        }}
+                    >
+                        Aplicar Customización
+                    </a>
                 </div>
             </div>
         </div>

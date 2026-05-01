@@ -6,13 +6,21 @@ import ClearSvg from '../assets/clear.svg?react'
 
 interface Props {
     keyName: string
+    parentName: string
     value: string
-    reset: (key: string) => void
-    update: (key: string, value: string) => void
+    reset: (key: string, parent: string) => void
+    update: (key: string, parent: string, value: string) => void
     type?: 'color' | 'pixel' | 'boolean'
 }
 
-const StyleCard = ({ keyName, value, reset, update, type = 'color' }: Props): React.JSX.Element => {
+const StyleCard = ({
+    keyName,
+    parentName,
+    value,
+    reset,
+    update,
+    type = 'color'
+}: Props): React.JSX.Element => {
     const [customStyles] = useAtom(EditedStylesDataAtom)
 
     const b = (v: string): boolean => {
@@ -23,7 +31,9 @@ const StyleCard = ({ keyName, value, reset, update, type = 'color' }: Props): Re
         <div className="assets-container color-asset-container" key={keyName}>
             <div className="header">
                 <p>{keyName}</p>
-                {customStyles?.[keyName] && <ClearSvg onClick={() => reset(keyName)} />}
+                {customStyles?.[parentName]?.[keyName] && (
+                    <ClearSvg onClick={() => reset(keyName, parentName)} />
+                )}
             </div>
 
             {type === 'boolean' && (
@@ -32,12 +42,22 @@ const StyleCard = ({ keyName, value, reset, update, type = 'color' }: Props): Re
                     <div
                         className="original-color-sample input-wrapper"
                         onClick={() =>
-                            update(keyName, b(customStyles?.[keyName]) ? 'false' : 'true')
+                            update(
+                                keyName,
+                                parentName,
+                                b(customStyles?.[parentName]?.[keyName]) ? 'false' : 'true'
+                            )
                         }
                     >
-                        <p>{customStyles?.[keyName] || 'false'}</p>
-                        <button className={b(customStyles?.[keyName]) ? '' : 'inactive'}>
-                            {b(customStyles?.[keyName]) ? <CheckSvg /> : <CancelSvg />}
+                        <p>{customStyles?.[parentName]?.[keyName] || 'false'}</p>
+                        <button
+                            className={b(customStyles?.[parentName]?.[keyName]) ? '' : 'inactive'}
+                        >
+                            {b(customStyles?.[parentName]?.[keyName]) ? (
+                                <CheckSvg />
+                            ) : (
+                                <CancelSvg />
+                            )}
                         </button>
                     </div>
                 </>
@@ -52,16 +72,16 @@ const StyleCard = ({ keyName, value, reset, update, type = 'color' }: Props): Re
                             type="number"
                             placeholder="Sin indicar"
                             min={0}
-                            value={parseInt(customStyles?.buttonBorderRadius) || ''}
-                            onChange={(e) => update(keyName, e.target.value)}
+                            value={parseInt(customStyles?.[parentName]?.borderRadius) || ''}
+                            onChange={(e) => update(keyName, parentName, e.target.value)}
                         ></input>
                     </div>
 
                     <div
                         className="custom-radius-sampler"
                         style={{
-                            borderRadius: customStyles?.buttonBorderRadius
-                                ? customStyles?.buttonBorderRadius + 'px'
+                            borderRadius: customStyles?.[parentName]?.borderRadius
+                                ? customStyles?.[parentName]?.borderRadius + 'px'
                                 : value
                         }}
                     >
@@ -82,18 +102,18 @@ const StyleCard = ({ keyName, value, reset, update, type = 'color' }: Props): Re
                         <input
                             type="text"
                             placeholder="Sin indicar"
-                            value={customStyles?.[keyName] || ''}
-                            onChange={(e) => update(keyName, e.target.value)}
+                            value={customStyles?.[parentName]?.[keyName] || ''}
+                            onChange={(e) => update(keyName, parentName, e.target.value)}
                         ></input>
                         <label
                             className="custom-color-sample"
-                            style={{ backgroundColor: customStyles?.[keyName] || '' }}
+                            style={{ backgroundColor: customStyles?.[parentName]?.[keyName] || '' }}
                         >
                             <input
                                 hidden
                                 type="color"
-                                value={customStyles?.[keyName]}
-                                onChange={(e) => update(keyName, e.target.value)}
+                                value={customStyles?.[parentName]?.[keyName]}
+                                onChange={(e) => update(keyName, parentName, e.target.value)}
                             />
                         </label>
                     </div>

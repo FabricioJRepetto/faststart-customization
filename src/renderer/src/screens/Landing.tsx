@@ -20,21 +20,24 @@ import {
     EditedAudiosDataAtom,
     EditedThirdScreenDataAtom,
     DefaultConfigAtom,
-    EditedStylesDataAtom
+    // EditedStylesDataAtom,
+    DefaultStylesDataAtom
 } from '@renderer/utils/context/context'
 import {
     AppSettingsData,
     AssetData,
     AssetList,
     CustomConfig,
-    DefaultStylesData,
+    // DefaultStylesData,
     LanguageData,
-    Screens
+    Screens,
+    StylesData
 } from '@shared/types'
 import {
     CUSTOM_CONFIG_GILE_NAME,
     DEFAULT_ASSETS_DIR,
     DEFAULT_LANGUAGE_DATA_DIR,
+    DEFAULT_STYLES_DATA_DIR,
     SERVICES_APPSETTINGS_DIR,
     VERSIONS_DIR
 } from '../utils/CONSTANTS'
@@ -55,7 +58,8 @@ const Landing = (): React.JSX.Element => {
     const setNewAppsettings = useSetAtom(EditedAppSettingsAtom)
 
     const setDefaultCustomConfig = useSetAtom(DefaultConfigAtom)
-    const setDefaultStyles = useSetAtom(EditedStylesDataAtom)
+
+    const setDefaultStyles = useSetAtom(DefaultStylesDataAtom)
 
     const setAssetList = useSetAtom(AssetsDataAtom)
     const setIconsList = useSetAtom(EditedIconsDataAtom)
@@ -108,63 +112,13 @@ const Landing = (): React.JSX.Element => {
             }
             console.log('continuing...')
 
-            //* language.json
-            console.log(
-                'language.json ...',
-                (_clientVer || clientVersionDir) + DEFAULT_LANGUAGE_DATA_DIR
-            )
-            const res = await window.electronAPI.getJsonData(
-                (_clientVer || clientVersionDir) + DEFAULT_LANGUAGE_DATA_DIR
-            )
-            if (res.success) {
-                console.log('languages.json data OK')
-
-                setLangData(res.data as LanguageData)
-                setNewLangData(langDataShell(res.data as LanguageData))
-            } else {
-                console.error('Error al cargar archivo de idioma por defecto: ' + res.error)
-                throw res.error
-            }
-
-            //* appsettings.json TS
-            console.log('appsettings.json TS...', baseDir + SERVICES_APPSETTINGS_DIR)
-            const resSettings = await window.electronAPI.getJsonData(
-                baseDir + SERVICES_APPSETTINGS_DIR
-            )
-            if (resSettings.success) {
-                console.log('appsettings.json data OK')
-
-                setAppsettings(resSettings.data as AppSettingsData)
-                setNewAppsettings(resSettings.data as AppSettingsData)
-            } else {
-                console.error('Error al cargar archivo appsettings: ' + resSettings.error)
-                throw resSettings.error
-            }
-
-            //* default customConfig.json
-            console.log('customConfig.json...', _clientVer || clientVersionDir)
-            const resCustoms = await window.electronAPI.getJsonData(
-                (_clientVer || clientVersionDir) + '/' + CUSTOM_CONFIG_GILE_NAME
-            )
-            if (resCustoms.success) {
-                console.log('default customConfig.json data OK')
-                const aux = resCustoms.data as CustomConfig
-                console.log(aux)
-                setDefaultCustomConfig(aux)
-                setDefaultStyles({
-                    ...DefaultStylesData,
-                    buttonBorder: aux.styles.buttonBorder.toString()
-                })
-            } else {
-                console.error('Error al cargar archivo appsettings: ' + resCustoms.error)
-                throw resCustoms.error
-            }
-
             //* assets
             console.log(
-                'assets...',
+                '-----------------------------\n',
+                '- Searching assets...\n',
+                'Client:',
                 (_clientVer || clientVersionDir) + DEFAULT_ASSETS_DIR,
-                ' - ',
+                '\nThirdScreen:',
                 _thirdVer || thirdVersionDir
             )
 
@@ -173,18 +127,103 @@ const Landing = (): React.JSX.Element => {
                 _thirdVer || thirdVersionDir
             ])
             if (resAssets.success) {
-                console.log('assets data OK')
+                console.log('- Assets data OK\n', '- Saving data')
                 const data = resAssets.data as AssetList
-                console.log(data)
+                console.log(JSON.stringify(data))
                 setAssetList(data as AssetList)
                 setIconsList([...data.icon] as AssetData[])
                 setBackgroundList([...data.background] as AssetData[])
                 setAudioList([...data.audio] as AssetData[])
                 setThirdList([...data.thirdscreen] as AssetData[])
             } else {
-                console.error('Error al cargar assets: ' + resAssets.error)
+                console.error('- Error al cargar assets: ' + resAssets.error)
                 throw resAssets.error
             }
+
+            //* language.json
+            console.log(
+                '-----------------------------\n',
+                '- Searching language.json ...\n',
+                'Client:',
+                (_clientVer || clientVersionDir) + DEFAULT_LANGUAGE_DATA_DIR
+            )
+            const res = await window.electronAPI.getJsonData(
+                (_clientVer || clientVersionDir) + DEFAULT_LANGUAGE_DATA_DIR
+            )
+            if (res.success) {
+                console.log('- languages.json data OK\n', '- Saving data')
+                setLangData(res.data as LanguageData)
+                setNewLangData(langDataShell(res.data as LanguageData))
+            } else {
+                console.error('- Error al cargar archivo de idioma por defecto:\n' + res.error)
+                throw res.error
+            }
+
+            //* styles.json
+            console.log(
+                '-----------------------------\n',
+                '- Searching styles.json ...\n',
+                'Client:',
+                (_clientVer || clientVersionDir) + DEFAULT_STYLES_DATA_DIR
+            )
+            const resStyles = await window.electronAPI.getJsonData(
+                (_clientVer || clientVersionDir) + DEFAULT_STYLES_DATA_DIR
+            )
+            if (resStyles.success) {
+                console.log('- styles.json data OK\n', '- Saving data')
+                const data = resStyles.data as StylesData
+                setDefaultStyles({
+                    ...data,
+                    button: { ...data.button, border: data.button.border.toString() }
+                })
+                // setStylesList(DefaultStylesData)
+            } else {
+                console.error(
+                    '- Error al cargar archivo de idioma por defecto:\n' + resStyles.error
+                )
+                throw resStyles.error
+            }
+
+            //* appsettings.json TS
+            //! DEPRECADO !//
+            console.log(
+                '-----------------------------\n',
+                '- Searching appsettings.json TS ...\n',
+                'Client:',
+                baseDir + SERVICES_APPSETTINGS_DIR
+            )
+            const resSettings = await window.electronAPI.getJsonData(
+                baseDir + SERVICES_APPSETTINGS_DIR
+            )
+            if (resSettings.success) {
+                console.log('- appsettings.json data OK\n', '- Saving data')
+
+                setAppsettings(resSettings.data as AppSettingsData)
+                setNewAppsettings(resSettings.data as AppSettingsData)
+            } else {
+                console.error('- Error al cargar archivo appsettings:\n' + resSettings.error)
+                throw resSettings.error
+            }
+
+            //* default customConfig.json
+            console.log(
+                '-----------------------------\n',
+                '- Searching customConfig.json...\n',
+                'Client:\n',
+                _clientVer || clientVersionDir
+            )
+            const resCustoms = await window.electronAPI.getJsonData(
+                (_clientVer || clientVersionDir) + '/' + CUSTOM_CONFIG_GILE_NAME
+            )
+            if (resCustoms.success) {
+                console.log('- customConfig.json data OK\n', '- Saving data')
+                console.log(resCustoms.data)
+                setDefaultCustomConfig(resCustoms.data as CustomConfig)
+            } else {
+                console.error('- Error al cargar archivo appsettings:\n' + resCustoms.error)
+                throw resCustoms.error
+            }
+
             setScreen(Screens.main)
         } catch (error) {
             alert('Error al cargar archivos: ' + error)

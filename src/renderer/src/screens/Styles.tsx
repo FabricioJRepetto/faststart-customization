@@ -1,31 +1,48 @@
 import ClearSvg from '../assets/clear.svg?react'
 import { useSetAtom } from 'jotai'
-import { DefaultConfigAtom, EditedStylesDataAtom, store } from '@renderer/utils/context/context'
+import { DefaultStylesDataAtom, EditedStylesDataAtom, store } from '@renderer/utils/context/context'
 import StyleCard from '@renderer/components/StyleCard'
 import { DefaultStylesData } from '@shared/types'
 
 const Styles = (): React.JSX.Element => {
-    // const [ogStyles] = useState(getStylesData())
-    const defStyles = store.get(DefaultConfigAtom)
-    const ogStyles = defStyles!.styles
+    const ogStyles = store.get(DefaultStylesDataAtom)
     const setCustomStyles = useSetAtom(EditedStylesDataAtom)
 
-    const updateCustom = (key: string, value: string): void => {
-        if (key === 'buttonBorder') {
-            setCustomStyles((prev) => ({ ...prev, [key]: prev.buttonBorder ? 'false' : 'true' }))
+    console.log(ogStyles)
+    if (!ogStyles?.general)
+        return (
+            <>
+                <h1>No hay estilos</h1>
+            </>
+        )
+
+    const updateCustom = (key: string, parent: string, value: string): void => {
+        if (parent === 'button') {
+            if (key === 'border') {
+                // setCustomStyles((prev) => ({ ...prev, [key]: prev.buttonBorder ? 'false' : 'true' }))
+                setCustomStyles((prev) => ({
+                    ...prev,
+                    [parent]: { ...prev[parent], [key]: prev[parent][key] ? 'false' : 'true' }
+                }))
+            }
+            if (key === 'borderRadius') {
+                // setCustomStyles((prev) => ({ ...prev, [key]: value + 'px' }))
+                setCustomStyles((prev) => ({
+                    ...prev,
+                    [parent]: { ...prev[parent], [key]: '' }
+                }))
+            }
         }
-        if (key === 'buttonBorderRadius') {
-            setCustomStyles((prev) => ({ ...prev, [key]: value + 'px' }))
-        }
-        setCustomStyles((prev) => ({ ...prev, [key]: value }))
+
+        setCustomStyles((prev) => ({ ...prev, [parent]: { ...prev[parent], [key]: value } }))
     }
 
     const resetAllValues = (): void => {
         setCustomStyles(DefaultStylesData)
     }
 
-    const resetValue = (key: string): void => {
-        setCustomStyles((prev) => ({ ...prev, [key]: '' }))
+    const resetValue = (key: string, parent: string): void => {
+        setCustomStyles((prev) => ({ ...prev, [parent]: { ...prev[parent], [key]: '' } }))
     }
 
     return (
@@ -43,58 +60,89 @@ const Styles = (): React.JSX.Element => {
             </div>
 
             <div className="assets-grid scrolleable">
+                <div className="grid-divider">General</div>
                 <StyleCard
-                    key={'primaryColor'}
+                    parentName={'general'}
                     keyName={'primaryColor'}
-                    value={ogStyles.primaryColor}
+                    value={ogStyles.general.primaryColor}
                     reset={resetValue}
                     update={updateCustom}
                 />
                 <StyleCard
-                    key={'secondaryColor'}
+                    parentName={'general'}
                     keyName={'secondaryColor'}
-                    value={ogStyles.secondaryColor}
+                    value={ogStyles.general.secondaryColor}
                     reset={resetValue}
                     update={updateCustom}
                 />
                 <StyleCard
-                    key={'errorMessageColor'}
+                    parentName={'general'}
                     keyName={'errorMessageColor'}
-                    value={ogStyles.errorMessageColor}
+                    value={ogStyles.general.errorMessageColor}
                     reset={resetValue}
                     update={updateCustom}
                 />
 
-                <div className="grid-divider"></div>
-
+                <div className="grid-divider">Succes Screen</div>
                 <StyleCard
-                    key={'buttonColor'}
-                    keyName={'buttonColor'}
-                    value={ogStyles.buttonColor}
+                    parentName={'succesScreen'}
+                    keyName={'primaryColor'}
+                    value={ogStyles.successScreen.primaryColor}
                     reset={resetValue}
                     update={updateCustom}
                 />
                 <StyleCard
-                    key={'buttonBackground'}
-                    keyName={'buttonBackground'}
-                    value={ogStyles.buttonBackground}
+                    parentName={'succesScreen'}
+                    keyName={'secondaryColor'}
+                    value={ogStyles.successScreen.secondaryColor}
                     reset={resetValue}
                     update={updateCustom}
                 />
 
+                <div className="grid-divider">Error Screen</div>
+                <StyleCard
+                    parentName={'errorScreen'}
+                    keyName={'primaryColor'}
+                    value={ogStyles.errorScreen.primaryColor}
+                    reset={resetValue}
+                    update={updateCustom}
+                />
+                <StyleCard
+                    parentName={'errorScreen'}
+                    keyName={'secondaryColor'}
+                    value={ogStyles.errorScreen.secondaryColor}
+                    reset={resetValue}
+                    update={updateCustom}
+                />
+
+                <div className="grid-divider">Button</div>
+                <StyleCard
+                    parentName={'button'}
+                    keyName={'color'}
+                    value={ogStyles.button.color}
+                    reset={resetValue}
+                    update={updateCustom}
+                />
+                <StyleCard
+                    parentName={'button'}
+                    keyName={'background'}
+                    value={ogStyles.button.background}
+                    reset={resetValue}
+                    update={updateCustom}
+                />
                 <StyleCard
                     type="pixel"
-                    key={'buttonBorderRadius'}
-                    keyName={'buttonBorderRadius'}
-                    value={ogStyles.buttonBorderRadius}
+                    parentName={'button'}
+                    keyName={'borderRadius'}
+                    value={ogStyles.button.borderRadius}
                     reset={resetValue}
                     update={updateCustom}
                 />
                 <StyleCard
                     type="boolean"
-                    key={'buttonBorder'}
-                    keyName={'buttonBorder'}
-                    value={ogStyles.buttonBorder ? 'true' : 'false'}
+                    parentName={'button'}
+                    keyName={'border'}
+                    value={ogStyles.button.border ? 'true' : 'false'}
                     reset={resetValue}
                     update={updateCustom}
                 />

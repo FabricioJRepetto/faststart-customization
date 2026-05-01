@@ -4,10 +4,10 @@ import {
     AssetData,
     AssetList,
     StylesData,
-    DefaultStylesData,
     LanguageData,
     Screens,
-    CustomConfig
+    CustomConfig,
+    DefaultStylesData
 } from '@shared/types'
 
 export const store = createStore()
@@ -23,9 +23,13 @@ export const ClientAppVersionDirAtom = atom<string>('')
 export const SupervisorAppVersionDirAtom = atom<string>('')
 /** Directorio base de la version de ThirdScreen */
 export const ThirdAppVersionDirAtom = atom<string>('')
+/** Activar o desactivar la configuración customizada */
+export const CustomEnabledAtom = atom<boolean>(true)
 
 /** Lista de Assets actuales en la versión indicada */
 export const AssetsDataAtom = atom<AssetList>()
+/** Archivo de configuración por defecto encontrado en el directorio de la aplicación cliente */
+export const DefaultConfigAtom = atom<CustomConfig>()
 
 /** Datos del archivo language por default */
 export const DefaultLanguageDataAtom = atom<LanguageData>({})
@@ -37,13 +41,12 @@ export const AppSettingsAtom = atom<AppSettingsData>()
 /** @deprecated Edited TerminalServices appsettings */
 export const EditedAppSettingsAtom = atom<AppSettingsData>()
 
-/** Archivo de configuración por defecto encontrado en el directorio de la aplicación cliente */
-export const DefaultConfigAtom = atom<CustomConfig>()
-
 /** Nuevos Iconos indicados por el usuario */
 export const EditedIconsDataAtom = atom<AssetData[]>()
 
-/** Nuevos Colores indicados por el usuario */
+/** Datos del archivo styles por default */
+export const DefaultStylesDataAtom = atom<StylesData>()
+/** Nuevos Estilos indicados por el usuario */
 export const EditedStylesDataAtom = atom<StylesData>(DefaultStylesData)
 
 /** Nuevos Backgrounds indicados por el usuario */

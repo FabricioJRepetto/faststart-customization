@@ -41,38 +41,36 @@ export const manageRawCustomConfig = async (
         mkdirSync(clientDir + '/customs', { recursive: true })
 
         const keys = Object.keys(rawConfig)
+        console.log(keys)
 
-        const aux: CustomConfig = {
-            version: '1.0.0',
+        const newConfig: CustomConfig = {
+            version: '1.0.2',
+            customEnabled: rawConfig.customEnabled,
             icon: [],
             background: [],
             thirdscreen: [],
             audio: [],
-            styles: {
-                primaryColor: '',
-                secondaryColor: '',
-                errorMessageColor: '',
-                buttonBorder: false,
-                buttonBorderRadius: '',
-                buttonColor: '',
-                buttonBackground: ''
-            },
-            language: {}
+            styles: rawConfig.styles,
+            language: rawConfig.language
         }
 
         for await (const key of keys) {
             if (key === 'language') {
-                aux[key] = rawConfig[key]
+                // newConfig[key] = rawConfig[key]
+                // console.log(rawConfig[key])
                 break
             }
             if (key === 'styles') {
-                aux[key] = rawConfig[key]
+                // newConfig[key] = rawConfig[key]
                 break
             }
             for await (const entry of rawConfig[key]) {
                 const custom = entry.custom?.path
+                const originalPath = join('defaults', entry.original.path.split('/').pop())
+
+                const newEntry = { ...entry, original: { ...entry.original, path: originalPath } }
+
                 if (custom) {
-                    const originalPath = 'defaults/' + entry.original.path.split('/').pop()
                     const fileName = basename(custom)
                     const dest = join(key === 'thirdscreen' ? thirdDir : destDir, fileName)
                     console.log('file name:', fileName, '\ndest:\n', dest)
@@ -80,20 +78,19 @@ export const manageRawCustomConfig = async (
                     // renameSync(custom, dest) // mueve el archivo
                     copyFileSync(custom, dest)
 
-                    aux[key].push({
-                        ...entry,
-                        original: { ...entry.original, path: originalPath },
-                        custom: { ...entry.custom, path: join(customsDir, fileName) }
+                    newConfig[key].push({
+                        ...newEntry,
+                        custom: { ...newEntry.custom, path: join(customsDir, fileName) }
                     })
                 } else {
                     console.log('No custom for', entry.name)
-                    aux[key].push(entry)
+                    newConfig[key].push(newEntry)
                 }
             }
         }
-        console.log('[TEST] final configData:\n', aux)
+        console.log('[TEST] final configData:\n', newConfig)
 
-        return aux as CustomConfig
+        return newConfig as CustomConfig
     } catch (error) {
         console.error(error)
         return null

@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import { CustomConfig } from '../../shared/types'
 
 // Custom APIs for renderer
 const api = {}
@@ -17,8 +18,10 @@ if (process.contextIsolated) {
             getFilesList: (dirPaths: string[]) => ipcRenderer.invoke('get-files-list', dirPaths),
             getFoldersList: (dirPath: string) => ipcRenderer.invoke('get-folders-list', dirPath),
             getJsonData: (filePath: string) => ipcRenderer.invoke('get-json-data', filePath),
-            writeJsonData: (data: unknown, clientDir: string, thirdDir: string) =>
-                ipcRenderer.invoke('write-json-file', data, clientDir, thirdDir)
+            writeJsonData: (data: CustomConfig, clientDir: string, thirdDir: string) =>
+                ipcRenderer.invoke('write-json-file', data, clientDir, thirdDir),
+            toggleEnabled: (data: CustomConfig, clientDir: string) =>
+                ipcRenderer.invoke('toggle-enable-custom-config', data, clientDir)
         })
     } catch (error) {
         console.error(error)

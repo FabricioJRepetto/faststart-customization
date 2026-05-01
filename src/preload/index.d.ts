@@ -11,11 +11,8 @@ declare global {
             getFilesList: (dirPaths: string[]) => IpcResponse<unknown>
             getFoldersList: (dirPath: string) => IpcResponse<string[]>
             getJsonData: (filePath: string) => IpcResponse<unknown>
-            writeJsonData: (
-                data: CustomConfig,
-                clientDir: string,
-                thirdDir: string
-            ) => IpcResponse<unknown>
+            writeJsonData: (data: CustomConfig, clientDir: string) => IpcResponse<unknown>
+            toggleEnabled: (data: CustomConfig, clientDir: string) => IpcResponse<unknown>
         }
     }
 }

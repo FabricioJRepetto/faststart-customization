@@ -1,20 +1,24 @@
 import {
-    DefaultConfigAtom,
+    // DefaultConfigAtom,
     DefaultLanguageDataAtom,
+    DefaultStylesDataAtom,
     EditedBackgroundsDataAtom,
     EditedIconsDataAtom,
     EditedLanguageDataAtom,
     EditedStylesDataAtom
 } from '@renderer/utils/context/context'
+import { StylesParentKeys } from '@shared/types'
 import { useAtom } from 'jotai'
 
 export const Previewer = (): React.JSX.Element => {
-    const [ogData] = useAtom(DefaultConfigAtom)
+    // const [ogData] = useAtom(DefaultConfigAtom)
+
     const [bgData] = useAtom(EditedBackgroundsDataAtom)
     const [iconData] = useAtom(EditedIconsDataAtom)
     const [lngData] = useAtom(EditedLanguageDataAtom)
     const [ogLngData] = useAtom(DefaultLanguageDataAtom)
     const [stylesData] = useAtom(EditedStylesDataAtom)
+    const [ogStylesData] = useAtom(DefaultStylesDataAtom)
 
     const currBg = (): string => {
         try {
@@ -46,11 +50,11 @@ export const Previewer = (): React.JSX.Element => {
         }
     }
 
-    const currStyle = (name: string): string => {
+    const currStyle = (parentKey: StylesParentKeys, name: string): string => {
         try {
-            const style = stylesData?.[name] || ogData?.styles?.[name]
-
-            if (name === 'buttonBorderRadius') return style + (stylesData?.[name] ? 'px' : '')
+            const style = stylesData?.[parentKey]?.[name] || ogStylesData?.[parentKey]?.[name]
+            if (name === 'borderRadius')
+                return style + (stylesData?.[parentKey]?.[name] ? 'px' : '')
 
             return style
         } catch (error) {
@@ -68,25 +72,27 @@ export const Previewer = (): React.JSX.Element => {
                 <div
                     className="preview-lang-btn"
                     style={{
-                        color: currStyle('buttonBackground'),
-                        backgroundColor: currStyle('buttonColor'),
-                        border: `3px solid ${currStyle('buttonBackground')}`,
-                        borderRadius: currStyle('buttonBorderRadius')
+                        color: currStyle(StylesParentKeys.button, 'background'),
+                        backgroundColor: currStyle(StylesParentKeys.button, 'color'),
+                        border: `3px solid ${currStyle(StylesParentKeys.button, 'background')}`,
+                        borderRadius: currStyle(StylesParentKeys.button, 'borderRadius')
                     }}
                 >
                     <img className="preview-lang-icon" src={currIcon('icon_world')} />
                     es
                 </div>
 
-                <h1 style={{ color: currStyle('primaryColor') }}>{currLang('es', 'thankYou')}</h1>
+                <h1 style={{ color: currStyle(StylesParentKeys.general, 'primaryColor') }}>
+                    {currLang('es', 'thankYou')}
+                </h1>
 
                 <button
                     className="preview-start-btn"
                     style={{
-                        color: currStyle('buttonColor'),
-                        backgroundColor: currStyle('buttonBackground'),
-                        border: `2px solid ${currStyle('buttonBorder') === 'true' ? currStyle('buttonColor') : 'transparent'}`,
-                        borderRadius: currStyle('buttonBorderRadius')
+                        color: currStyle(StylesParentKeys.button, 'color'),
+                        backgroundColor: currStyle(StylesParentKeys.button, 'background'),
+                        border: `2px solid ${currStyle(StylesParentKeys.button, 'border') === 'true' ? currStyle(StylesParentKeys.button, 'color') : 'transparent'}`,
+                        borderRadius: currStyle(StylesParentKeys.button, 'borderRadius')
                     }}
                 >
                     {currLang('es', 'button.start')}

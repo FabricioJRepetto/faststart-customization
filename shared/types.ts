@@ -65,17 +65,6 @@ export interface AppSettingsConfigModule {
     }[]
 }
 
-export const DefaultStylesData = {
-    primaryColor: '',
-    secondaryColor: '',
-    errorMessageColor: '',
-    buttonBorder: '',
-    buttonBorderRadius: '',
-    buttonColor: '',
-    buttonBackground: ''
-} as const
-export type StylesData = Record<keyof typeof DefaultStylesData, string>
-
 type AssetType = 'icon' | 'background' | 'audio' | 'thirdscreen' | 'other'
 export interface AssetData {
     name: string
@@ -105,21 +94,83 @@ export enum filterType {
 
 export interface FinalAssetData {
     name: string
-    original: { path: string; fileType: string } | string
-    custom?: { path: string; fileType: string } | string
+    original: { path: string; fileType: string }
+    custom?: { path: string; fileType: string }
+}
+
+export enum StylesParentKeys {
+    general = 'general',
+    successScreen = 'successScreen',
+    errorScreen = 'errorScreen',
+    button = 'button'
+}
+export const DefaultStylesData = {
+    general: {
+        primaryColor: '',
+        secondaryColor: '',
+        errorMessageColor: ''
+    },
+    successScreen: {
+        primaryColor: '',
+        secondaryColor: ''
+    },
+    errorScreen: {
+        primaryColor: '',
+        secondaryColor: ''
+    },
+    button: {
+        border: '',
+        borderRadius: '',
+        color: '',
+        background: ''
+    }
 }
 export interface FinalStylesData {
-    primaryColor: string
-    secondaryColor: string
-    errorMessageColor: string
-    buttonBorder: boolean
-    buttonBorderRadius: string
-    buttonColor: string
-    buttonBackground: string
+    general: {
+        primaryColor: string
+        secondaryColor: string
+        errorMessageColor: string
+    }
+    successScreen: {
+        primaryColor: string
+        secondaryColor: string
+    }
+    errorScreen: {
+        primaryColor: string
+        secondaryColor: string
+    }
+    button: {
+        border: boolean
+        borderRadius: string
+        color: string
+        background: string
+    }
+}
+export interface StylesData {
+    general: {
+        primaryColor: string
+        secondaryColor: string
+        errorMessageColor: string
+    }
+    successScreen: {
+        primaryColor: string
+        secondaryColor: string
+    }
+    errorScreen: {
+        primaryColor: string
+        secondaryColor: string
+    }
+    button: {
+        border: string
+        borderRadius: string
+        color: string
+        background: string
+    }
 }
 
 export interface CustomConfig {
     version: string
+    customEnabled: boolean
     icon: FinalAssetData[]
     background: FinalAssetData[]
     thirdscreen: FinalAssetData[]

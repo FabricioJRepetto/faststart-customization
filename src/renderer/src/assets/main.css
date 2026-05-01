@@ -122,6 +122,13 @@ input[type='number'] {
 .action {
     flex-shrink: 0;
     padding: 6px;
+
+    .green {
+        background-color: var(--ev-c-green-1);
+    }
+    .red {
+        background-color: var(--ev-c-red-1);
+    }
 }
 
 .action a {
