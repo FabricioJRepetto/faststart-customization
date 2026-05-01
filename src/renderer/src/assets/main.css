@@ -123,10 +123,10 @@ input[type='number'] {
     flex-shrink: 0;
     padding: 6px;
 
-    .green {
+    &.green {
         background-color: var(--ev-c-green-1);
     }
-    .red {
+    &.red {
         background-color: var(--ev-c-red-1);
     }
 }
@@ -729,10 +729,69 @@ input[type='number'] {
     animation: fadeIn 1s ease;
 }
 
-/** PREVIEWER */
-.main-container {
+.toggler {
+    height: min-content;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 225px;
+
+    div {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-radius: 50px;
+        background-color: white;
+        color: black;
+        padding: 6px 8px 6px 18px;
+        width: 100%;
+        cursor: pointer;
+
+        button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 30px;
+            width: 30px;
+            border-radius: 50%;
+            border: none;
+            background: white;
+
+            svg {
+                top: -2px;
+                right: -6px;
+                height: 46px;
+                width: 46px;
+                color: var(--ev-c-green-1);
+            }
+            &.inactive svg {
+                color: var(--ev-c-red-1);
+            }
+
+            &:focus {
+                outline: none;
+            }
+        }
+    }
+}
+
+.main-container > div {
+    display: flex;
+    flex-direction: column;
     gap: 25px;
 }
+.main-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.main-actions {
+    display: flex;
+    justify-content: end;
+}
+
+/** PREVIEWER */
 .preview-container {
     --preview-container-height-px: 400px;
     --preview-container-height: 400;

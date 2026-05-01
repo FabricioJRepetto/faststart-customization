@@ -15,6 +15,8 @@ import { dataParser, languageParser, stylesDataParser } from '@renderer/utils/as
 import { CustomConfig } from '@shared/types'
 import { Previewer } from '@renderer/components/Previewer'
 import { useState } from 'react'
+import CheckSvg from '../assets/check.svg?react'
+import CancelSvg from '../assets/cancel.svg?react'
 
 export const MainScreen = (): React.JSX.Element => {
     const clientDir = useAtomValue(ClientAppVersionDirAtom)
@@ -73,33 +75,32 @@ export const MainScreen = (): React.JSX.Element => {
 
     return (
         <div className="screen-content main-container">
-            <div className="scree-header">
-                <h1>Preview</h1>
+            <div>
+                <div className="main-header">
+                    <h1>Preview</h1>
+                    <div className="toggler">
+                        <div
+                            className="input-wrapper"
+                            onClick={() => !loading && toggleCustomEnabled()}
+                        >
+                            Activar Customización
+                            <button className={customEnabled ? '' : 'inactive'}>
+                                {customEnabled ? <CheckSvg /> : <CancelSvg />}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <Previewer />
-            </div>
 
-            <div className="actions">
-                <div className={`action ${customEnabled ? 'green' : 'red'}`}>
-                    <a
-                        onClick={() => {
-                            if (!loading) toggleCustomEnabled()
-                        }}
-                    >
-                        Activar Customización
-                    </a>
-                </div>
-                <div className="action">
-                    <a>Guardar en libreria</a>
-                </div>
+                <div className="actions main-actions">
+                    <div className="action">
+                        <a style={{ textDecoration: 'line-through' }}>Guardar en libreria</a>
+                    </div>
 
-                <div className="action primary">
-                    <a
-                        onClick={() => {
-                            if (!loading) testConfig()
-                        }}
-                    >
-                        Aplicar Customización
-                    </a>
+                    <div className="action primary">
+                        <a onClick={() => !loading && testConfig()}>Aplicar Customización</a>
+                    </div>
                 </div>
             </div>
         </div>
