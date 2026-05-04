@@ -255,6 +255,15 @@ input[type='number'] {
 }
 
 /* : Screens : */
+.landing-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    opacity: 0;
+    animation: fadeIn 0.5s ease-in-out forwards;
+}
+
 .screen-content {
     position: absolute;
     top: 0;
@@ -268,6 +277,9 @@ input[type='number'] {
     padding: 20px 00px 0px 90px;
     box-sizing: border-box;
     overflow: hidden;
+
+    /* opacity: 0; */
+    /* animation: fadeIn 0.25s ease-in-out forwards; */
 }
 
 .screen-header {
@@ -482,16 +494,13 @@ input[type='number'] {
 .grid-bg {
     grid-template-columns: repeat(auto-fit, minmax(233px, 233px));
 }
-.grid-third {
-    /* grid-template-columns: repeat(auto-fit, minmax(830px, 1fr)); */
-}
+/* .grid-third {} */
+
 .grid-styles {
     grid-template-columns: repeat(auto-fit, minmax(285px, 285px));
-    /* padding: 0 1px; */
 }
 .grid-audio {
     grid-template-columns: repeat(auto-fit, minmax(330px, 330px));
-    /* padding: 0 1px; */
 }
 
 .assets-container {
@@ -777,7 +786,8 @@ input[type='number'] {
 }
 
 .fade-in {
-    animation: fadeIn 1s ease;
+    opacity: 0;
+    animation: fadeIn 0.15s ease 0.3s forwards;
 }
 
 .toggler {

@@ -5,13 +5,11 @@ import NATL from '../assets/NATL-logo.svg'
 import RightSvg from '../assets/right.svg?react'
 import { langDataShell } from '@renderer/utils/LangStructureBuilder'
 import {
-    AppSettingsAtom,
     ClientAppVersionDirAtom,
     AssetsDataAtom,
     RootDirectoryAtom,
     CurrentScreenAtom,
     DefaultLanguageDataAtom,
-    EditedAppSettingsAtom,
     EditedLanguageDataAtom,
     SupervisorAppVersionDirAtom,
     ThirdAppVersionDirAtom,
@@ -20,15 +18,12 @@ import {
     EditedAudiosDataAtom,
     EditedThirdScreenDataAtom,
     DefaultConfigAtom,
-    // EditedStylesDataAtom,
     DefaultStylesDataAtom
 } from '@renderer/utils/context/context'
 import {
-    AppSettingsData,
     AssetData,
     AssetList,
     CustomConfig,
-    // DefaultStylesData,
     LanguageData,
     Screens,
     StylesData
@@ -38,7 +33,6 @@ import {
     DEFAULT_ASSETS_DIR,
     DEFAULT_LANGUAGE_DATA_DIR,
     DEFAULT_STYLES_DATA_DIR,
-    SERVICES_APPSETTINGS_DIR,
     VERSIONS_DIR
 } from '../utils/CONSTANTS'
 
@@ -53,9 +47,6 @@ const Landing = (): React.JSX.Element => {
     const setScreen = useSetAtom(CurrentScreenAtom)
     const setLangData = useSetAtom(DefaultLanguageDataAtom)
     const setNewLangData = useSetAtom(EditedLanguageDataAtom)
-
-    const setAppsettings = useSetAtom(AppSettingsAtom)
-    const setNewAppsettings = useSetAtom(EditedAppSettingsAtom)
 
     const setDefaultCustomConfig = useSetAtom(DefaultConfigAtom)
 
@@ -186,24 +177,24 @@ const Landing = (): React.JSX.Element => {
 
             //* appsettings.json TS
             //! DEPRECADO !//
-            console.log(
-                '-----------------------------\n',
-                '- Searching appsettings.json TS ...\n',
-                'Client:',
-                baseDir + SERVICES_APPSETTINGS_DIR
-            )
-            const resSettings = await window.electronAPI.getJsonData(
-                baseDir + SERVICES_APPSETTINGS_DIR
-            )
-            if (resSettings.success) {
-                console.log('- appsettings.json data OK\n', '- Saving data')
+            // console.log(
+            //     '-----------------------------\n',
+            //     '- Searching appsettings.json TS ...\n',
+            //     'Client:',
+            //     baseDir + SERVICES_APPSETTINGS_DIR
+            // )
+            // const resSettings = await window.electronAPI.getJsonData(
+            //     baseDir + SERVICES_APPSETTINGS_DIR
+            // )
+            // if (resSettings.success) {
+            //     console.log('- appsettings.json data OK\n', '- Saving data')
 
-                setAppsettings(resSettings.data as AppSettingsData)
-                setNewAppsettings(resSettings.data as AppSettingsData)
-            } else {
-                console.error('- Error al cargar archivo appsettings:\n' + resSettings.error)
-                throw resSettings.error
-            }
+            //     setAppsettings(resSettings.data as AppSettingsData)
+            //     setNewAppsettings(resSettings.data as AppSettingsData)
+            // } else {
+            //     console.error('- Error al cargar archivo appsettings:\n' + resSettings.error)
+            //     throw resSettings.error
+            // }
 
             //* default customConfig.json
             console.log(
@@ -342,7 +333,7 @@ const Landing = (): React.JSX.Element => {
     }, [modal])
 
     return (
-        <>
+        <div className="landing-screen">
             <img alt="logo" className="logo" src={NATL} />
             <div className="creator">Versión de desarrollo</div>
             <div className="text">
@@ -393,7 +384,7 @@ const Landing = (): React.JSX.Element => {
                     </div>
                 </>
             )}
-        </>
+        </div>
     )
 }
 

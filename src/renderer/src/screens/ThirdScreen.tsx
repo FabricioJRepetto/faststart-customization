@@ -61,21 +61,29 @@ const ThirdScreen = (): React.JSX.Element => {
                             className="assets-container thirdscreen-asset-container"
                         >
                             <p>{assetName(_asset.name)}</p>
-
                             <div className="thirscreen-container">
-                                {_asset.mimeType.match('video') ? (
-                                    <video
-                                        src={_asset.base64}
-                                        width={350}
-                                        muted
-                                        autoPlay
-                                        loop
-                                        onLoadedData={() => setLoaded(true)}
-                                        className={loaded ? 'fade-in' : ''}
-                                    />
-                                ) : (
-                                    <img src={_asset.base64} />
-                                )}
+                                <div
+                                    style={{
+                                        width: '350px',
+                                        height: '197px',
+                                        marginBottom: '15px'
+                                    }}
+                                >
+                                    {_asset.mimeType.match('video') ? (
+                                        <video
+                                            src={_asset.base64}
+                                            width={350}
+                                            muted
+                                            autoPlay
+                                            loop
+                                            onLoadedData={() => setLoaded(true)}
+                                            style={{ opacity: 0 }}
+                                            className={loaded ? 'fade-in' : ''}
+                                        />
+                                    ) : (
+                                        <img src={_asset.base64} />
+                                    )}
+                                </div>
                                 {_asset.customBase64 ? (
                                     <div className="custom-thirscreen-container">
                                         {_asset.mimeType.match('video') ? (
@@ -86,7 +94,7 @@ const ThirdScreen = (): React.JSX.Element => {
                                                 autoPlay
                                                 loop
                                                 onLoadedData={() => setLoaded(true)}
-                                                className={loaded ? 'fade-in' : ''}
+                                                // className={loaded ? 'fade-in' : ''}
                                             />
                                         ) : (
                                             <img src={_asset.customBase64} />

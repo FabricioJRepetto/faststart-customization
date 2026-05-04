@@ -9,12 +9,13 @@ import {
     EditedThirdScreenDataAtom,
     AssetsDataAtom,
     CustomEnabledAtom,
-    DefaultConfigAtom
+    DefaultConfigAtom,
+    FirstLoadAtom
 } from '@renderer/utils/context/context'
 import { dataParser, languageParser, stylesDataParser } from '@renderer/utils/assetsUtils'
 import { CustomConfig } from '@shared/types'
 import { Previewer } from '@renderer/components/Previewer'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import CheckSvg from '../assets/check.svg?react'
 import CancelSvg from '../assets/cancel.svg?react'
 import AppsVersions from '@renderer/components/AppsVersions'
@@ -33,6 +34,11 @@ export const MainScreen = (): React.JSX.Element => {
     const newLangs = useAtomValue(EditedLanguageDataAtom)
 
     const [loading, setLoading] = useState<boolean>(false)
+    const [firstLoad, setFirstLoad] = useAtom(FirstLoadAtom)
+
+    useEffect(() => {
+        setTimeout(() => setFirstLoad(false), 450)
+    }, [setFirstLoad])
 
     const toggleCustomEnabled = async (): Promise<void> => {
         setLoading(true)
@@ -49,7 +55,7 @@ export const MainScreen = (): React.JSX.Element => {
         setLoading(false)
     }
 
-    const testConfig = async (): Promise<void> => {
+    const saveConfig = async (): Promise<void> => {
         setLoading(true)
         const aux: CustomConfig = {
             version: '',
@@ -62,19 +68,16 @@ export const MainScreen = (): React.JSX.Element => {
             language: languageParser(newLangs)
         }
 
-        console.log('[TEST] Testing new config data:\n', aux)
-        console.log('[TEST] Destination path for customConfig.json:\n', clientDir)
-
         const res = await window.electronAPI.writeJsonData(aux, clientDir)
 
-        if (res.success) console.log('[TEST] Custom config file witen')
-        else console.error('[TEST] Custom config file creation failed')
+        if (res.success) console.log('[SAVE] Custom config file witen')
+        else console.error('[SAVE] Custom config file creation failed')
 
         setLoading(false)
     }
 
     return (
-        <div className="screen-content main-container">
+        <div className={`screen-content main-container ${firstLoad ? 'fade-in' : ''}`}>
             <div>
                 <div className="main-header">
                     <h1>Previsualización</h1>
@@ -101,7 +104,7 @@ export const MainScreen = (): React.JSX.Element => {
                     </div>
 
                     <div className="action primary">
-                        <a onClick={() => !loading && testConfig()}>Aplicar Customización</a>
+                        <a onClick={() => !loading && saveConfig()}>Aplicar Customización</a>
                     </div>
                 </div>
             </div>

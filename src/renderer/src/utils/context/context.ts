@@ -12,6 +12,7 @@ import {
 
 export const store = createStore()
 
+export const FirstLoadAtom = atom<boolean>(true)
 /** Pantalla actual a renderizar */
 export const CurrentScreenAtom = atom<Screens>(Screens.landing)
 
