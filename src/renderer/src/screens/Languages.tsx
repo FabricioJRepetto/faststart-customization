@@ -105,7 +105,7 @@ const Languages = (): React.JSX.Element => {
     return (
         <div className="screen-content">
             <div className="screen-header">
-                <h1>Languages</h1>
+                <h1>Idiomas</h1>
 
                 <div className="header-group">
                     <div className="input-wrapper">

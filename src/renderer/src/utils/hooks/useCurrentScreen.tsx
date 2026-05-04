@@ -10,6 +10,7 @@ import Styles from '@renderer/screens/Styles'
 import ThirdScreen from '@renderer/screens/ThirdScreen'
 import Audio from '@renderer/screens/Audio'
 import MainScreen from '@renderer/screens/MainScreen'
+import Collections from '@renderer/screens/Collection'
 
 // TODO: Saltearse la landing si no hace falta input del usuario
 
@@ -26,7 +27,8 @@ const useCurrentScreen = (): React.JSX.Element => {
         [Screens.backgrounds]: <Backgrounds />,
         [Screens.languages]: <Languages />,
         [Screens.thirdScreen]: <ThirdScreen />,
-        [Screens.audio]: <Audio />
+        [Screens.audio]: <Audio />,
+        [Screens.collections]: <Collections />
     }
 
     return <ScreenWrapper>{allScreens[currentScreen]}</ScreenWrapper>

@@ -48,7 +48,7 @@ const Styles = (): React.JSX.Element => {
     return (
         <div className="screen-content">
             <div className="screen-header">
-                <h1>Styles</h1>
+                <h1>Colores y Estilos</h1>
                 <div className="actions">
                     <div className="action tertiary">
                         <a onClick={resetAllValues}>
@@ -59,7 +59,7 @@ const Styles = (): React.JSX.Element => {
                 </div>
             </div>
 
-            <div className="assets-grid scrolleable">
+            <div className="assets-grid grid-styles scrolleable">
                 <div className="grid-divider">General</div>
                 <StyleCard
                     parentName={'general'}
@@ -83,7 +83,7 @@ const Styles = (): React.JSX.Element => {
                     update={updateCustom}
                 />
 
-                <div className="grid-divider">Succes Screen</div>
+                <div className="grid-divider">Pantallas de éxito</div>
                 <StyleCard
                     parentName={'succesScreen'}
                     keyName={'primaryColor'}
@@ -99,7 +99,7 @@ const Styles = (): React.JSX.Element => {
                     update={updateCustom}
                 />
 
-                <div className="grid-divider">Error Screen</div>
+                <div className="grid-divider">Pantallas de error</div>
                 <StyleCard
                     parentName={'errorScreen'}
                     keyName={'primaryColor'}
@@ -115,7 +115,7 @@ const Styles = (): React.JSX.Element => {
                     update={updateCustom}
                 />
 
-                <div className="grid-divider">Button</div>
+                <div className="grid-divider">Botones</div>
                 <StyleCard
                     parentName={'button'}
                     keyName={'color'}

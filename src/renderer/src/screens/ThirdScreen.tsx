@@ -42,7 +42,7 @@ const ThirdScreen = (): React.JSX.Element => {
     return (
         <div className="screen-content">
             <div className="screen-header">
-                <h1>Third Screen</h1>
+                <h1>Tercer pantalla</h1>
                 <div className="actions">
                     <div className="action tertiary">
                         <a onClick={resetAllValues}>

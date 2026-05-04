@@ -110,7 +110,7 @@ const StyleCard = ({
                             style={{ backgroundColor: customStyles?.[parentName]?.[keyName] || '' }}
                         >
                             <input
-                                hidden
+                                className="hidden-color-input"
                                 type="color"
                                 value={customStyles?.[parentName]?.[keyName]}
                                 onChange={(e) => update(keyName, parentName, e.target.value)}

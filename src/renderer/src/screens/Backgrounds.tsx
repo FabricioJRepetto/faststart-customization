@@ -41,7 +41,7 @@ const Backgrounds = (): React.JSX.Element => {
     return (
         <div className="screen-content">
             <div className="screen-header">
-                <h1>Backgrounds</h1>
+                <h1>Fondos</h1>
                 <div className="actions">
                     <div className="action tertiary">
                         <a onClick={resetAllValues}>

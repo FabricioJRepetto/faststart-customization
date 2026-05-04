@@ -38,7 +38,7 @@ const Icons = (): React.JSX.Element => {
     return (
         <div className="screen-content">
             <div className="screen-header">
-                <h1>Icons</h1>
+                <h1>Iconos</h1>
                 <div className="actions">
                     <div className="action tertiary">
                         <a onClick={resetAllValues}>

@@ -39,7 +39,7 @@ const Audio = (): React.JSX.Element => {
     return (
         <div className="screen-content">
             <div className="screen-header">
-                <h1>Audio</h1>
+                <h1>Audios</h1>
                 <div className="actions">
                     <div className="action tertiary">
                         <a onClick={resetAllValues}>

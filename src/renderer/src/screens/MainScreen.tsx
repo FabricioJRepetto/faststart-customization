@@ -17,10 +17,10 @@ import { Previewer } from '@renderer/components/Previewer'
 import { useState } from 'react'
 import CheckSvg from '../assets/check.svg?react'
 import CancelSvg from '../assets/cancel.svg?react'
+import AppsVersions from '@renderer/components/AppsVersions'
 
 export const MainScreen = (): React.JSX.Element => {
     const clientDir = useAtomValue(ClientAppVersionDirAtom)
-    // const thirdDir = useAtomValue(ThirdAppVersionDirAtom)
     const [customEnabled, setCustomEnabled] = useAtom(CustomEnabledAtom)
 
     const ogData = useAtomValue(AssetsDataAtom)!
@@ -77,7 +77,7 @@ export const MainScreen = (): React.JSX.Element => {
         <div className="screen-content main-container">
             <div>
                 <div className="main-header">
-                    <h1>Preview</h1>
+                    <h1>Previsualización</h1>
                     <div className="toggler">
                         <div
                             className="input-wrapper"
@@ -90,6 +90,8 @@ export const MainScreen = (): React.JSX.Element => {
                         </div>
                     </div>
                 </div>
+
+                <AppsVersions />
 
                 <Previewer />
 

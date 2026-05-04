@@ -1,41 +1,32 @@
 import {
     ClientAppVersionDirAtom,
     CurrentScreenAtom,
-    RootDirectoryAtom,
     SupervisorAppVersionDirAtom,
     ThirdAppVersionDirAtom
 } from '@renderer/utils/context/context'
-import { useAtom, useAtomValue } from 'jotai'
-import { useState } from 'react'
-import CloseSvg from '../assets/left.svg'
-import OpenSvg from '../assets/right.svg'
-import MainSvg from '../assets/main.svg?react'
+import { useAtom, useSetAtom } from 'jotai'
+import MainSvg from '../assets/preview.svg?react'
 import IconsSvg from '../assets/sticker.svg?react'
 import ColorsSvg from '../assets/palette.svg?react'
 import BackgroundsSvg from '../assets/image.svg?react'
 import LanguageSvg from '../assets/dictionary.svg?react'
 import ScreenSvg from '../assets/screen.svg?react'
 import AudioSvg from '../assets/audio.svg?react'
-import ExitSvg from '../assets/door.svg?react'
+import CollectionSvg from '../assets/box.svg?react'
+import ExitSvg from '../assets/logout.svg?react'
 import { Screens } from '@shared/types'
 
 const SidebarMenu = (): React.JSX.Element => {
     const [screen, setScreen] = useAtom(CurrentScreenAtom)
-    const [isOpen, setIsOpen] = useState<boolean>(false)
     const renderSidebar = screen !== Screens.landing
 
-    const rootDir = useAtomValue(RootDirectoryAtom)
-    const [clientVersionDir, setClientVersionDir] = useAtom(ClientAppVersionDirAtom)
-    const [superVersionDir, setSuperVersionDir] = useAtom(SupervisorAppVersionDirAtom)
-    const [thirdVersionDir, setThirdVersionDir] = useAtom(ThirdAppVersionDirAtom)
+    // const rootDir = useAtomValue(RootDirectoryAtom)
+    const setClientVersionDir = useSetAtom(ClientAppVersionDirAtom)
+    const setSuperVersionDir = useSetAtom(SupervisorAppVersionDirAtom)
+    const setThirdVersionDir = useSetAtom(ThirdAppVersionDirAtom)
 
     return renderSidebar ? (
-        <div className={`sidebar ${isOpen ? '' : 'closed'}`}>
-            <img
-                alt="toggle sidebar"
-                src={isOpen ? CloseSvg : OpenSvg}
-                onClick={() => setIsOpen((v) => !v)}
-            />
+        <div className={`sidebar closed`}>
             <a
                 target="_blank"
                 rel="noreferrer"
@@ -43,8 +34,10 @@ const SidebarMenu = (): React.JSX.Element => {
                 className={screen === Screens.main ? 'selected' : ''}
             >
                 <MainSvg />
-                {isOpen ? <span>Main</span> : ''}
             </a>
+
+            <div className="sidebard-divider"></div>
+
             <a
                 target="_blank"
                 rel="noreferrer"
@@ -52,7 +45,6 @@ const SidebarMenu = (): React.JSX.Element => {
                 className={screen === Screens.icons ? 'selected' : ''}
             >
                 <IconsSvg />
-                {isOpen ? <span>Iconos</span> : ''}
             </a>
             <a
                 target="_blank"
@@ -61,7 +53,6 @@ const SidebarMenu = (): React.JSX.Element => {
                 className={screen === Screens.styles ? 'selected' : ''}
             >
                 <ColorsSvg />
-                {isOpen ? <span>Estilos</span> : null}
             </a>
             <a
                 target="_blank"
@@ -70,7 +61,6 @@ const SidebarMenu = (): React.JSX.Element => {
                 className={screen === Screens.backgrounds ? 'selected' : ''}
             >
                 <BackgroundsSvg />
-                {isOpen ? <span>Fondos</span> : null}
             </a>
             <a
                 target="_blank"
@@ -79,7 +69,6 @@ const SidebarMenu = (): React.JSX.Element => {
                 className={screen === Screens.languages ? 'selected' : ''}
             >
                 <LanguageSvg />
-                {isOpen ? <span>Lenguajes</span> : null}
             </a>
             <a
                 target="_blank"
@@ -88,7 +77,6 @@ const SidebarMenu = (): React.JSX.Element => {
                 className={screen === Screens.thirdScreen ? 'selected' : ''}
             >
                 <ScreenSvg />
-                {isOpen ? <span>Tercera Pantalla</span> : null}
             </a>
             <a
                 target="_blank"
@@ -97,13 +85,18 @@ const SidebarMenu = (): React.JSX.Element => {
                 className={screen === Screens.audio ? 'selected' : ''}
             >
                 <AudioSvg />
-                {isOpen ? <span>Sonidos</span> : null}
             </a>
 
-            {isOpen ? <span>{rootDir}</span> : null}
-            {isOpen ? <span>{clientVersionDir.split('/').pop()}</span> : null}
-            {isOpen ? <span>{superVersionDir.split('/').pop()}</span> : null}
-            {isOpen ? <span>{thirdVersionDir.split('/').pop()}</span> : null}
+            <a
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => setScreen(Screens.collections)}
+                className={screen === Screens.collections ? 'selected' : ''}
+            >
+                <CollectionSvg />
+            </a>
+
+            <div className="sidebard-divider"></div>
 
             <a
                 target="_blank"
@@ -116,7 +109,6 @@ const SidebarMenu = (): React.JSX.Element => {
                 }}
             >
                 <ExitSvg />
-                {isOpen ? <span>Salir</span> : null}
             </a>
         </div>
     ) : (

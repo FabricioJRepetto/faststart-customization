@@ -24,7 +24,8 @@ export enum Screens {
     backgrounds = 'backgrounds',
     languages = 'languages',
     thirdScreen = 'thirdScreen',
-    audio = 'audio'
+    audio = 'audio',
+    collections = 'collections'
 }
 
 export type LanguageData = Record<string, Record<string, string>>
