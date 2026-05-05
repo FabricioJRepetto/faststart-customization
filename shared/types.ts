@@ -167,6 +167,12 @@ export interface StylesData {
         color: string
         background: string
     }
+    secondaryButton: {
+        border: string
+        borderRadius: string
+        color: string
+        background: string
+    }
 }
 
 export interface CustomConfig {
