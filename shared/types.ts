@@ -95,8 +95,8 @@ export enum filterType {
 
 export interface FinalAssetData {
     name: string
-    original: { path: string; fileType: string }
-    custom?: { path: string; fileType: string }
+    path: string
+    fileType: string
 }
 
 export enum StylesParentKeys {
@@ -146,6 +146,12 @@ export interface FinalStylesData {
         color: string
         background: string
     }
+    secondaryButton: {
+        border: boolean
+        borderRadius: string
+        color: string
+        background: string
+    }
 }
 export interface StylesData {
     general: {
@@ -177,6 +183,7 @@ export interface StylesData {
 
 export interface CustomConfig {
     version: string
+    ID: string
     customEnabled: boolean
     icon: FinalAssetData[]
     background: FinalAssetData[]
@@ -185,3 +192,5 @@ export interface CustomConfig {
     styles: FinalStylesData
     language: LanguageData
 }
+
+export type CustomConfigKey = keyof CustomConfig

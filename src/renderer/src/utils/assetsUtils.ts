@@ -37,24 +37,51 @@ export const dataParser = (
 ): FinalAssetData[] => {
     return originalDataList.map((e) => {
         const custom = newDataList.find((c) => c.name === e.name)
+        const _path = custom?.customPath || e.filePath
+        const _fileType = assetExtention(custom?.customPath || e.filePath)
         return {
             name: e.name,
-            original: { path: e.filePath, fileType: e.assetType },
-            custom: custom?.customPath
-                ? { path: custom.customPath, fileType: assetExtention(custom.filePath) }
-                : undefined
+            path: _path,
+            fileType: _fileType
         }
     })
 }
 
 /** Convierte 'true' o 'false' a booleano */
 export const stylesDataParser = (newList: StylesData): FinalStylesData => {
-    const ogStyles = store.get(DefaultStylesDataAtom)
+    const ogStyles = store.get(DefaultStylesDataAtom) as StylesData
 
-    const aux = { general: {}, successScreen: {}, errorScreen: {}, button: {} }
-    Object.keys(ogStyles!).map((parent) => {
+    const aux: FinalStylesData = {
+        general: {
+            primaryColor: '',
+            secondaryColor: '',
+            errorMessageColor: ''
+        },
+        successScreen: {
+            primaryColor: '',
+            secondaryColor: ''
+        },
+        errorScreen: {
+            primaryColor: '',
+            secondaryColor: ''
+        },
+        button: {
+            border: false,
+            borderRadius: '',
+            color: '',
+            background: ''
+        },
+        secondaryButton: {
+            border: false,
+            borderRadius: '',
+            color: '',
+            background: ''
+        }
+    }
+    Object.keys(ogStyles!).map((_parent ) => {
+        const parent = _parent as keyof FinalStylesData
         Object.keys(ogStyles![parent]).map((key) => {
-            if (parent === 'button' && key === 'border') {
+            if ((parent === 'button' || parent === 'secondaryButton') && key === 'border') {
                 aux[parent][key] = newList?.[parent]?.[key] === 'true'
             } else {
                 aux[parent][key] = newList?.[parent]?.[key] || ogStyles![parent][key]

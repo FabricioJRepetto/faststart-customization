@@ -10,7 +10,9 @@ import {
     AssetsDataAtom,
     CustomEnabledAtom,
     DefaultConfigAtom,
-    FirstLoadAtom
+    FirstLoadAtom,
+    ThirdAppVersionDirAtom,
+    SupervisorAppVersionDirAtom
 } from '@renderer/utils/context/context'
 import { dataParser, languageParser, stylesDataParser } from '@renderer/utils/assetsUtils'
 import { CustomConfig } from '@shared/types'
@@ -22,6 +24,9 @@ import AppsVersions from '@renderer/components/AppsVersions'
 
 export const MainScreen = (): React.JSX.Element => {
     const clientDir = useAtomValue(ClientAppVersionDirAtom)
+    const thirdDir = useAtomValue(ThirdAppVersionDirAtom)
+    const supDir = useAtomValue(SupervisorAppVersionDirAtom)
+
     const [customEnabled, setCustomEnabled] = useAtom(CustomEnabledAtom)
 
     const ogData = useAtomValue(AssetsDataAtom)!
@@ -45,7 +50,7 @@ export const MainScreen = (): React.JSX.Element => {
         setCustomEnabled(!customEnabled)
         if (defCustomConfig) {
             const aux = { ...defCustomConfig, customEnabled: !customEnabled }
-            const res = await window.electronAPI.toggleEnabled(aux, clientDir)
+            const res = await window.electronAPI.toggleEnabled(aux, clientDir, thirdDir, supDir)
             res.success
                 ? console.log('Customs enabled correctly')
                 : console.error('Error enabling customs')
@@ -58,7 +63,30 @@ export const MainScreen = (): React.JSX.Element => {
     const saveConfig = async (): Promise<void> => {
         setLoading(true)
         const aux: CustomConfig = {
-            version: '',
+            version: '2.0.0',
+            ID: new Date().getTime().toString(),
+            customEnabled: true,
+            icon: dataParser(ogData.icon, newIcons!),
+            background: dataParser(ogData.background, newBgs!),
+            thirdscreen: dataParser(ogData.thirdscreen, newThird!),
+            audio: dataParser(ogData.audio, newAudios!),
+            styles: stylesDataParser(newStyles!),
+            language: languageParser(newLangs)
+        }
+
+        const res = await window.electronAPI.writeJsonData(aux, clientDir, thirdDir, supDir)
+
+        if (res.success) console.log('[SAVE] Custom config file witen')
+        else console.error('[SAVE] Custom config file creation failed')
+
+        setLoading(false)
+    }
+
+    const applyConfig = async (): Promise<void> => {
+        setLoading(true)
+        const aux: CustomConfig = {
+            version: '2.0.0',
+            ID: new Date().getTime().toString(),
             customEnabled: customEnabled,
             icon: dataParser(ogData.icon, newIcons!),
             background: dataParser(ogData.background, newBgs!),
@@ -68,10 +96,10 @@ export const MainScreen = (): React.JSX.Element => {
             language: languageParser(newLangs)
         }
 
-        const res = await window.electronAPI.writeJsonData(aux, clientDir)
+        const res = await window.electronAPI.writeJsonData(aux, clientDir, thirdDir, supDir)
 
-        if (res.success) console.log('[SAVE] Custom config file witen')
-        else console.error('[SAVE] Custom config file creation failed')
+        if (res.success) console.log('[APPLY] Custom config file witen')
+        else console.error('[APPLY] Custom config file creation failed')
 
         setLoading(false)
     }
@@ -100,11 +128,15 @@ export const MainScreen = (): React.JSX.Element => {
 
                 <div className="actions main-actions">
                     <div className="action">
-                        <a style={{ textDecoration: 'line-through' }}>Guardar en libreria</a>
+                        <a
+                            onClick={() => !loading && saveConfig()}
+                        >
+                            Guardar en libreria
+                        </a>
                     </div>
 
                     <div className="action primary">
-                        <a onClick={() => !loading && saveConfig()}>Aplicar Customización</a>
+                        <a onClick={() => !loading && applyConfig()}>Aplicar Customización</a>
                     </div>
                 </div>
             </div>

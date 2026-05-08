@@ -245,9 +245,9 @@ const Landing = (): React.JSX.Element => {
                 const potentialSupervisorApps = res.data.filter((v) => v.match(/supervisor/g))
                 const potentialThirdApps = res.data.filter((v) => v.match(/thirdscreen/g))
 
-                if (!potentialClientApps.length || !potentialThirdApps.length) {
+                if (!potentialClientApps.length || !potentialSupervisorApps.length || !potentialThirdApps.length) {
                     return alert(
-                        `No se encontraron versiones de Cliente y/o Tercera pantalla en el directorio:\n${baseDir + VERSIONS_DIR}`
+                        `No se encontraron versiones de aplicación para Cliente, Supervisor y/o Tercera pantalla en el directorio:\n${baseDir + VERSIONS_DIR}`
                     )
                 }
 

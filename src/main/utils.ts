@@ -1,6 +1,6 @@
 import { copyFileSync, mkdirSync, readFileSync } from 'fs'
 import { basename, extname, join } from 'path'
-import { CustomConfig } from '../../shared/types'
+import { CustomConfig, CustomConfigKey } from '../../shared/types'
 
 export const getBase64 = (filePath: string): { base64: string; mime: string } => {
     try {
@@ -30,21 +30,15 @@ export const getBase64 = (filePath: string): { base64: string; mime: string } =>
     }
 }
 
-export const manageRawCustomConfig = async (
-    rawConfig: CustomConfig,
-    clientDir: string,
-    thirdDir: string
-): Promise<CustomConfig | null> => {
+/** Devuelve los datos finales para el archivo customConfig.json */
+export const parseCustomConfig = async (rawConfig: CustomConfig): Promise<CustomConfig | null> => {
     try {
         const customsDir = 'customs'
-        const destDir = clientDir + '/' + customsDir
-        mkdirSync(clientDir + '/customs', { recursive: true })
-
-        const keys = Object.keys(rawConfig)
-        console.log(keys)
+        const keys = Object.keys(rawConfig) as CustomConfigKey[]
 
         const newConfig: CustomConfig = {
-            version: '1.0.2',
+            version: rawConfig.version,
+            ID: rawConfig.ID,
             customEnabled: rawConfig.customEnabled,
             icon: [],
             background: [],
@@ -55,44 +49,105 @@ export const manageRawCustomConfig = async (
         }
 
         for await (const key of keys) {
-            if (key === 'language') {
-                // newConfig[key] = rawConfig[key]
-                // console.log(rawConfig[key])
+            // Ignoramos keys que no son necesarias modificar
+            if (
+                key === 'language' ||
+                key === 'styles' ||
+                key === 'version' ||
+                key === 'ID' ||
+                key === 'customEnabled'
+            )
                 break
-            }
-            if (key === 'styles') {
-                // newConfig[key] = rawConfig[key]
-                break
-            }
             for await (const entry of rawConfig[key]) {
-                const custom = entry.custom?.path
-                const originalPath = join('defaults', entry.original.path.split('/').pop())
-
-                const newEntry = { ...entry, original: { ...entry.original, path: originalPath } }
-
-                if (custom) {
-                    const fileName = basename(custom)
-                    const dest = join(key === 'thirdscreen' ? thirdDir : destDir, fileName)
-                    console.log('file name:', fileName, '\ndest:\n', dest)
-
-                    // renameSync(custom, dest) // mueve el archivo
-                    copyFileSync(custom, dest)
-
-                    newConfig[key].push({
-                        ...newEntry,
-                        custom: { ...newEntry.custom, path: join(customsDir, fileName) }
-                    })
-                } else {
-                    console.log('No custom for', entry.name)
-                    newConfig[key].push(newEntry)
-                }
+                // Modifica el path para que sea relativo
+                const relativePath = join(customsDir, entry.path.split('/').pop())
+                // Actualiza el pre customConfig
+                newConfig[key].push({ ...entry, path: relativePath })
             }
         }
         console.log('[TEST] final configData:\n', newConfig)
 
-        return newConfig as CustomConfig
+        return newConfig
     } catch (error) {
         console.error(error)
         return null
+    }
+}
+
+/** Mueve los archivos necesarios a las apps */
+export const moveFilesToApps = async (
+    rawConfig: CustomConfig,
+    clientDir: string,
+    thirdDir: string,
+    supDir?: string
+): Promise<void> => {
+    try {
+        const customsDir = 'customs'
+        const clientCustomDir = clientDir + '/' + customsDir
+        const thirdCustomDir = thirdDir + '/' + customsDir
+        const supCustomDir = supDir ? supDir + '/' + customsDir : null
+        // Creamos directorios
+        mkdirSync(clientCustomDir, { recursive: true })
+        mkdirSync(thirdCustomDir, { recursive: true })
+        if (supCustomDir) mkdirSync(supCustomDir, { recursive: true })
+
+        const keys = Object.keys(rawConfig) as CustomConfigKey[]
+
+        for await (const key of keys) {
+            // Ignoramos keys que no son necesarias modificar
+            if (
+                key === 'language' ||
+                key === 'styles' ||
+                key === 'version' ||
+                key === 'ID' ||
+                key === 'customEnabled'
+            )
+                break
+            for await (const entry of rawConfig[key]) {
+                // Mueve los archivos
+                if (key === 'thirdscreen') {
+                    copyFileSync(entry.path, join(thirdCustomDir, basename(entry.path)))
+                } else {
+                    copyFileSync(entry.path, join(clientCustomDir, basename(entry.path)))
+                    if (supCustomDir)
+                        copyFileSync(entry.path, join(supCustomDir, basename(entry.path)))
+                }
+            }
+        }
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+/** Mueve los archivos al directorio de libreria de temas */
+export const moveFilesToLibrary = async (
+    rawConfig: CustomConfig,
+    themeName: string,
+    configFile: string
+): Promise<void> => {
+    try {
+        const customsDir = 'customs'
+        // Creamos directorios
+        mkdirSync(clientCustomDir, { recursive: true })
+
+        const keys = Object.keys(rawConfig) as CustomConfigKey[]
+
+        for await (const key of keys) {
+            // Ignoramos keys que no son necesarias modificar
+            if (
+                key === 'language' ||
+                key === 'styles' ||
+                key === 'version' ||
+                key === 'ID' ||
+                key === 'customEnabled'
+            )
+                break
+            for await (const entry of rawConfig[key]) {
+                // Mueve los archivos
+                copyFileSync(entry.path, join(thirdCustomDir, basename(entry.path)))
+            }
+        }
+    } catch (error) {
+        console.error(error)
     }
 }
