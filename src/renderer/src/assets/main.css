@@ -132,6 +132,10 @@ input[type='number'] {
 }
 
 .action a {
+    position: relative;
+
+    height: 40px;
+
     cursor: pointer;
     text-decoration: none;
     display: flex;
@@ -154,6 +158,22 @@ input[type='number'] {
         height: 24px;
         width: 24px;
     }
+
+    .spinner {
+        position: absolute;
+        top: calc(50% - 12px);
+        left: calc(50% - 12px);
+        rotate: 0deg;
+        opacity: 0;
+        animation:
+            spinner 2s infinite,
+            fadeIn 0.25s forwards;
+    }
+}
+.waiter a span {
+    display: flex;
+    gap: 4px;
+    align-items: center;
 }
 
 .action a:hover {
@@ -374,6 +394,12 @@ input[type='number'] {
     }
 }
 
+@keyframes spinner {
+    to {
+        rotate: 720deg;
+    }
+}
+
 .sidebar.closed {
     width: 80px;
 }
@@ -456,6 +482,12 @@ input[type='number'] {
     height: 100%;
     background-color: #00000080;
     backdrop-filter: blur(4px);
+}
+
+.error-messagge {
+    color: var(--ev-c-red-1);
+    height: 26px;
+    width: 361px;
 }
 
 /* : Landing : */
@@ -618,6 +650,12 @@ input[type='number'] {
         display: flex;
         align-items: center;
         justify-content: center;
+    }
+
+    .thirscreen-container {
+        width: 350px;
+        height: 197px;
+        margin-bottom: 15px;
     }
 
     .custom-thirscreen-container {
@@ -795,7 +833,7 @@ input[type='number'] {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    width: 225px;
+    width: 190px;
 
     div {
         width: 100%;
@@ -826,8 +864,8 @@ input[type='number'] {
                 width: 46px;
                 color: var(--ev-c-green-1);
             }
-            &.inactive svg {
-                color: var(--ev-c-red-1);
+            &.power-off svg {
+                color: #515151;
             }
 
             &:focus {
@@ -932,5 +970,33 @@ input[type='number'] {
         /* height: 40px; */
         padding: 40px;
         font-size: 32px;
+    }
+}
+
+/** Library collection */
+.theme-card {
+    position: relative;
+    width: 175px;
+    height: 130px;
+    font-size: 1.75rem;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    .theme-card-background {
+        position: absolute;
+        height: 100%;
+        width: auto;
+    }
+    .theme-card-logo {
+        z-index: 10;
+        height: 20px;
+        width: auto;
+    }
+    p {
+        z-index: 10;
     }
 }

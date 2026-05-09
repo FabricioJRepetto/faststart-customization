@@ -1,26 +1,18 @@
 import { useAtom, useAtomValue } from 'jotai'
 import {
     ClientAppVersionDirAtom,
-    EditedAudiosDataAtom,
-    EditedBackgroundsDataAtom,
-    EditedStylesDataAtom,
-    EditedIconsDataAtom,
-    EditedLanguageDataAtom,
-    EditedThirdScreenDataAtom,
-    AssetsDataAtom,
     CustomEnabledAtom,
-    DefaultConfigAtom,
     FirstLoadAtom,
     ThirdAppVersionDirAtom,
     SupervisorAppVersionDirAtom
 } from '@renderer/utils/context/context'
-import { dataParser, languageParser, stylesDataParser } from '@renderer/utils/assetsUtils'
-import { CustomConfig } from '@shared/types'
 import { Previewer } from '@renderer/components/Previewer'
 import { useEffect, useState } from 'react'
-import CheckSvg from '../assets/check.svg?react'
-import CancelSvg from '../assets/cancel.svg?react'
+import PowerSvg from '../assets/powerb.svg?react'
 import AppsVersions from '@renderer/components/AppsVersions'
+import Modal from '@renderer/components/Modal'
+import { getRawConfig } from '@renderer/utils/getRawConfig'
+import SpinnerSvg from '../assets/spinner.svg?react'
 
 export const MainScreen = (): React.JSX.Element => {
     const clientDir = useAtomValue(ClientAppVersionDirAtom)
@@ -29,79 +21,87 @@ export const MainScreen = (): React.JSX.Element => {
 
     const [customEnabled, setCustomEnabled] = useAtom(CustomEnabledAtom)
 
-    const ogData = useAtomValue(AssetsDataAtom)!
-    const defCustomConfig = useAtomValue(DefaultConfigAtom)
-    const newIcons = useAtomValue(EditedIconsDataAtom)
-    const newBgs = useAtomValue(EditedBackgroundsDataAtom)
-    const newThird = useAtomValue(EditedThirdScreenDataAtom)
-    const newAudios = useAtomValue(EditedAudiosDataAtom)
-    const newStyles = useAtomValue(EditedStylesDataAtom)
-    const newLangs = useAtomValue(EditedLanguageDataAtom)
-
-    const [loading, setLoading] = useState<boolean>(false)
+    const [loadingApply, setLoadingApply] = useState<boolean>(false)
+    const [loadingSave, setLoadingSave] = useState<boolean>(false)
     const [firstLoad, setFirstLoad] = useAtom(FirstLoadAtom)
 
+    const [modal, setModal] = useState<boolean>(false)
+    const [themeName, setThemeName] = useState<string>('')
+
     useEffect(() => {
+        // Para la animación fade in de esta pantalla
+        // el delay es la duración de la animación
         setTimeout(() => setFirstLoad(false), 450)
     }, [setFirstLoad])
 
+    const closeModal = (): void => {
+        setModal(false)
+        setThemeName('')
+    }
+
+    const openModal = (): void => {
+        setModal(true)
+    }
+
+    const test = (): boolean => {
+        return /^[a-z0-9]+[a-z0-9 _.-]*$/gi.test(themeName)
+    }
+
+    const unicName = (): boolean => {
+        const nameList: string[] = []
+        return !nameList.includes(themeName)
+    }
+
     const toggleCustomEnabled = async (): Promise<void> => {
-        setLoading(true)
+        setLoadingApply(true)
         setCustomEnabled(!customEnabled)
-        if (defCustomConfig) {
-            const aux = { ...defCustomConfig, customEnabled: !customEnabled }
-            const res = await window.electronAPI.toggleEnabled(aux, clientDir, thirdDir, supDir)
-            res.success
-                ? console.log('Customs enabled correctly')
-                : console.error('Error enabling customs')
-        } else {
-            console.log('No custom config loaded. Save one first.')
-        }
-        setLoading(false)
+
+        const res = await window.electronAPI.toggleEnabled(
+            !customEnabled,
+            clientDir,
+            thirdDir,
+            supDir
+        )
+        res.success
+            ? console.log(res.data + '/3 custom files updated correctly')
+            : console.error('Error enabling customs')
+
+        setLoadingApply(false)
     }
 
     const saveConfig = async (): Promise<void> => {
-        setLoading(true)
-        const aux: CustomConfig = {
-            version: '2.0.0',
-            ID: new Date().getTime().toString(),
-            customEnabled: true,
-            icon: dataParser(ogData.icon, newIcons!),
-            background: dataParser(ogData.background, newBgs!),
-            thirdscreen: dataParser(ogData.thirdscreen, newThird!),
-            audio: dataParser(ogData.audio, newAudios!),
-            styles: stylesDataParser(newStyles!),
-            language: languageParser(newLangs)
+        if (!test() || !unicName() || loadingApply) {
+            return
         }
+        console.log('OOOOOOO - saving')
 
-        const res = await window.electronAPI.writeJsonData(aux, clientDir, thirdDir, supDir)
+        setLoadingSave(true)
+        const aux = getRawConfig(themeName)
+        const res = await window.electronAPI.saveThemeData(aux)
 
         if (res.success) console.log('[SAVE] Custom config file witen')
         else console.error('[SAVE] Custom config file creation failed')
 
-        setLoading(false)
+        setLoadingSave(false)
+        closeModal()
     }
 
     const applyConfig = async (): Promise<void> => {
-        setLoading(true)
-        const aux: CustomConfig = {
-            version: '2.0.0',
-            ID: new Date().getTime().toString(),
-            customEnabled: customEnabled,
-            icon: dataParser(ogData.icon, newIcons!),
-            background: dataParser(ogData.background, newBgs!),
-            thirdscreen: dataParser(ogData.thirdscreen, newThird!),
-            audio: dataParser(ogData.audio, newAudios!),
-            styles: stylesDataParser(newStyles!),
-            language: languageParser(newLangs)
-        }
+        console.log('apply')
 
-        const res = await window.electronAPI.writeJsonData(aux, clientDir, thirdDir, supDir)
+        setLoadingApply(true)
+        const rawConfig = getRawConfig()
+        const res = await window.electronAPI.applyCurrentConfig(
+            rawConfig,
+            clientDir,
+            thirdDir,
+            supDir
+        )
 
         if (res.success) console.log('[APPLY] Custom config file witen')
         else console.error('[APPLY] Custom config file creation failed')
 
-        setLoading(false)
+        setLoadingApply(false)
     }
 
     return (
@@ -112,11 +112,11 @@ export const MainScreen = (): React.JSX.Element => {
                     <div className="toggler">
                         <div
                             className="input-wrapper"
-                            onClick={() => !loading && toggleCustomEnabled()}
+                            onClick={() => !loadingApply && toggleCustomEnabled()}
                         >
-                            Activar Customización
-                            <button className={customEnabled ? '' : 'inactive'}>
-                                {customEnabled ? <CheckSvg /> : <CancelSvg />}
+                            Customización
+                            <button className={customEnabled ? '' : 'power-off'}>
+                                <PowerSvg />
                             </button>
                         </div>
                     </div>
@@ -127,18 +127,66 @@ export const MainScreen = (): React.JSX.Element => {
                 <Previewer />
 
                 <div className="actions main-actions">
-                    <div className="action">
-                        <a
-                            onClick={() => !loading && saveConfig()}
-                        >
+                    <div
+                        className="action"
+                        style={{ pointerEvents: !loadingApply && !loadingSave ? 'all' : 'none' }}
+                    >
+                        <a onClick={() => !loadingApply && !loadingSave && openModal()}>
                             Guardar en libreria
                         </a>
                     </div>
 
-                    <div className="action primary">
-                        <a onClick={() => !loading && applyConfig()}>Aplicar Customización</a>
+                    <div
+                        className="action primary waiter"
+                        style={{ pointerEvents: !loadingApply && !loadingSave ? 'all' : 'none' }}
+                    >
+                        <a onClick={() => !loadingApply && !loadingSave && applyConfig()}>
+                            {loadingApply && <SpinnerSvg className="spinner" />}
+                            {
+                                <span style={{ opacity: loadingApply ? '0' : 'unset' }}>
+                                    Aplicar Customización
+                                </span>
+                            }
+                        </a>
                     </div>
                 </div>
+
+                {modal && (
+                    <Modal confirm={saveConfig} close={closeModal}>
+                        <div className="modal-backdrop" onClick={closeModal}></div>
+                        <div className="lang-editor-modal">
+                            <h2>
+                                Guardar <code className="gradient-text">tema</code> nuevo
+                            </h2>
+                            <p>Indica un nombre para identificarlo</p>
+                            <input
+                                type="text"
+                                autoFocus
+                                value={themeName}
+                                id="lang-value-input"
+                                onChange={(e) => setThemeName(e.target.value)}
+                            />
+                            <p className="error-messagge">
+                                {!test()
+                                    ? 'Solo se permiten letras, números, puntos y guiones'
+                                    : unicName()
+                                      ? ''
+                                      : 'El nombre ya está en uso'}
+                            </p>
+                            <div className="actions">
+                                <div
+                                    className="action primary"
+                                    style={{ pointerEvents: test() && unicName() ? 'all' : 'none' }}
+                                >
+                                    <a onClick={saveConfig}>Aplicar</a>
+                                </div>
+                                <div className="action">
+                                    <a onClick={closeModal}>Cancelar</a>
+                                </div>
+                            </div>
+                        </div>
+                    </Modal>
+                )}
             </div>
         </div>
     )

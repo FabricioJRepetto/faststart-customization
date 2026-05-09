@@ -103,7 +103,8 @@ export enum StylesParentKeys {
     general = 'general',
     successScreen = 'successScreen',
     errorScreen = 'errorScreen',
-    button = 'button'
+    button = 'button',
+    secodnaryButton = 'secodnaryButton'
 }
 export const DefaultStylesData = {
     general: {
@@ -120,6 +121,12 @@ export const DefaultStylesData = {
         secondaryColor: ''
     },
     button: {
+        border: '',
+        borderRadius: '',
+        color: '',
+        background: ''
+    },
+    secondaryButton: {
         border: '',
         borderRadius: '',
         color: '',
@@ -184,6 +191,7 @@ export interface StylesData {
 export interface CustomConfig {
     version: string
     ID: string
+    themeName: string
     customEnabled: boolean
     icon: FinalAssetData[]
     background: FinalAssetData[]
@@ -194,3 +202,16 @@ export interface CustomConfig {
 }
 
 export type CustomConfigKey = keyof CustomConfig
+
+export interface ThemeConfig {
+    themeName: string
+    color: string
+    background: {
+        base64: string
+        mime: string
+    }
+    logo: {
+        base64: string
+        mime: string
+    }
+}

@@ -19,14 +19,12 @@ const Styles = (): React.JSX.Element => {
     const updateCustom = (key: string, parent: string, value: string): void => {
         if (parent === 'button') {
             if (key === 'border') {
-                // setCustomStyles((prev) => ({ ...prev, [key]: prev.buttonBorder ? 'false' : 'true' }))
                 setCustomStyles((prev) => ({
                     ...prev,
                     [parent]: { ...prev[parent], [key]: prev[parent][key] ? 'false' : 'true' }
                 }))
             }
             if (key === 'borderRadius') {
-                // setCustomStyles((prev) => ({ ...prev, [key]: value + 'px' }))
                 setCustomStyles((prev) => ({
                     ...prev,
                     [parent]: { ...prev[parent], [key]: '' }
@@ -64,21 +62,21 @@ const Styles = (): React.JSX.Element => {
                 <StyleCard
                     parentName={'general'}
                     keyName={'primaryColor'}
-                    value={ogStyles.general.primaryColor}
+                    value={ogStyles?.general?.primaryColor}
                     reset={resetValue}
                     update={updateCustom}
                 />
                 <StyleCard
                     parentName={'general'}
                     keyName={'secondaryColor'}
-                    value={ogStyles.general.secondaryColor}
+                    value={ogStyles?.general?.secondaryColor}
                     reset={resetValue}
                     update={updateCustom}
                 />
                 <StyleCard
                     parentName={'general'}
                     keyName={'errorMessageColor'}
-                    value={ogStyles.general.errorMessageColor}
+                    value={ogStyles?.general?.errorMessageColor}
                     reset={resetValue}
                     update={updateCustom}
                 />
@@ -87,14 +85,14 @@ const Styles = (): React.JSX.Element => {
                 <StyleCard
                     parentName={'succesScreen'}
                     keyName={'primaryColor'}
-                    value={ogStyles.successScreen.primaryColor}
+                    value={ogStyles?.successScreen?.primaryColor}
                     reset={resetValue}
                     update={updateCustom}
                 />
                 <StyleCard
                     parentName={'succesScreen'}
                     keyName={'secondaryColor'}
-                    value={ogStyles.successScreen.secondaryColor}
+                    value={ogStyles?.successScreen?.secondaryColor}
                     reset={resetValue}
                     update={updateCustom}
                 />
@@ -103,14 +101,14 @@ const Styles = (): React.JSX.Element => {
                 <StyleCard
                     parentName={'errorScreen'}
                     keyName={'primaryColor'}
-                    value={ogStyles.errorScreen.primaryColor}
+                    value={ogStyles?.errorScreen?.primaryColor}
                     reset={resetValue}
                     update={updateCustom}
                 />
                 <StyleCard
                     parentName={'errorScreen'}
                     keyName={'secondaryColor'}
-                    value={ogStyles.errorScreen.secondaryColor}
+                    value={ogStyles?.errorScreen?.secondaryColor}
                     reset={resetValue}
                     update={updateCustom}
                 />
@@ -119,14 +117,14 @@ const Styles = (): React.JSX.Element => {
                 <StyleCard
                     parentName={'button'}
                     keyName={'color'}
-                    value={ogStyles.button.color}
+                    value={ogStyles?.button?.color}
                     reset={resetValue}
                     update={updateCustom}
                 />
                 <StyleCard
                     parentName={'button'}
                     keyName={'background'}
-                    value={ogStyles.button.background}
+                    value={ogStyles?.button?.background}
                     reset={resetValue}
                     update={updateCustom}
                 />
@@ -134,7 +132,7 @@ const Styles = (): React.JSX.Element => {
                     type="pixel"
                     parentName={'button'}
                     keyName={'borderRadius'}
-                    value={ogStyles.button.borderRadius}
+                    value={ogStyles?.button?.borderRadius}
                     reset={resetValue}
                     update={updateCustom}
                 />
@@ -142,38 +140,38 @@ const Styles = (): React.JSX.Element => {
                     type="boolean"
                     parentName={'button'}
                     keyName={'border'}
-                    value={ogStyles.button.border ? 'true' : 'false'}
+                    value={ogStyles?.button?.border ? 'true' : 'false'}
                     reset={resetValue}
                     update={updateCustom}
                 />
                 <div className="grid-divider">Botones secundarios</div>
                 <StyleCard
-                    parentName={'button'}
+                    parentName={'secondaryButton'}
                     keyName={'color'}
-                    value={ogStyles.secondaryButton.color}
+                    value={ogStyles?.secondaryButton?.color}
                     reset={resetValue}
                     update={updateCustom}
                 />
                 <StyleCard
-                    parentName={'button'}
+                    parentName={'secondaryButton'}
                     keyName={'background'}
-                    value={ogStyles.secondaryButton.background}
+                    value={ogStyles?.secondaryButton?.background}
                     reset={resetValue}
                     update={updateCustom}
                 />
                 <StyleCard
                     type="pixel"
-                    parentName={'button'}
+                    parentName={'secondaryButton'}
                     keyName={'borderRadius'}
-                    value={ogStyles.secondaryButton.borderRadius}
+                    value={ogStyles?.secondaryButton?.borderRadius}
                     reset={resetValue}
                     update={updateCustom}
                 />
                 <StyleCard
                     type="boolean"
-                    parentName={'button'}
+                    parentName={'secondaryButton'}
                     keyName={'border'}
-                    value={ogStyles.secondaryButton.border ? 'true' : 'false'}
+                    value={ogStyles?.secondaryButton?.border ? 'true' : 'false'}
                     reset={resetValue}
                     update={updateCustom}
                 />

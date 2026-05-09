@@ -1,30 +1,53 @@
-import { writeFileSync } from 'fs'
+import { readFileSync, writeFileSync } from 'fs'
 import { CustomConfig, IpcResponse } from '../../../shared/types'
+import { CUSTOM_CONFIG_FILE_NAME } from '../../../shared/CONSTANTS'
+import { join } from 'path'
 
 export const toggleCustomEnabled = async (
     _event,
-    fileData: CustomConfig,
+    data: boolean,
     clientDir: string,
     thirdDir: string,
-    supDir?: string
-): Promise<IpcResponse<undefined>> => {
+    supDir: string
+): Promise<IpcResponse<number>> => {
     try {
-        const jsonName = '/customConfig.json'
+        let success = 0
 
-        writeFileSync(clientDir + jsonName, JSON.stringify(fileData, null, 2), 'utf-8').catch(
-            console.error
-        )
-        writeFileSync(thirdDir + jsonName, JSON.stringify(fileData, null, 2), 'utf-8').catch(
-            console.error
-        )
-        if (supDir)
-            writeFileSync(supDir + jsonName, JSON.stringify(fileData, null, 2), 'utf-8').catch(
-                console.error
-            )
+        if (clientDir) {
+            console.log('toggling client')
+            toogleProp(clientDir, data) && success++
+        }
 
-        return { success: true, data: undefined }
+        if (thirdDir) {
+            console.log('toggling third')
+            toogleProp(thirdDir, data) && success++
+        }
+
+        if (supDir) {
+            console.log('toggling sup')
+            toogleProp(supDir, data) && success++
+        }
+
+        return { success: true, data: success }
     } catch (error) {
         console.error(error)
         return { success: false, error: (error as Error).message }
+    }
+}
+
+const toogleProp = (path: string, data: boolean): boolean => {
+    try {
+        const dir = join(path, CUSTOM_CONFIG_FILE_NAME)
+
+        const stringData = readFileSync(dir, 'utf-8')
+        const aux: CustomConfig = JSON.parse(stringData)
+        aux.customEnabled = data
+        const finalData = JSON.stringify(aux, null, 2)
+
+        writeFileSync(dir, finalData, 'utf-8')
+        return true
+    } catch (error) {
+        console.error(error)
+        return false
     }
 }

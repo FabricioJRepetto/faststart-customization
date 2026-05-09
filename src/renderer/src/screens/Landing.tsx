@@ -18,7 +18,9 @@ import {
     EditedAudiosDataAtom,
     EditedThirdScreenDataAtom,
     DefaultConfigAtom,
-    DefaultStylesDataAtom
+    DefaultStylesDataAtom,
+    CustomEnabledAtom,
+    ThemesLibraryDataAtom
 } from '@renderer/utils/context/context'
 import {
     AssetData,
@@ -29,12 +31,14 @@ import {
     StylesData
 } from '@shared/types'
 import {
-    CUSTOM_CONFIG_GILE_NAME,
+    CUSTOM_CONFIG_FILE_NAME,
     DEFAULT_ASSETS_DIR,
     DEFAULT_LANGUAGE_DATA_DIR,
     DEFAULT_STYLES_DATA_DIR,
+    THEMES_LIBRARY_DIR,
     VERSIONS_DIR
-} from '../utils/CONSTANTS'
+} from '../../../../shared/CONSTANTS'
+import SpinnerSvg from '../assets/spinner.svg?react'
 
 // TODO Checkear que los directorios seleccionados tienen la estructura correcta antes de avanzar
 
@@ -49,6 +53,7 @@ const Landing = (): React.JSX.Element => {
     const setNewLangData = useSetAtom(EditedLanguageDataAtom)
 
     const setDefaultCustomConfig = useSetAtom(DefaultConfigAtom)
+    const setCustomEnabled = useSetAtom(CustomEnabledAtom)
 
     const setDefaultStyles = useSetAtom(DefaultStylesDataAtom)
 
@@ -57,6 +62,8 @@ const Landing = (): React.JSX.Element => {
     const setBackgroundList = useSetAtom(EditedBackgroundsDataAtom)
     const setAudioList = useSetAtom(EditedAudiosDataAtom)
     const setThirdList = useSetAtom(EditedThirdScreenDataAtom)
+
+    const setThemesLibrary = useSetAtom(ThemesLibraryDataAtom)
 
     const [baseDir, setBaseDir] = useAtom(RootDirectoryAtom)
     const [clientVersionDir, setClientVersionDir] = useAtom(ClientAppVersionDirAtom)
@@ -71,10 +78,12 @@ const Landing = (): React.JSX.Element => {
         }
     }
 
+    const [loading, setLoading] = useState(false)
     const [modal, setModal] = useState<modalData[] | null>(null)
 
     const continueHandler = async (): Promise<void> => {
         try {
+            setLoading(true)
             let _clientVer = ''
             let _thirdVer = ''
 
@@ -82,7 +91,6 @@ const Landing = (): React.JSX.Element => {
                 console.log('no versions, checking')
 
                 const versions = await getVersions()
-
                 console.log(versions)
 
                 if (!versions) {
@@ -114,7 +122,7 @@ const Landing = (): React.JSX.Element => {
             )
 
             const resAssets = await window.electronAPI.getFilesList([
-                (_clientVer || clientVersionDir) + DEFAULT_ASSETS_DIR,
+                _clientVer || clientVersionDir,
                 _thirdVer || thirdVersionDir
             ])
             if (resAssets.success) {
@@ -175,27 +183,6 @@ const Landing = (): React.JSX.Element => {
                 throw resStyles.error
             }
 
-            //* appsettings.json TS
-            //! DEPRECADO !//
-            // console.log(
-            //     '-----------------------------\n',
-            //     '- Searching appsettings.json TS ...\n',
-            //     'Client:',
-            //     baseDir + SERVICES_APPSETTINGS_DIR
-            // )
-            // const resSettings = await window.electronAPI.getJsonData(
-            //     baseDir + SERVICES_APPSETTINGS_DIR
-            // )
-            // if (resSettings.success) {
-            //     console.log('- appsettings.json data OK\n', '- Saving data')
-
-            //     setAppsettings(resSettings.data as AppSettingsData)
-            //     setNewAppsettings(resSettings.data as AppSettingsData)
-            // } else {
-            //     console.error('- Error al cargar archivo appsettings:\n' + resSettings.error)
-            //     throw resSettings.error
-            // }
-
             //* default customConfig.json
             console.log(
                 '-----------------------------\n',
@@ -204,20 +191,38 @@ const Landing = (): React.JSX.Element => {
                 _clientVer || clientVersionDir
             )
             const resCustoms = await window.electronAPI.getJsonData(
-                (_clientVer || clientVersionDir) + '/' + CUSTOM_CONFIG_GILE_NAME
+                (_clientVer || clientVersionDir) + '/' + CUSTOM_CONFIG_FILE_NAME
             )
             if (resCustoms.success) {
                 console.log('- customConfig.json data OK\n', '- Saving data')
                 console.log(resCustoms.data)
                 setDefaultCustomConfig(resCustoms.data as CustomConfig)
+                setCustomEnabled((resCustoms.data as CustomConfig).customEnabled)
             } else {
                 console.error('- Error al cargar archivo appsettings:\n' + resCustoms.error)
                 throw resCustoms.error
             }
 
+            //* Libreria de temas
+            console.log(
+                '-----------------------------\n',
+                '- Searching Themes Library...\n',
+                THEMES_LIBRARY_DIR
+            )
+            const resLibrary = await window.electronAPI.getLibraryThemesList()
+            if (resLibrary.success) {
+                console.log('- Themes Library data OK\n', '- Saving data')
+                console.log(resLibrary.data)
+                setThemesLibrary(resLibrary.data as CustomConfig[])
+            } else {
+                console.error('- Error al cargar libreria de temas:\n' + resLibrary.error)
+            }
+
             setScreen(Screens.main)
         } catch (error) {
             alert('Error al cargar archivos: ' + error)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -245,7 +250,11 @@ const Landing = (): React.JSX.Element => {
                 const potentialSupervisorApps = res.data.filter((v) => v.match(/supervisor/g))
                 const potentialThirdApps = res.data.filter((v) => v.match(/thirdscreen/g))
 
-                if (!potentialClientApps.length || !potentialSupervisorApps.length || !potentialThirdApps.length) {
+                if (
+                    !potentialClientApps.length ||
+                    !potentialSupervisorApps.length ||
+                    !potentialThirdApps.length
+                ) {
                     return alert(
                         `No se encontraron versiones de aplicación para Cliente, Supervisor y/o Tercera pantalla en el directorio:\n${baseDir + VERSIONS_DIR}`
                     )
@@ -352,10 +361,16 @@ const Landing = (): React.JSX.Element => {
                         Seleccionar Directorio Base
                     </a>
                 </div>
-                <div className="action primary">
+                <div
+                    className="action primary waiter"
+                    style={{ pointerEvents: !loading ? 'all' : 'none' }}
+                >
                     <a target="_blank" rel="noreferrer" onClick={continueHandler}>
-                        Continuar
-                        <RightSvg />
+                        {loading && <SpinnerSvg className="spinner" />}
+                        <span style={{ opacity: loading ? '0' : 'unset' }}>
+                            Continuar
+                            <RightSvg />
+                        </span>
                     </a>
                 </div>
             </div>

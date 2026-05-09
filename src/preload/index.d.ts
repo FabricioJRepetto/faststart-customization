@@ -11,9 +11,20 @@ declare global {
             getFilesList: (dirPaths: string[]) => IpcResponse<unknown>
             getFoldersList: (dirPath: string) => IpcResponse<string[]>
             getJsonData: (filePath: string) => IpcResponse<unknown>
-            writeJsonData: (data: CustomConfig, clientDir: string, thirdDir: string, supDir?: string) => IpcResponse<unknown>
-            toggleEnabled: (data: CustomConfig, clientDir: string, thirdDir: string, supDir?: string) => IpcResponse<unknown>
-            saveThemeData: (data: CustomConfig) => IpcResponse<unknown>
+            getLibraryThemesList: () => IpcResponse<CustomConfig[]>
+            applyCurrentConfig: (
+                data: CustomConfig,
+                clientDir: string,
+                thirdDir: string,
+                supDir: string
+            ) => IpcResponse<unknown>
+            toggleEnabled: (
+                data: boolean,
+                clientDir: string,
+                thirdDir: string,
+                supDir: string
+            ) => IpcResponse<number>
+            saveThemeData: (rawData: CustomConfig) => IpcResponse<unknown>
         }
     }
 }

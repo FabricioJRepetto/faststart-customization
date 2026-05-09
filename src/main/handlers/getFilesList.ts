@@ -1,5 +1,7 @@
 import { readdirSync } from 'fs'
 import { getBase64 } from '../utils'
+import { join } from 'path'
+import { DEFAULT_ASSETS_DIR } from '../../../shared/CONSTANTS'
 
 export const getFilesList = async (_event, dirPaths: string[]): Promise<unknown> => {
     try {
@@ -39,7 +41,7 @@ export const getFilesList = async (_event, dirPaths: string[]): Promise<unknown>
                     })
                 })
         }
-        for (const dir of dirPaths) read(dir)
+        for (const dir of dirPaths) read(join(dir, DEFAULT_ASSETS_DIR))
 
         return { success: true, data: aux }
     } catch (error) {

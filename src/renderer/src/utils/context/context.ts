@@ -7,7 +7,8 @@ import {
     LanguageData,
     Screens,
     CustomConfig,
-    DefaultStylesData
+    DefaultStylesData,
+    ThemeConfig
 } from '@shared/types'
 
 export const store = createStore()
@@ -53,8 +54,11 @@ export const EditedStylesDataAtom = atom<StylesData>(DefaultStylesData)
 /** Nuevos Backgrounds indicados por el usuario */
 export const EditedBackgroundsDataAtom = atom<AssetData[]>()
 
+/** Nuenos Backgrounds indicados por el usuario */
+export const EditedAudiosDataAtom = atom<AssetData[]>()
+
 /** Nueva meda para mostrar en la Tercera pantalla indicada por el usuario */
 export const EditedThirdScreenDataAtom = atom<AssetData[]>()
 
-/** Nuenos Backgrounds indicados por el usuario */
-export const EditedAudiosDataAtom = atom<AssetData[]>()
+/** Lista de temas previamente guardados en la libreria */
+export const ThemesLibraryDataAtom = atom<ThemeConfig[]>()

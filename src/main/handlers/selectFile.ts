@@ -7,7 +7,7 @@ const auxFilters = {
         name: 'Imágenes',
         extensions: ['png', 'jpg', 'jpeg', 'webp', 'gif']
     },
-    Videos: { name: 'Videos', extensions: ['webm', 'mp4'] },
+    Videos: { name: 'Videos', extensions: ['webm'] },
     Audio: { name: 'Audio', extensions: ['mp3', 'wav'] },
     ImgSvg: {
         name: 'Imágenes',
@@ -15,7 +15,7 @@ const auxFilters = {
     },
     ImgVideo: {
         name: 'Imagenes y video',
-        extensions: ['png', 'jpg', 'jpeg', 'webp', 'svg', 'gif', 'webm', 'mp4']
+        extensions: ['png', 'jpg', 'jpeg', 'webp', 'gif', 'webm']
     },
     Todos: { name: 'Todos', extensions: ['*'] }
 }

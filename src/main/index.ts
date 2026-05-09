@@ -5,10 +5,12 @@ import icon from '../../resources/icon.png?asset'
 import { selectDirectory } from './handlers/selectDirectory'
 import { selectFile } from './handlers/selectFile'
 import { getJsonData } from './handlers/getJsonData'
-import { writeJsonFile } from './handlers/writeJsonFile'
+import { applyCurrentConfig } from './handlers/writeJsonFile'
 import { getFoldersList } from './handlers/getFoldersList'
 import { getFilesList } from './handlers/getFilesList'
 import { toggleCustomEnabled } from './handlers/toggleEnabled'
+import { saveThemeData } from './handlers/saveThemeData'
+import { getLibraryThemesList } from './handlers/getLibraryThemesList'
 
 function createWindow(): void {
     // Create the browser window.
@@ -62,9 +64,13 @@ app.whenReady().then(() => {
 
     ipcMain.handle('get-files-list', getFilesList)
 
-    ipcMain.handle('write-json-file', writeJsonFile)
+    ipcMain.handle('apply-current-config', applyCurrentConfig)
 
     ipcMain.handle('toggle-enable-custom-config', toggleCustomEnabled)
+
+    ipcMain.handle('save-theme-data', saveThemeData)
+
+    ipcMain.handle('get-library-list', getLibraryThemesList)
 
     createWindow()
 

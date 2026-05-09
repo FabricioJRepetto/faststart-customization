@@ -61,25 +61,20 @@ const ThirdScreen = (): React.JSX.Element => {
                             className="assets-container thirdscreen-asset-container"
                         >
                             <p>{assetName(_asset.name)}</p>
-                            <div className="thirscreen-container">
-                                <div
-                                    style={{
-                                        width: '350px',
-                                        height: '197px',
-                                        marginBottom: '15px'
-                                    }}
-                                >
+                            <div>
+                                <div className="thirscreen-container">
                                     {_asset.mimeType.match('video') ? (
-                                        <video
-                                            src={_asset.base64}
-                                            width={350}
-                                            muted
-                                            autoPlay
-                                            loop
-                                            onLoadedData={() => setLoaded(true)}
-                                            style={{ opacity: 0 }}
-                                            className={loaded ? 'fade-in' : ''}
-                                        />
+                                        <div>
+                                            <video
+                                                width={350}
+                                                src={_asset.base64}
+                                                muted
+                                                autoPlay
+                                                loop
+                                                onLoadedData={() => setLoaded(true)}
+                                                className={loaded ? 'fade-in' : ''}
+                                            />
+                                        </div>
                                     ) : (
                                         <img src={_asset.base64} />
                                     )}

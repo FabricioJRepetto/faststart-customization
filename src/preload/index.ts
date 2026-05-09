@@ -18,10 +18,22 @@ if (process.contextIsolated) {
             getFilesList: (dirPaths: string[]) => ipcRenderer.invoke('get-files-list', dirPaths),
             getFoldersList: (dirPath: string) => ipcRenderer.invoke('get-folders-list', dirPath),
             getJsonData: (filePath: string) => ipcRenderer.invoke('get-json-data', filePath),
-            writeJsonData: (data: CustomConfig, clientDir: string, thirdDir: string) =>
-                ipcRenderer.invoke('write-json-file', data, clientDir, thirdDir),
-            toggleEnabled: (data: CustomConfig, clientDir: string) =>
-                ipcRenderer.invoke('toggle-enable-custom-config', data, clientDir)
+            getLibraryThemesList: () => ipcRenderer.invoke('get-library-list'),
+            applyCurrentConfig: (
+                data: CustomConfig,
+                clientDir: string,
+                thirdDir: string,
+                supDir: string
+            ) => ipcRenderer.invoke('apply-current-config', data, clientDir, thirdDir, supDir),
+            toggleEnabled: (data: boolean, clientDir: string, thirdDir: string, supDir: string) =>
+                ipcRenderer.invoke(
+                    'toggle-enable-custom-config',
+                    data,
+                    clientDir,
+                    thirdDir,
+                    supDir
+                ),
+            saveThemeData: (rawData: CustomConfig) => ipcRenderer.invoke('save-theme-data', rawData)
         })
     } catch (error) {
         console.error(error)
