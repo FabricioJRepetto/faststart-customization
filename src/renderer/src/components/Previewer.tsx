@@ -1,4 +1,5 @@
 import {
+    DefaultConfigAtom,
     // DefaultConfigAtom,
     DefaultLanguageDataAtom,
     DefaultStylesDataAtom,
@@ -11,7 +12,7 @@ import { StylesParentKeys } from '@shared/types'
 import { useAtom } from 'jotai'
 
 export const Previewer = (): React.JSX.Element => {
-    // const [ogData] = useAtom(DefaultConfigAtom)
+    const [ogData] = useAtom(DefaultConfigAtom)
 
     const [bgData] = useAtom(EditedBackgroundsDataAtom)
     const [iconData] = useAtom(EditedIconsDataAtom)
@@ -32,8 +33,8 @@ export const Previewer = (): React.JSX.Element => {
 
     const currIcon = (name: string): string => {
         try {
-            const logo = iconData?.find((e) => e?.name === name)
-            return logo?.customBase64 || logo!.base64
+            const ico = iconData?.find((e) => e?.name === name)
+            return ico?.customBase64 || ico!.base64
         } catch (error) {
             console.error(error)
             return ''
@@ -42,7 +43,7 @@ export const Previewer = (): React.JSX.Element => {
 
     const currLang = (lang: string, name: string): string => {
         try {
-            const word = lngData?.[lang][name] || ogLngData?.[lang][name]
+            const word = lngData?.[lang][name] || ogLngData?.[lang][name] || ''
             return word
         } catch (error) {
             console.error(error)
@@ -65,6 +66,7 @@ export const Previewer = (): React.JSX.Element => {
 
     return (
         <div className="preview-container">
+            {ogData?.themeName && <p>Tema: {ogData?.themeName}</p>}
             <div className="preview-content">
                 <img className="preview-bg" src={currBg()} />
                 <img className="preview-logo" src={currIcon('icon_logo')} />
@@ -72,10 +74,10 @@ export const Previewer = (): React.JSX.Element => {
                 <div
                     className="preview-lang-btn"
                     style={{
-                        color: currStyle(StylesParentKeys.button, 'background'),
-                        backgroundColor: currStyle(StylesParentKeys.button, 'color'),
-                        border: `3px solid ${currStyle(StylesParentKeys.button, 'background')}`,
-                        borderRadius: currStyle(StylesParentKeys.button, 'borderRadius')
+                        color: currStyle(StylesParentKeys.secodnaryButton, 'background'),
+                        backgroundColor: currStyle(StylesParentKeys.secodnaryButton, 'color'),
+                        border: `3px solid ${currStyle(StylesParentKeys.secodnaryButton, 'background')}`,
+                        borderRadius: currStyle(StylesParentKeys.secodnaryButton, 'borderRadius')
                     }}
                 >
                     <img className="preview-lang-icon" src={currIcon('icon_world')} />
@@ -89,10 +91,10 @@ export const Previewer = (): React.JSX.Element => {
                 <button
                     className="preview-start-btn"
                     style={{
-                        color: currStyle(StylesParentKeys.button, 'color'),
-                        backgroundColor: currStyle(StylesParentKeys.button, 'background'),
-                        border: `2px solid ${currStyle(StylesParentKeys.button, 'border') === 'true' ? currStyle(StylesParentKeys.button, 'color') : 'transparent'}`,
-                        borderRadius: currStyle(StylesParentKeys.button, 'borderRadius')
+                        color: currStyle(StylesParentKeys.secodnaryButton, 'color'),
+                        backgroundColor: currStyle(StylesParentKeys.secodnaryButton, 'background'),
+                        border: `2px solid ${currStyle(StylesParentKeys.secodnaryButton, 'border') === 'true' ? currStyle(StylesParentKeys.secodnaryButton, 'color') : 'transparent'}`,
+                        borderRadius: currStyle(StylesParentKeys.secodnaryButton, 'borderRadius')
                     }}
                 >
                     {currLang('es', 'button.start')}

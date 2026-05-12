@@ -74,12 +74,10 @@ export const parseCustomConfig = async (
                     const root = basePath
                         ? join(basePath, CUSTOMS_FOLDER_NAME)
                         : CUSTOMS_FOLDER_NAME
+                    const newName = entry.name + extname(basename(entry.path))
+
                     // Modifica el path para que sea relativo
-                    const relativePath = join(
-                        root,
-                        basename(entry.path)
-                        // entry.path.split(/\/|\\/g).pop() || entry.path
-                    )
+                    const relativePath = join(root, newName)
                     // Actualiza el pre customConfig
                     newConfig[key].push({ ...entry, path: relativePath })
                 }
@@ -175,7 +173,8 @@ export const moveFilesToLibrary = async (rawConfig: CustomConfig): Promise<void>
             ) {
                 for await (const entry of rawConfig[key]) {
                     // Mueve los archivos
-                    copyFileSync(entry.path, join(distDir, basename(entry.path)))
+                    const newName = entry.name + extname(basename(entry.path))
+                    copyFileSync(entry.path, join(distDir, newName))
                 }
             }
         }

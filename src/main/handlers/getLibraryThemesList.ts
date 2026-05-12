@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from 'fs'
+import { existsSync, mkdirSync, readdirSync, readFileSync } from 'fs'
 import { CustomConfig, IpcResponse, ThemeConfig } from '../../../shared/types'
 import { getBase64, libraryDir } from '../utils'
 import { join } from 'path'
@@ -6,6 +6,10 @@ import { CUSTOM_CONFIG_FILE_NAME } from '../../../shared/CONSTANTS'
 
 export const getLibraryThemesList = async (): Promise<IpcResponse<ThemeConfig[]>> => {
     try {
+        if (!existsSync(libraryDir)) {
+            mkdirSync(libraryDir)
+            return { success: false, error: "Directory didn't exists" }
+        }
         const aux = readdirSync(libraryDir, { withFileTypes: true })
             .filter((entry) => entry.isDirectory())
             .map((e) => {

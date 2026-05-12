@@ -17,7 +17,7 @@ const Styles = (): React.JSX.Element => {
         )
 
     const updateCustom = (key: string, parent: string, value: string): void => {
-        if (parent === 'button') {
+        if (parent === 'button' || parent === 'secondaryButton') {
             if (key === 'border') {
                 setCustomStyles((prev) => ({
                     ...prev,
