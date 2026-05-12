@@ -74,10 +74,10 @@ export const Previewer = (): React.JSX.Element => {
                 <div
                     className="preview-lang-btn"
                     style={{
-                        color: currStyle(StylesParentKeys.secodnaryButton, 'background'),
-                        backgroundColor: currStyle(StylesParentKeys.secodnaryButton, 'color'),
-                        border: `3px solid ${currStyle(StylesParentKeys.secodnaryButton, 'background')}`,
-                        borderRadius: currStyle(StylesParentKeys.secodnaryButton, 'borderRadius')
+                        color: currStyle(StylesParentKeys.secondaryButton, 'background'),
+                        backgroundColor: currStyle(StylesParentKeys.secondaryButton, 'color'),
+                        border: `3px solid ${currStyle(StylesParentKeys.secondaryButton, 'background')}`,
+                        borderRadius: currStyle(StylesParentKeys.secondaryButton, 'borderRadius')
                     }}
                 >
                     <img className="preview-lang-icon" src={currIcon('icon_world')} />
@@ -91,10 +91,10 @@ export const Previewer = (): React.JSX.Element => {
                 <button
                     className="preview-start-btn"
                     style={{
-                        color: currStyle(StylesParentKeys.secodnaryButton, 'color'),
-                        backgroundColor: currStyle(StylesParentKeys.secodnaryButton, 'background'),
-                        border: `2px solid ${currStyle(StylesParentKeys.secodnaryButton, 'border') === 'true' ? currStyle(StylesParentKeys.secodnaryButton, 'color') : 'transparent'}`,
-                        borderRadius: currStyle(StylesParentKeys.secodnaryButton, 'borderRadius')
+                        color: currStyle(StylesParentKeys.secondaryButton, 'color'),
+                        backgroundColor: currStyle(StylesParentKeys.secondaryButton, 'background'),
+                        border: `2px solid ${currStyle(StylesParentKeys.secondaryButton, 'border') === 'true' ? currStyle(StylesParentKeys.secondaryButton, 'color') : 'transparent'}`,
+                        borderRadius: currStyle(StylesParentKeys.secondaryButton, 'borderRadius')
                     }}
                 >
                     {currLang('es', 'button.start')}

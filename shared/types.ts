@@ -104,7 +104,7 @@ export enum StylesParentKeys {
     successScreen = 'successScreen',
     errorScreen = 'errorScreen',
     button = 'button',
-    secodnaryButton = 'secodnaryButton'
+    secondaryButton = 'secondaryButton'
 }
 export const DefaultStylesData = {
     general: {
