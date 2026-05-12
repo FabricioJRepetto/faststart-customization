@@ -2,6 +2,7 @@ import { writeFileSync } from 'fs'
 import { CustomConfig, IpcResponse } from '../../../shared/types'
 import { moveFilesToApps, parseCustomConfig } from '../utils'
 import { CUSTOM_CONFIG_FILE_NAME } from '../../../shared/CONSTANTS'
+import { join } from 'path'
 
 export const applyCurrentConfig = async (
     _event,
@@ -18,19 +19,19 @@ export const applyCurrentConfig = async (
 
         // Movemos el customConfig.json a cada app
         writeFileSync(
-            clientDir + CUSTOM_CONFIG_FILE_NAME,
+            join(clientDir, CUSTOM_CONFIG_FILE_NAME),
             JSON.stringify(finalData, null, 2),
             'utf-8'
         )
         if (thirdDir)
             writeFileSync(
-                thirdDir + CUSTOM_CONFIG_FILE_NAME,
+                join(thirdDir, CUSTOM_CONFIG_FILE_NAME),
                 JSON.stringify(finalData, null, 2),
                 'utf-8'
             )
         if (supDir)
             writeFileSync(
-                supDir + CUSTOM_CONFIG_FILE_NAME,
+                join(supDir, CUSTOM_CONFIG_FILE_NAME),
                 JSON.stringify(finalData, null, 2),
                 'utf-8'
             )

@@ -234,7 +234,7 @@ input[type='number'] {
 }
 
 .app-versions {
-    margin: -10px 0;
+    margin: 20px 0;
     font-family: 'Menlo', 'Lucida Console', monospace;
     display: inline-flex;
     overflow: hidden;
@@ -974,12 +974,49 @@ input[type='number'] {
 }
 
 /** Library collection */
+.theme-card-container {
+    background-color: var(--color-background-mute);
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.theme-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+
+    span {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background-color: #494949;
+        padding: 2px 5px;
+        border-radius: 5px;
+
+        &:hover {
+            filter: brightness(125%);
+        }
+    }
+
+    .apply-buton {
+        background-color: var(--ev-c-green-2);
+    }
+    .delete-buton {
+        /* background-color: var(--ev-c-red-1); */
+    }
+}
+
 .theme-card {
     position: relative;
     width: 175px;
     height: 130px;
     font-size: 1.75rem;
-    border-radius: 20px;
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;

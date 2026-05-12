@@ -25,6 +25,13 @@ declare global {
                 supDir: string
             ) => IpcResponse<number>
             saveThemeData: (rawData: CustomConfig) => IpcResponse<unknown>
+            applyTheme: (
+                themeName: string,
+                clientDir: string,
+                thirdDir: string,
+                supDir: string
+            ) => IpcResponse<unknown>
+            deleteTheme: (themeName: string) => IpcResponse<unknown>
         }
     }
 }

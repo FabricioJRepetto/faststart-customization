@@ -3,42 +3,24 @@ import { useEffect, useState } from 'react'
 import Versions from '../components/Versions'
 import NATL from '../assets/NATL-logo.svg'
 import RightSvg from '../assets/right.svg?react'
-import { langDataShell } from '@renderer/utils/LangStructureBuilder'
 import {
     ClientAppVersionDirAtom,
-    AssetsDataAtom,
     RootDirectoryAtom,
     CurrentScreenAtom,
-    DefaultLanguageDataAtom,
-    EditedLanguageDataAtom,
     SupervisorAppVersionDirAtom,
-    ThirdAppVersionDirAtom,
-    EditedIconsDataAtom,
-    EditedBackgroundsDataAtom,
-    EditedAudiosDataAtom,
-    EditedThirdScreenDataAtom,
-    DefaultConfigAtom,
-    DefaultStylesDataAtom,
-    CustomEnabledAtom,
-    ThemesLibraryDataAtom
+    ThirdAppVersionDirAtom
 } from '@renderer/utils/context/context'
-import {
-    AssetData,
-    AssetList,
-    CustomConfig,
-    LanguageData,
-    Screens,
-    StylesData
-} from '@shared/types'
-import {
-    CUSTOM_CONFIG_FILE_NAME,
-    DEFAULT_ASSETS_DIR,
-    DEFAULT_LANGUAGE_DATA_DIR,
-    DEFAULT_STYLES_DATA_DIR,
-    THEMES_LIBRARY_DIR,
-    VERSIONS_DIR
-} from '../../../../shared/CONSTANTS'
+import { Screens } from '@shared/types'
+import { VERSIONS_DIR } from '../../../../shared/CONSTANTS'
 import SpinnerSvg from '../assets/spinner.svg?react'
+import {
+    loadAssets,
+    loadCustomConfigFile,
+    loadLanguageFile,
+    loadStylesFile,
+    loadThemesLibrary,
+    validateFiles
+} from '@renderer/utils/bootSequence'
 
 // TODO Checkear que los directorios seleccionados tienen la estructura correcta antes de avanzar
 
@@ -49,21 +31,6 @@ interface modalData {
 
 const Landing = (): React.JSX.Element => {
     const setScreen = useSetAtom(CurrentScreenAtom)
-    const setLangData = useSetAtom(DefaultLanguageDataAtom)
-    const setNewLangData = useSetAtom(EditedLanguageDataAtom)
-
-    const setDefaultCustomConfig = useSetAtom(DefaultConfigAtom)
-    const setCustomEnabled = useSetAtom(CustomEnabledAtom)
-
-    const setDefaultStyles = useSetAtom(DefaultStylesDataAtom)
-
-    const setAssetList = useSetAtom(AssetsDataAtom)
-    const setIconsList = useSetAtom(EditedIconsDataAtom)
-    const setBackgroundList = useSetAtom(EditedBackgroundsDataAtom)
-    const setAudioList = useSetAtom(EditedAudiosDataAtom)
-    const setThirdList = useSetAtom(EditedThirdScreenDataAtom)
-
-    const setThemesLibrary = useSetAtom(ThemesLibraryDataAtom)
 
     const [baseDir, setBaseDir] = useAtom(RootDirectoryAtom)
     const [clientVersionDir, setClientVersionDir] = useAtom(ClientAppVersionDirAtom)
@@ -111,112 +78,23 @@ const Landing = (): React.JSX.Element => {
             }
             console.log('continuing...')
 
-            //* assets
-            console.log(
-                '-----------------------------\n',
-                '- Searching assets...\n',
-                'Client:',
-                (_clientVer || clientVersionDir) + DEFAULT_ASSETS_DIR,
-                '\nThirdScreen:',
-                _thirdVer || thirdVersionDir
-            )
+            //* LOAD : assets
+            await loadAssets(_clientVer || clientVersionDir, _thirdVer || thirdVersionDir)
 
-            const resAssets = await window.electronAPI.getFilesList([
-                _clientVer || clientVersionDir,
-                _thirdVer || thirdVersionDir
-            ])
-            if (resAssets.success) {
-                console.log('- Assets data OK\n', '- Saving data')
-                const data = resAssets.data as AssetList
-                console.log(JSON.stringify(data))
-                setAssetList(data as AssetList)
-                setIconsList([...data.icon] as AssetData[])
-                setBackgroundList([...data.background] as AssetData[])
-                setAudioList([...data.audio] as AssetData[])
-                setThirdList([...data.thirdscreen] as AssetData[])
-            } else {
-                console.error('- Error al cargar assets: ' + resAssets.error)
-                throw resAssets.error
-            }
+            //* LOAD : language.json
+            await loadLanguageFile(_clientVer || clientVersionDir)
 
-            //* language.json
-            console.log(
-                '-----------------------------\n',
-                '- Searching language.json ...\n',
-                'Client:',
-                (_clientVer || clientVersionDir) + DEFAULT_LANGUAGE_DATA_DIR
-            )
-            const res = await window.electronAPI.getJsonData(
-                (_clientVer || clientVersionDir) + DEFAULT_LANGUAGE_DATA_DIR
-            )
-            if (res.success) {
-                console.log('- languages.json data OK\n', '- Saving data')
-                setLangData(res.data as LanguageData)
-                setNewLangData(langDataShell(res.data as LanguageData))
-            } else {
-                console.error('- Error al cargar archivo de idioma por defecto:\n' + res.error)
-                throw res.error
-            }
+            //* LOAD : styles.json
+            await loadStylesFile(_clientVer || clientVersionDir)
 
-            //* styles.json
-            console.log(
-                '-----------------------------\n',
-                '- Searching styles.json ...\n',
-                'Client:',
-                (_clientVer || clientVersionDir) + DEFAULT_STYLES_DATA_DIR
-            )
-            const resStyles = await window.electronAPI.getJsonData(
-                (_clientVer || clientVersionDir) + DEFAULT_STYLES_DATA_DIR
-            )
-            if (resStyles.success) {
-                console.log('- styles.json data OK\n', '- Saving data')
-                const data = resStyles.data as StylesData
-                setDefaultStyles({
-                    ...data,
-                    button: { ...data.button, border: data.button.border.toString() }
-                })
-                // setStylesList(DefaultStylesData)
-            } else {
-                console.error(
-                    '- Error al cargar archivo de idioma por defecto:\n' + resStyles.error
-                )
-                throw resStyles.error
-            }
+            //* LOAD : customConfig.json
+            await loadCustomConfigFile(_clientVer || clientVersionDir)
 
-            //* default customConfig.json
-            console.log(
-                '-----------------------------\n',
-                '- Searching customConfig.json...\n',
-                'Client:\n',
-                _clientVer || clientVersionDir
-            )
-            const resCustoms = await window.electronAPI.getJsonData(
-                (_clientVer || clientVersionDir) + '/' + CUSTOM_CONFIG_FILE_NAME
-            )
-            if (resCustoms.success) {
-                console.log('- customConfig.json data OK\n', '- Saving data')
-                console.log(resCustoms.data)
-                setDefaultCustomConfig(resCustoms.data as CustomConfig)
-                setCustomEnabled((resCustoms.data as CustomConfig).customEnabled)
-            } else {
-                console.error('- Error al cargar archivo appsettings:\n' + resCustoms.error)
-                throw resCustoms.error
-            }
+            //* VALIDATE : language.json, styles.json / customConfig.json
+            validateFiles()
 
             //* Libreria de temas
-            console.log(
-                '-----------------------------\n',
-                '- Searching Themes Library...\n',
-                THEMES_LIBRARY_DIR
-            )
-            const resLibrary = await window.electronAPI.getLibraryThemesList()
-            if (resLibrary.success) {
-                console.log('- Themes Library data OK\n', '- Saving data')
-                console.log(resLibrary.data)
-                setThemesLibrary(resLibrary.data as CustomConfig[])
-            } else {
-                console.error('- Error al cargar libreria de temas:\n' + resLibrary.error)
-            }
+            await loadThemesLibrary()
 
             setScreen(Screens.main)
         } catch (error) {

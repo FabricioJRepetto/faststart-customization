@@ -1,9 +1,9 @@
-import { copyFileSync, mkdirSync, readFileSync, rmSync } from 'fs'
+import { copyFileSync, mkdirSync, readFileSync, renameSync, rmSync } from 'fs'
 import { basename, dirname, extname, join } from 'path'
 import { CustomConfig, CustomConfigKey } from '../../shared/types'
 import { is } from '@electron-toolkit/utils'
 import { app } from 'electron'
-import { CUSTOMS_FOLDER_NAME, THEMES_LIBRARY_DIR } from '../../shared/CONSTANTS'
+import { CUSTOMS_FOLDER_NAME, TEMP_FOLDER, THEMES_LIBRARY_DIR } from '../../shared/CONSTANTS'
 
 const getLibraryDir = (): string => {
     if (is.dev) {
@@ -43,7 +43,10 @@ export const getBase64 = (filePath: string): { base64: string; mime: string } =>
 }
 
 /** Devuelve los datos finales para el archivo customConfig.json */
-export const parseCustomConfig = async (rawConfig: CustomConfig): Promise<CustomConfig | null> => {
+export const parseCustomConfig = async (
+    rawConfig: CustomConfig,
+    basePath?: string
+): Promise<CustomConfig | null> => {
     try {
         const keys = Object.keys(rawConfig) as CustomConfigKey[]
 
@@ -68,10 +71,14 @@ export const parseCustomConfig = async (rawConfig: CustomConfig): Promise<Custom
                 key === 'audio'
             ) {
                 for await (const entry of rawConfig[key]) {
+                    const root = basePath
+                        ? join(basePath, CUSTOMS_FOLDER_NAME)
+                        : CUSTOMS_FOLDER_NAME
                     // Modifica el path para que sea relativo
                     const relativePath = join(
-                        CUSTOMS_FOLDER_NAME,
-                        entry.path.split(/\/|\\/g).pop() || entry.path
+                        root,
+                        basename(entry.path)
+                        // entry.path.split(/\/|\\/g).pop() || entry.path
                     )
                     // Actualiza el pre customConfig
                     newConfig[key].push({ ...entry, path: relativePath })
@@ -96,27 +103,17 @@ export const moveFilesToApps = async (
     }
 ): Promise<void> => {
     try {
-        const clientCustomDir = join(paths.clientDir, CUSTOMS_FOLDER_NAME)
-        const thirdCustomDir = paths.thirdDir ? join(paths.thirdDir, CUSTOMS_FOLDER_NAME) : null
-        const supCustomDir = paths.supDir ? join(paths.supDir, CUSTOMS_FOLDER_NAME) : null
+        const client_Temp_Dir = join(paths.clientDir, TEMP_FOLDER)
+        const third_Temp_Dir = paths.thirdDir ? join(paths.thirdDir, TEMP_FOLDER) : null
+        const sup_Temp_Dir = paths.supDir ? join(paths.supDir, TEMP_FOLDER) : null
 
-        console.log(supCustomDir)
+        //* 1# - Creamos carpeta _temp_
+        mkdirSync(client_Temp_Dir, { recursive: true })
+        if (third_Temp_Dir) mkdirSync(third_Temp_Dir, { recursive: true })
+        if (sup_Temp_Dir) mkdirSync(sup_Temp_Dir, { recursive: true })
 
-        // Limpiamos y creamos directorios
-        rmSync(clientCustomDir, { recursive: true, force: true })
-        mkdirSync(clientCustomDir, { recursive: true })
-
-        if (thirdCustomDir) {
-            rmSync(thirdCustomDir, { recursive: true, force: true })
-            mkdirSync(thirdCustomDir, { recursive: true })
-        }
-        if (supCustomDir) {
-            rmSync(supCustomDir, { recursive: true, force: true })
-            mkdirSync(supCustomDir, { recursive: true })
-        }
-
+        //* 2# - Movemos archivos a carpeta _temp_
         const keys = Object.keys(rawConfig) as CustomConfigKey[]
-
         for await (const key of keys) {
             if (
                 key === 'icon' ||
@@ -127,16 +124,30 @@ export const moveFilesToApps = async (
                 for await (const entry of rawConfig[key]) {
                     // Mueve los archivos
                     if (key === 'thirdscreen') {
-                        if (thirdCustomDir)
-                            copyFileSync(entry.path, join(thirdCustomDir, basename(entry.path)))
+                        if (third_Temp_Dir)
+                            copyFileSync(entry.path, join(third_Temp_Dir, basename(entry.path)))
                     } else {
-                        copyFileSync(entry.path, join(clientCustomDir, basename(entry.path)))
-                        if (supCustomDir)
-                            copyFileSync(entry.path, join(supCustomDir, basename(entry.path)))
+                        copyFileSync(entry.path, join(client_Temp_Dir, basename(entry.path)))
+                        if (sup_Temp_Dir)
+                            copyFileSync(entry.path, join(sup_Temp_Dir, basename(entry.path)))
                     }
                 }
             }
         }
+
+        //* 3# - Borramos carpeta _customs_
+        const client_Custom_Dir = join(paths.clientDir, CUSTOMS_FOLDER_NAME)
+        const third_Custom_Dir = paths.thirdDir ? join(paths.thirdDir, CUSTOMS_FOLDER_NAME) : null
+        const sup_Custom_Dir = paths.supDir ? join(paths.supDir, CUSTOMS_FOLDER_NAME) : null
+
+        rmSync(client_Custom_Dir, { recursive: true, force: true })
+        if (third_Custom_Dir) rmSync(third_Custom_Dir, { recursive: true, force: true })
+        if (sup_Custom_Dir) rmSync(sup_Custom_Dir, { recursive: true, force: true })
+
+        //* 4# - Renombramos carpeta _temp_ a _customs_
+        renameSync(client_Temp_Dir, client_Custom_Dir)
+        if (third_Temp_Dir && third_Custom_Dir) renameSync(third_Temp_Dir, third_Custom_Dir)
+        if (sup_Custom_Dir && sup_Temp_Dir) renameSync(sup_Temp_Dir, sup_Custom_Dir)
     } catch (error) {
         console.error(error)
         throw error
@@ -170,5 +181,47 @@ export const moveFilesToLibrary = async (rawConfig: CustomConfig): Promise<void>
         }
     } catch (error) {
         console.error(error)
+    }
+}
+
+/** Mueve los archivos del tema a las apps indicadas */
+export const moveThemeToApps = async (
+    rawConfig: CustomConfig,
+    paths: {
+        clientDir: string
+        thirdDir?: string
+        supDir?: string
+    }
+): Promise<void> => {
+    try {
+        const client_Custom_Dir = join(paths.clientDir, CUSTOMS_FOLDER_NAME)
+        const third_Custom_Dir = paths.thirdDir ? join(paths.thirdDir, CUSTOMS_FOLDER_NAME) : null
+        const sup_Custom_Dir = paths.supDir ? join(paths.supDir, CUSTOMS_FOLDER_NAME) : null
+
+        //* 1# - Movemos archivos a carpeta _customs_
+        const keys = Object.keys(rawConfig) as CustomConfigKey[]
+        for await (const key of keys) {
+            if (
+                key === 'icon' ||
+                key === 'background' ||
+                key === 'thirdscreen' ||
+                key === 'audio'
+            ) {
+                for await (const entry of rawConfig[key]) {
+                    // Mueve los archivos
+                    if (key === 'thirdscreen') {
+                        if (third_Custom_Dir)
+                            copyFileSync(entry.path, join(third_Custom_Dir, basename(entry.path)))
+                    } else {
+                        copyFileSync(entry.path, join(client_Custom_Dir, basename(entry.path)))
+                        if (sup_Custom_Dir)
+                            copyFileSync(entry.path, join(sup_Custom_Dir, basename(entry.path)))
+                    }
+                }
+            }
+        }
+    } catch (error) {
+        console.error(error)
+        throw error
     }
 }

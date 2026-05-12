@@ -34,9 +34,9 @@ export const AssetsDataAtom = atom<AssetList>()
 export const DefaultConfigAtom = atom<CustomConfig>()
 
 /** Datos del archivo language por default */
-export const DefaultLanguageDataAtom = atom<LanguageData>({})
+export const DefaultLanguageDataAtom = atom<LanguageData>()
 /** Datos del archivo language que se están editando actualmente, se guardan aquí los cambios antes de generar el nuevo archivo */
-export const EditedLanguageDataAtom = atom<LanguageData>({})
+export const EditedLanguageDataAtom = atom<LanguageData>()
 
 /** @deprecated Original TerminalServices appsettings */
 export const AppSettingsAtom = atom<AppSettingsData>()

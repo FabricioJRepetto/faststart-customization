@@ -9,7 +9,7 @@ import { applyCurrentConfig } from './handlers/writeJsonFile'
 import { getFoldersList } from './handlers/getFoldersList'
 import { getFilesList } from './handlers/getFilesList'
 import { toggleCustomEnabled } from './handlers/toggleEnabled'
-import { saveThemeData } from './handlers/saveThemeData'
+import { applyThemeData, deleteThemeData, saveThemeData } from './handlers/ThemeData'
 import { getLibraryThemesList } from './handlers/getLibraryThemesList'
 
 function createWindow(): void {
@@ -68,9 +68,14 @@ app.whenReady().then(() => {
 
     ipcMain.handle('toggle-enable-custom-config', toggleCustomEnabled)
 
+    // Library
+    ipcMain.handle('get-library-list', getLibraryThemesList)
+
     ipcMain.handle('save-theme-data', saveThemeData)
 
-    ipcMain.handle('get-library-list', getLibraryThemesList)
+    ipcMain.handle('apply-theme-data', applyThemeData)
+
+    ipcMain.handle('delete-theme-data', deleteThemeData)
 
     createWindow()
 

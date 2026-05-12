@@ -4,7 +4,8 @@ import {
     CustomEnabledAtom,
     FirstLoadAtom,
     ThirdAppVersionDirAtom,
-    SupervisorAppVersionDirAtom
+    SupervisorAppVersionDirAtom,
+    ThemesLibraryDataAtom
 } from '@renderer/utils/context/context'
 import { Previewer } from '@renderer/components/Previewer'
 import { useEffect, useState } from 'react'
@@ -13,6 +14,9 @@ import AppsVersions from '@renderer/components/AppsVersions'
 import Modal from '@renderer/components/Modal'
 import { getRawConfig } from '@renderer/utils/getRawConfig'
 import SpinnerSvg from '../assets/spinner.svg?react'
+import { loadThemesLibrary } from '@renderer/utils/bootSequence'
+import ApplySvg from '../assets/apply.svg?react'
+import StorageSvg from '../assets/storage.svg?react'
 
 export const MainScreen = (): React.JSX.Element => {
     const clientDir = useAtomValue(ClientAppVersionDirAtom)
@@ -27,6 +31,7 @@ export const MainScreen = (): React.JSX.Element => {
 
     const [modal, setModal] = useState<boolean>(false)
     const [themeName, setThemeName] = useState<string>('')
+    const [themes] = useAtom(ThemesLibraryDataAtom)
 
     useEffect(() => {
         // Para la animación fade in de esta pantalla
@@ -48,8 +53,7 @@ export const MainScreen = (): React.JSX.Element => {
     }
 
     const unicName = (): boolean => {
-        const nameList: string[] = []
-        return !nameList.includes(themeName)
+        return !themes?.map((t) => t.themeName.toLowerCase()).includes(themeName.toLowerCase())
     }
 
     const toggleCustomEnabled = async (): Promise<void> => {
@@ -73,14 +77,15 @@ export const MainScreen = (): React.JSX.Element => {
         if (!test() || !unicName() || loadingApply) {
             return
         }
-        console.log('OOOOOOO - saving')
 
         setLoadingSave(true)
         const aux = getRawConfig(themeName)
         const res = await window.electronAPI.saveThemeData(aux)
 
-        if (res.success) console.log('[SAVE] Custom config file witen')
-        else console.error('[SAVE] Custom config file creation failed')
+        if (res.success) {
+            console.log('[SAVE] Custom config file witen')
+            await loadThemesLibrary()
+        } else console.error('[SAVE] Custom config file creation failed')
 
         setLoadingSave(false)
         closeModal()
@@ -122,8 +127,6 @@ export const MainScreen = (): React.JSX.Element => {
                     </div>
                 </div>
 
-                <AppsVersions />
-
                 <Previewer />
 
                 <div className="actions main-actions">
@@ -132,7 +135,8 @@ export const MainScreen = (): React.JSX.Element => {
                         style={{ pointerEvents: !loadingApply && !loadingSave ? 'all' : 'none' }}
                     >
                         <a onClick={() => !loadingApply && !loadingSave && openModal()}>
-                            Guardar en libreria
+                            Guardar
+                            <StorageSvg />
                         </a>
                     </div>
 
@@ -144,19 +148,21 @@ export const MainScreen = (): React.JSX.Element => {
                             {loadingApply && <SpinnerSvg className="spinner" />}
                             {
                                 <span style={{ opacity: loadingApply ? '0' : 'unset' }}>
-                                    Aplicar Customización
+                                    Aplicar <ApplySvg />
                                 </span>
                             }
                         </a>
                     </div>
                 </div>
 
+                <AppsVersions />
+
                 {modal && (
                     <Modal confirm={saveConfig} close={closeModal}>
                         <div className="modal-backdrop" onClick={closeModal}></div>
                         <div className="lang-editor-modal">
                             <h2>
-                                Guardar <code className="gradient-text">tema</code> nuevo
+                                Guardar <span className="gradient-text">tema</span> nuevo
                             </h2>
                             <p>Indica un nombre para identificarlo</p>
                             <input

@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs'
 import { IpcResponse } from '../../../shared/types'
 
-export const getJsonData = async (_event, filePath: string): Promise<IpcResponse<string>> => {
+export const getJsonData = async (_event, filePath: string): IpcResponse<unknown> => {
     try {
         const content = readFileSync(filePath, 'utf-8')
         return { success: true, data: JSON.parse(content) }
