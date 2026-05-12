@@ -149,7 +149,7 @@ export const loadCustomConfigFile = async (clientVersion: string): Promise<void>
 
 /** Valída que no falten archivos necesarios. EJECUTAR LUEGO DE loadLanguageFile, loadStylesFile Y loadCustomConfigFile*/
 export const validateFiles = (): void => {
-    const languages = store.get(DefaultLanguageDataAtom)
+    const languages = !!Object.keys(store.get(DefaultLanguageDataAtom)).length
     const styles = store.get(DefaultStylesDataAtom)
 
     if (!languages || !styles) {
