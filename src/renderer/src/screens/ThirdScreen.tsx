@@ -1,16 +1,12 @@
-import { assetName } from '@renderer/utils/assetsUtils'
 import { AssetsDataAtom, EditedThirdScreenDataAtom } from '@renderer/utils/context/context'
 import { useAtom, useAtomValue } from 'jotai'
-import { useState } from 'react'
 import ClearSvg from '../assets/clear.svg?react'
-import ResetSvg from '../assets/cancel.svg?react'
-import { filterType } from '@shared/types'
+import { AssetData, filterType } from '@shared/types'
+import { ThirdCard, AddNewAsset, NewAssetCard } from '@renderer/components/ThirdScreenAssetsCard'
 
 const ThirdScreen = (): React.JSX.Element => {
     const OgAssets = useAtomValue(AssetsDataAtom)
     const [asset, setAsset] = useAtom(EditedThirdScreenDataAtom)
-
-    const [loaded, setLoaded] = useState<boolean>(false)
 
     const resetAllValues = (): void => {
         setAsset([...OgAssets!.thirdscreen])
@@ -22,20 +18,53 @@ const ThirdScreen = (): React.JSX.Element => {
         )
     }
 
+    const deleteValue = (key: string): void => {
+        setAsset((prev) => prev!.filter((e) => e.name !== key))
+    }
+
     const setValue = async (key: string): Promise<void> => {
         console.log(key)
         const res = await window.electronAPI.selectFile(filterType.ImgVideo)
         console.log(res)
 
         if (res.success) {
-            const { filePath, base64 } = res.data
+            const { filePath, base64, customMimeType } = res.data
             console.log(filePath)
 
             setAsset((prev) =>
                 prev!.map((e) =>
-                    e.name === key ? { ...e, customPath: filePath, customBase64: base64 } : e
+                    e.name === key
+                        ? { ...e, customPath: filePath, customBase64: base64, customMimeType }
+                        : e
                 )
             )
+        }
+    }
+
+    const addNew = async (): Promise<void> => {
+        const res = await window.electronAPI.selectFile(filterType.ImgVideo)
+        console.log(res)
+
+        if (res.success) {
+            const { filePath, base64, customMimeType } = res.data
+            console.log(res.data)
+
+            setAsset((prev): AssetData[] => {
+                const aux = prev ? [...prev] : []
+                return [
+                    ...aux,
+                    {
+                        name: `thirdscreen_asset_${aux.length + 1}`,
+                        customPath: filePath,
+                        customBase64: base64,
+                        assetType: 'thirdscreen',
+                        filePath: '',
+                        base64: '',
+                        mimeType: '',
+                        customMimeType
+                    }
+                ]
+            })
         }
     }
 
@@ -53,64 +82,26 @@ const ThirdScreen = (): React.JSX.Element => {
                 </div>
             </div>
 
-            {asset?.length ? (
-                <div className="assets-grid grid-third">
-                    {asset!.map((_asset) => (
-                        <div
-                            key={_asset.name}
-                            className="assets-container thirdscreen-asset-container"
-                        >
-                            <p>{assetName(_asset.name)}</p>
-                            <div>
-                                <div className="thirscreen-container">
-                                    {_asset.mimeType.match('video') ? (
-                                        <div>
-                                            <video
-                                                width={350}
-                                                src={_asset.base64}
-                                                muted
-                                                autoPlay
-                                                loop
-                                                onLoadedData={() => setLoaded(true)}
-                                                className={loaded ? 'fade-in' : ''}
-                                            />
-                                        </div>
-                                    ) : (
-                                        <img src={_asset.base64} />
-                                    )}
-                                </div>
-                                {_asset.customBase64 ? (
-                                    <div className="custom-thirscreen-container">
-                                        {_asset.mimeType.match('video') ? (
-                                            <video
-                                                src={_asset.customBase64}
-                                                width={350}
-                                                muted
-                                                autoPlay
-                                                loop
-                                                onLoadedData={() => setLoaded(true)}
-                                                // className={loaded ? 'fade-in' : ''}
-                                            />
-                                        ) : (
-                                            <img src={_asset.customBase64} />
-                                        )}
-                                        <ResetSvg onClick={() => resetValue(_asset.name)} />
-                                    </div>
-                                ) : (
-                                    <div
-                                        className="thirdscreen-placeholder"
-                                        onClick={() => setValue(_asset.name)}
-                                    >
-                                        <p>Seleccionar</p>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            ) : (
-                <h2>No assets</h2>
-            )}
+            <div className="assets-grid grid-third scrolleable">
+                {asset?.length ? (
+                    asset!.map((_asset, i) =>
+                        _asset.filePath ? (
+                            <ThirdCard
+                                key={i}
+                                data={_asset}
+                                setValue={setValue}
+                                resetValue={resetValue}
+                            />
+                        ) : (
+                            <NewAssetCard key={i} data={_asset} deleteValue={deleteValue} />
+                        )
+                    )
+                ) : (
+                    <h2>No assets</h2>
+                )}
+
+                <AddNewAsset addNew={addNew} />
+            </div>
         </div>
     )
 }

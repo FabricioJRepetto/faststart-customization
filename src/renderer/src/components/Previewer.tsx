@@ -89,7 +89,6 @@ export const Previewer = (): React.JSX.Element => {
                     <img className="preview-lang-icon" src={currIcon('icon_world')} />
                     es
                 </div>
-
                 <h1 style={{ color: currStyle(StylesParentKeys.general, 'primaryColor') }}>
                     {currLang('es', 'thankYou')}
                 </h1>

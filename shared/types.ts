@@ -14,6 +14,8 @@ export type IpcResponse<T> = Promise<
 export interface IpcResponseFileData {
     base64: string
     filePath: string
+    mimeType: string
+    customMimeType: string
 }
 
 export enum Screens {
@@ -73,8 +75,9 @@ export interface AssetData {
     filePath: string
     customPath: string
     base64: string
-    customBase64: string
     mimeType: string
+    customBase64: string
+    customMimeType: string
 }
 export interface AssetList {
     icon: AssetData[]
@@ -107,6 +110,10 @@ export enum StylesParentKeys {
     secondaryButton = 'secondaryButton'
 }
 export const DefaultStylesData = {
+    logo: {
+        primaryColor: '',
+        secondaryColor: ''
+    },
     general: {
         primaryColor: '',
         secondaryColor: '',
@@ -161,6 +168,10 @@ export interface FinalStylesData {
     }
 }
 export interface StylesData {
+    logo: {
+        primaryColor: string
+        secondaryColor: string
+    }
     general: {
         primaryColor: string
         secondaryColor: string

@@ -58,6 +58,22 @@ const Styles = (): React.JSX.Element => {
             </div>
 
             <div className="assets-grid grid-styles scrolleable">
+                <div className="grid-divider">Logo</div>
+                <StyleCard
+                    parentName={'logo'}
+                    keyName={'primaryColor'}
+                    value={ogStyles?.logo?.primaryColor}
+                    reset={resetValue}
+                    update={updateCustom}
+                />
+                <StyleCard
+                    parentName={'logo'}
+                    keyName={'secondaryColor'}
+                    value={ogStyles?.logo?.secondaryColor}
+                    reset={resetValue}
+                    update={updateCustom}
+                />
+
                 <div className="grid-divider">General</div>
                 <StyleCard
                     parentName={'general'}
