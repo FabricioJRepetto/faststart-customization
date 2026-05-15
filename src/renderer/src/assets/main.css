@@ -904,8 +904,26 @@ input[type='number'] {
     height: calc(var(--preview-container-height-px));
     /* aspect-ratio: 16 / 9; */
     aspect-ratio: 4 / 3;
+    position: relative;
 }
 
+.preview-theme-name {
+    position: absolute;
+    z-index: 99999;
+    display: flex;
+    flex-direction: row;
+    top: -20px;
+    left: -30px;
+    background-color: var(--ev-c-red-1);
+    padding: 5px 10px 5px 5px;
+    border-radius: 10px 10px 0 10px;
+    color: white;
+
+    svg {
+        height: 24px;
+        width: auto;
+    }
+}
 .preview-content {
     zoom: var(--preview-container-zoom);
     position: relative;
@@ -981,6 +999,15 @@ input[type='number'] {
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+.theme-card-name {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    background: var(--color-background-soft);
+    padding: 5px;
+    border-radius: 5px;
 }
 
 .theme-card-footer {

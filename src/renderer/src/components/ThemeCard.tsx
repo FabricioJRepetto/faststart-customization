@@ -1,6 +1,7 @@
 import { ThemeConfig } from '@shared/types'
 import ApplySvg from '../assets/apply.svg?react'
 import DeleteSvg from '../assets/trash.svg?react'
+import ThemeSvg from '../assets/theme.svg?react'
 import { DEFAULT_THEME } from '@shared/CONSTANTS'
 
 interface Props {
@@ -12,7 +13,10 @@ const ThemeCard = ({ theme, applyCb, deleteCb }: Props): React.JSX.Element => {
     const defaultTheme = theme.themeName !== DEFAULT_THEME
     return (
         <div className="theme-card-container">
-            <span>{theme.themeName}</span>
+            <span className="theme-card-name">
+                <ThemeSvg />
+                {theme.themeName}
+            </span>
             <div className="theme-card" style={{ color: theme.color }}>
                 <img src={theme.background.base64} className="theme-card-background" />
                 <img src={theme.logo.base64} className="theme-card-logo" />

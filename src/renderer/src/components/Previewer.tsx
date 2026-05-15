@@ -10,6 +10,7 @@ import {
 } from '@renderer/utils/context/context'
 import { StylesParentKeys } from '@shared/types'
 import { useAtom } from 'jotai'
+import ThemeSvg from '../assets/theme.svg?react'
 
 export const Previewer = (): React.JSX.Element => {
     const [ogData] = useAtom(DefaultConfigAtom)
@@ -66,7 +67,12 @@ export const Previewer = (): React.JSX.Element => {
 
     return (
         <div className="preview-container">
-            {ogData?.themeName && <p>Tema: {ogData?.themeName}</p>}
+            {ogData?.themeName && (
+                <span className="preview-theme-name">
+                    <ThemeSvg />
+                    <p>{ogData?.themeName}</p>
+                </span>
+            )}
             <div className="preview-content">
                 <img className="preview-bg" src={currBg()} />
                 <img className="preview-logo" src={currIcon('icon_logo')} />
@@ -74,9 +80,9 @@ export const Previewer = (): React.JSX.Element => {
                 <div
                     className="preview-lang-btn"
                     style={{
-                        color: currStyle(StylesParentKeys.secondaryButton, 'background'),
-                        backgroundColor: currStyle(StylesParentKeys.secondaryButton, 'color'),
-                        border: `3px solid ${currStyle(StylesParentKeys.secondaryButton, 'background')}`,
+                        color: currStyle(StylesParentKeys.secondaryButton, 'color'),
+                        backgroundColor: currStyle(StylesParentKeys.secondaryButton, 'background'),
+                        border: `3px solid ${currStyle(StylesParentKeys.secondaryButton, 'color')}`,
                         borderRadius: currStyle(StylesParentKeys.secondaryButton, 'borderRadius')
                     }}
                 >
