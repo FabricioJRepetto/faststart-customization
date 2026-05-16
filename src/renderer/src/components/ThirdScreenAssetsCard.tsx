@@ -1,7 +1,7 @@
 import { assetName } from '@renderer/utils/assetsUtils'
 import { AssetData } from '@shared/types'
 import { useState } from 'react'
-import ResetSvg from '../assets/cancel.svg?react'
+import ResetSvg from '../assets/trash.svg?react'
 import AddSvg from '../assets/add.svg?react'
 
 interface CardProps {
@@ -16,49 +16,47 @@ export const ThirdCard = ({ data, setValue, resetValue }: CardProps): React.JSX.
     return (
         <div key={data.name} className="assets-container thirdscreen-asset-container">
             <p>{assetName(data.name)}</p>
-            <div>
-                {data?.base64 ? (
-                    <div className="thirscreen-container">
-                        {data.mimeType.match('video') ? (
-                            <div>
-                                <video
-                                    width={350}
-                                    src={data.base64}
-                                    muted
-                                    autoPlay
-                                    loop
-                                    onLoadedData={() => setLoaded(true)}
-                                    className={loaded ? 'fade-in' : ''}
-                                />
-                            </div>
-                        ) : (
-                            <img src={data.base64} />
-                        )}
-                    </div>
-                ) : null}
 
-                {data.customBase64 ? (
-                    <div className="custom-thirscreen-container">
-                        {data.customMimeType.match('video') ? (
-                            <video
-                                src={data.customBase64}
-                                width={350}
-                                muted
-                                autoPlay
-                                loop
-                                onLoadedData={() => setLoaded(true)}
-                            />
-                        ) : (
-                            <img src={data.customBase64} />
-                        )}
-                        <ResetSvg onClick={() => resetValue(data.name)} />
-                    </div>
-                ) : (
-                    <div className="thirdscreen-placeholder" onClick={() => setValue(data.name)}>
-                        <p>Cambiar</p>
-                    </div>
-                )}
+            <div className="thirdscreen-container">
+                {data?.base64 ? (
+                    data.mimeType.match('video') ? (
+                        <video
+                            src={data.base64}
+                            muted
+                            autoPlay
+                            loop
+                            onLoadedData={() => setLoaded(true)}
+                            className={loaded ? 'fade-in' : ''}
+                        />
+                    ) : (
+                        <img src={data.base64} />
+                    )
+                ) : null}
             </div>
+
+            {data.customBase64 ? (
+                <div className="custom-thirscreen-container">
+                    {data.customMimeType.match('video') ? (
+                        <video
+                            src={data.customBase64}
+                            muted
+                            autoPlay
+                            loop
+                            onLoadedData={() => setLoaded(true)}
+                        />
+                    ) : (
+                        <img src={data.customBase64} />
+                    )}
+
+                    <span className="button delete-buton" onClick={() => resetValue(data.name)}>
+                        <ResetSvg />
+                    </span>
+                </div>
+            ) : (
+                <div className="thirdscreen-placeholder" onClick={() => setValue(data.name)}>
+                    <p>Cambiar</p>
+                </div>
+            )}
         </div>
     )
 }
@@ -102,7 +100,10 @@ export const NewAssetCard = ({ data, deleteValue }: NewProps): React.JSX.Element
                     ) : (
                         <img src={data.customBase64} />
                     )}
-                    <ResetSvg onClick={() => deleteValue(data.name)} />
+
+                    <span className="button delete-buton" onClick={() => deleteValue(data.name)}>
+                        <ResetSvg />
+                    </span>
                 </div>
             </div>
         </div>

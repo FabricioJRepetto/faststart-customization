@@ -309,6 +309,12 @@ input[type='number'] {
     justify-content: space-between;
     margin-bottom: calc(10ch - 50px);
 
+    h1 {
+        display: flex;
+        justify-content: baseline;
+        gap: 10px;
+    }
+
     .header-group {
         display: flex;
         align-items: baseline;
@@ -572,16 +578,10 @@ input[type='number'] {
         position: relative;
         width: 200px;
 
-        svg {
-            cursor: pointer;
+        span {
             position: absolute;
-            top: 0;
+            bottom: 0;
             right: 0;
-            color: var(--ev-c-red-3);
-
-            &:hover {
-                color: var(--ev-c-red-1);
-            }
         }
     }
 
@@ -629,6 +629,7 @@ input[type='number'] {
 
     video {
         width: 175px;
+        opacity: 0;
     }
 
     img {
@@ -636,16 +637,15 @@ input[type='number'] {
     }
 
     .thirdscreen-container {
-        width: 190px;
-        padding: 0 10px;
-        display: flex;
-        justify-content: space-between;
+        width: 175px;
+        height: 98px;
+        margin-bottom: 15px;
+        background-color: var(--color-background-soft);
     }
 
     .thirdscreen-placeholder {
         cursor: pointer;
         width: auto;
-        /* height: 200px; */
         aspect-ratio: 16 / 9;
         border-radius: 10px;
         border: 1px solid var(--ev-c-green-3);
@@ -655,27 +655,28 @@ input[type='number'] {
         justify-content: center;
     }
 
-    .thirscreen-container {
-        width: auto;
-        height: auto;
-        margin-bottom: 15px;
-    }
-
     .custom-thirscreen-container {
         position: relative;
         aspect-ratio: 16 / 9;
         overflow: hidden;
 
-        svg {
-            cursor: pointer;
+        span {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
+
+        /* svg {
             position: absolute;
             top: 0;
             right: 0;
+            cursor: pointer;
             color: var(--ev-c-red-3);
+            background-color: #494949;
         }
         svg:hover {
             color: var(--ev-c-red-1);
-        }
+        } */
     }
 }
 .thirdscreen-add-new-container {
@@ -699,6 +700,20 @@ input[type='number'] {
             /* width: 40px; */
             height: auto;
         }
+    }
+}
+.third-interval-section {
+    width: 90%;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 30px;
+
+    p {
+        width: 70%;
+    }
+    input {
+        width: 150px;
     }
 }
 
@@ -757,11 +772,8 @@ input[type='number'] {
         justify-content: space-between;
         height: 30px;
 
-        svg {
-            height: 30px;
-            width: 30px;
-            color: var(--ev-c-red-1);
-            cursor: pointer;
+        span {
+            padding-right: 7px;
         }
     }
 
@@ -771,8 +783,8 @@ input[type='number'] {
         align-items: center;
         justify-content: space-between;
         border-radius: 50px;
-        background-color: white;
-        color: black;
+        background-color: #bebebe13;
+        color: rgb(236, 236, 236);
         padding: 6px 8px 6px 18px;
     }
     .color-sample {
@@ -813,7 +825,7 @@ input[type='number'] {
 
             svg {
                 top: -2px;
-                right: -6px;
+                right: -5px;
                 height: 46px;
                 width: 46px;
                 color: var(--ev-c-green-1);
@@ -1041,27 +1053,27 @@ input[type='number'] {
     align-items: center;
     justify-content: flex-end;
     gap: 10px;
+}
+.button {
+    height: 28px;
+    width: 34px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background-color: #494949;
+    padding: 2px 5px;
+    border-radius: 5px;
 
-    span {
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        background-color: #494949;
-        padding: 2px 5px;
-        border-radius: 5px;
-
-        &:hover {
-            filter: brightness(125%);
-        }
+    &:hover {
+        filter: brightness(125%);
     }
-
-    .apply-buton {
-        background-color: var(--ev-c-green-2);
-    }
-    .delete-buton {
-        /* background-color: var(--ev-c-red-1); */
-    }
+}
+.apply-buton {
+    background-color: var(--ev-c-green-2);
+}
+.delete-buton {
+    /* background-color: var(--ev-c-red-1); */
 }
 
 .theme-card {
@@ -1088,5 +1100,27 @@ input[type='number'] {
     }
     p {
         z-index: 10;
+    }
+}
+
+.tooltip {
+    position: relative;
+    margin-top: 3px;
+    color: var(--ev-c-text-3);
+    cursor: pointer;
+
+    .tooltip-text {
+        position: absolute;
+        top: 50%;
+        left: 30%;
+        z-index: 9999;
+
+        width: 250px;
+        padding: 5px 10px;
+        opacity: 0;
+        font-size: 0.95rem;
+        font-weight: 100;
+        background-color: var(--color-background);
+        color: white;
     }
 }

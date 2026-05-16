@@ -10,7 +10,7 @@ interface Props {
     deleteCb: (v: string) => void
 }
 const ThemeCard = ({ theme, applyCb, deleteCb }: Props): React.JSX.Element => {
-    const defaultTheme = theme.themeName !== DEFAULT_THEME
+    const notDefaultTheme = theme.themeName !== DEFAULT_THEME
     return (
         <div className="theme-card-container">
             <span className="theme-card-name">
@@ -23,11 +23,11 @@ const ThemeCard = ({ theme, applyCb, deleteCb }: Props): React.JSX.Element => {
                 <p>{theme.themeName.toUpperCase()}</p>
             </div>
             <div className="theme-card-footer">
-                <span className="apply-buton" onClick={() => applyCb(theme.themeName)}>
+                <span className="button apply-buton" onClick={() => applyCb(theme.themeName)}>
                     <ApplySvg />
                 </span>
-                {defaultTheme && (
-                    <span className="delete-buton" onClick={() => deleteCb(theme.themeName)}>
+                {notDefaultTheme && (
+                    <span className="button delete-buton" onClick={() => deleteCb(theme.themeName)}>
                         <DeleteSvg />
                     </span>
                 )}

@@ -3,6 +3,7 @@ import { AssetsDataAtom, EditedIconsDataAtom } from '@renderer/utils/context/con
 import { useAtom, useAtomValue } from 'jotai'
 import ClearSvg from '../assets/clear.svg?react'
 import { filterType } from '@shared/types'
+import Tooltip from '@renderer/components/Tooltip'
 
 const Icons = (): React.JSX.Element => {
     const OgAssets = useAtomValue(AssetsDataAtom)
@@ -38,7 +39,14 @@ const Icons = (): React.JSX.Element => {
     return (
         <div className="screen-content">
             <div className="screen-header">
-                <h1>Iconos</h1>
+                <h1>
+                    Iconos
+                    <Tooltip
+                        text={
+                            'Iconos y algunas imagenes que se utilizan a lo largo de toda la aplicación. Pueden ser SVG o cualquier tipo de imágen.'
+                        }
+                    />
+                </h1>
                 <div className="actions">
                     <div className="action tertiary">
                         <a onClick={resetAllValues}>

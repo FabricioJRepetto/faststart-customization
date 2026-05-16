@@ -4,6 +4,7 @@ import { useAtom, useAtomValue } from 'jotai'
 import ClearSvg from '../assets/clear.svg?react'
 import ResetSvg from '../assets/cancel.svg?react'
 import { filterType } from '@shared/types'
+import Tooltip from '@renderer/components/Tooltip'
 
 const Audio = (): React.JSX.Element => {
     const OgAssets = useAtomValue(AssetsDataAtom)
@@ -39,7 +40,12 @@ const Audio = (): React.JSX.Element => {
     return (
         <div className="screen-content">
             <div className="screen-header">
-                <h1>Audios</h1>
+                <h1>
+                    Audios
+                    <Tooltip
+                        text={'Sonidos que se reproducen ante distintos eventos de la aplicación.'}
+                    />
+                </h1>
                 <div className="actions">
                     <div className="action tertiary">
                         <a onClick={resetAllValues}>

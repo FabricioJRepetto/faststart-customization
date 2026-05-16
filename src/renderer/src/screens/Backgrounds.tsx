@@ -2,8 +2,9 @@ import { assetName } from '@renderer/utils/assetsUtils'
 import { AssetsDataAtom, EditedBackgroundsDataAtom } from '@renderer/utils/context/context'
 import { useAtom, useAtomValue } from 'jotai'
 import ClearSvg from '../assets/clear.svg?react'
-import ResetSvg from '../assets/cancel.svg?react'
+import ResetSvg from '../assets/trash.svg?react'
 import { filterType } from '@shared/types'
+import Tooltip from '@renderer/components/Tooltip'
 
 // TODO Aceptar videos tambien
 
@@ -41,7 +42,14 @@ const Backgrounds = (): React.JSX.Element => {
     return (
         <div className="screen-content">
             <div className="screen-header">
-                <h1>Fondos</h1>
+                <h1>
+                    Fondos{' '}
+                    <Tooltip
+                        text={
+                            'Fondos de pantalla de diferentes momentos en los flujos de la aplicación.'
+                        }
+                    />
+                </h1>
                 <div className="actions">
                     <div className="action tertiary">
                         <a onClick={resetAllValues}>
@@ -63,7 +71,13 @@ const Backgrounds = (): React.JSX.Element => {
                                 {bg.customBase64 ? (
                                     <div className="custom-bg-container">
                                         <img src={bg.customBase64} />
-                                        <ResetSvg onClick={() => resetValue(bg.name)} />
+
+                                        <span
+                                            className="button delete-buton"
+                                            onClick={() => resetValue(bg.name)}
+                                        >
+                                            <ResetSvg />
+                                        </span>
                                     </div>
                                 ) : (
                                     <div

@@ -11,7 +11,8 @@ import {
     CustomConfig,
     LanguageData,
     StylesData,
-    ThemeConfig
+    ThemeConfig,
+    ThirdScreenConfig
 } from '@shared/types'
 import {
     AssetsDataAtom,
@@ -23,7 +24,8 @@ import {
     EditedBackgroundsDataAtom,
     EditedIconsDataAtom,
     EditedLanguageDataAtom,
-    EditedThirdScreenDataAtom,
+    EditedThirdScreenAssetsDataAtom,
+    EditedThirdScreenConfigDataAtom,
     store,
     ThemesLibraryDataAtom
 } from './context/context'
@@ -50,7 +52,7 @@ export const loadAssets = async (clientVersion: string, thirdVersion: string): P
             store.set(EditedIconsDataAtom, [...data.icon] as AssetData[])
             store.set(EditedBackgroundsDataAtom, [...data.background] as AssetData[])
             store.set(EditedAudiosDataAtom, [...data.audio] as AssetData[])
-            store.set(EditedThirdScreenDataAtom, [...data.thirdscreen] as AssetData[])
+            store.set(EditedThirdScreenAssetsDataAtom, [...data.thirdscreen] as AssetData[])
         } else {
             console.error('- Error al cargar assets: ' + resAssets.error)
             throw resAssets.error
@@ -139,6 +141,13 @@ export const loadCustomConfigFile = async (clientVersion: string): Promise<void>
             console.log(resCustoms.data)
             store.set(DefaultConfigAtom, resCustoms.data as CustomConfig)
             store.set(CustomEnabledAtom, (resCustoms.data as CustomConfig).customEnabled)
+
+            if (resCustoms.data.thirdScreen?.config) {
+                store.set(
+                    EditedThirdScreenConfigDataAtom,
+                    resCustoms.data.thirdScreen.config as ThirdScreenConfig
+                )
+            }
         } else {
             console.warn('- Error al cargar archivo customConfig.json:\n' + resCustoms.error)
         }
