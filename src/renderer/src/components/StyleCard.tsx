@@ -32,7 +32,12 @@ const StyleCard = ({
             <div className="header">
                 <p>{keyName}</p>
                 {customStyles?.[parentName]?.[keyName] && (
-                    <ClearSvg onClick={() => reset(keyName, parentName)} />
+                    <span
+                        className="button delete-buton"
+                        onClick={() => reset(keyName, parentName)}
+                    >
+                        <ClearSvg />
+                    </span>
                 )}
             </div>
 

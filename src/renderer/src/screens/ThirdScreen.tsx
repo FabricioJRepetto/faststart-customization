@@ -1,12 +1,18 @@
-import { AssetsDataAtom, EditedThirdScreenDataAtom } from '@renderer/utils/context/context'
+import {
+    AssetsDataAtom,
+    EditedThirdScreenAssetsDataAtom,
+    EditedThirdScreenConfigDataAtom
+} from '@renderer/utils/context/context'
 import { useAtom, useAtomValue } from 'jotai'
 import ClearSvg from '../assets/clear.svg?react'
 import { AssetData, filterType } from '@shared/types'
 import { ThirdCard, AddNewAsset, NewAssetCard } from '@renderer/components/ThirdScreenAssetsCard'
+import Tooltip from '@renderer/components/Tooltip'
 
 const ThirdScreen = (): React.JSX.Element => {
     const OgAssets = useAtomValue(AssetsDataAtom)
-    const [asset, setAsset] = useAtom(EditedThirdScreenDataAtom)
+    const [asset, setAsset] = useAtom(EditedThirdScreenAssetsDataAtom)
+    const [config, setConfig] = useAtom(EditedThirdScreenConfigDataAtom)
 
     const resetAllValues = (): void => {
         setAsset([...OgAssets!.thirdscreen])
@@ -41,6 +47,14 @@ const ThirdScreen = (): React.JSX.Element => {
         }
     }
 
+    const setNewConfig = (key: string, value: number | string): void => {
+        const aux = { ...config }
+        if (key === 'intervalSeconds') {
+            aux[key] = (value || 5) as number
+        }
+        setConfig(aux)
+    }
+
     const addNew = async (): Promise<void> => {
         const res = await window.electronAPI.selectFile(filterType.ImgVideo)
         console.log(res)
@@ -71,7 +85,14 @@ const ThirdScreen = (): React.JSX.Element => {
     return (
         <div className="screen-content">
             <div className="screen-header">
-                <h1>Tercer pantalla</h1>
+                <h1>
+                    Tercer pantalla
+                    <Tooltip
+                        text={
+                            'Estos elementos de mostrarán en la tercer pantalla (SR). Pueden ser imagenes y/o videos. Si se indican varios, se mostrará cada uno el tiempo indicado.'
+                        }
+                    />
+                </h1>
                 <div className="actions">
                     <div className="action tertiary">
                         <a onClick={resetAllValues}>
@@ -81,6 +102,17 @@ const ThirdScreen = (): React.JSX.Element => {
                     </div>
                 </div>
             </div>
+
+            {asset && asset.length > 1 && (
+                <div className="third-interval-section">
+                    <p>Intervalo de tiempo (en segundos) en el que se muestra cada imagen/video.</p>
+                    <input
+                        type="number"
+                        placeholder="5"
+                        onChange={(e) => setNewConfig('intervalSeconds', e.target.value)}
+                    ></input>
+                </div>
+            )}
 
             <div className="assets-grid grid-third scrolleable">
                 {asset?.length ? (

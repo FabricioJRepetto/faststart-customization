@@ -59,7 +59,7 @@ export const parseCustomConfig = async (
             language: rawConfig.language,
             icon: [],
             background: [],
-            thirdscreen: [],
+            thirdscreen: { config: rawConfig.thirdscreen.config, assets: [] },
             audio: []
         }
 
@@ -67,10 +67,13 @@ export const parseCustomConfig = async (
             if (
                 key === 'icon' ||
                 key === 'background' ||
-                key === 'thirdscreen' ||
-                key === 'audio'
+                key === 'audio' ||
+                key === 'thirdscreen'
             ) {
-                for await (const entry of rawConfig[key]) {
+                const parentKey = key === 'thirdscreen' ? rawConfig[key].assets : rawConfig[key]
+                const newKey = key === 'thirdscreen' ? newConfig[key].assets : newConfig[key]
+
+                for await (const entry of parentKey) {
                     const root = basePath
                         ? join(basePath, CUSTOMS_FOLDER_NAME)
                         : CUSTOMS_FOLDER_NAME
@@ -79,7 +82,7 @@ export const parseCustomConfig = async (
                     // Modifica el path para que sea relativo
                     const relativePath = join(root, newName)
                     // Actualiza el pre customConfig
-                    newConfig[key].push({ ...entry, path: relativePath })
+                    newKey.push({ ...entry, path: relativePath })
                 }
             }
         }
@@ -119,7 +122,9 @@ export const moveFilesToApps = async (
                 key === 'thirdscreen' ||
                 key === 'audio'
             ) {
-                for await (const entry of rawConfig[key]) {
+                const parentKey = key === 'thirdscreen' ? rawConfig[key].assets : rawConfig[key]
+
+                for await (const entry of parentKey) {
                     // Mueve los archivos
                     if (key === 'thirdscreen') {
                         if (third_Temp_Dir)
@@ -171,7 +176,9 @@ export const moveFilesToLibrary = async (rawConfig: CustomConfig): Promise<void>
                 key === 'thirdscreen' ||
                 key === 'audio'
             ) {
-                for await (const entry of rawConfig[key]) {
+                const parentKey = key === 'thirdscreen' ? rawConfig[key].assets : rawConfig[key]
+
+                for await (const entry of parentKey) {
                     // Mueve los archivos
                     const newName = entry.name + extname(basename(entry.path))
                     copyFileSync(entry.path, join(distDir, newName))
@@ -206,7 +213,9 @@ export const moveThemeToApps = async (
                 key === 'thirdscreen' ||
                 key === 'audio'
             ) {
-                for await (const entry of rawConfig[key]) {
+                const parentKey = key === 'thirdscreen' ? rawConfig[key].assets : rawConfig[key]
+
+                for await (const entry of parentKey) {
                     // Mueve los archivos
                     if (key === 'thirdscreen') {
                         if (third_Custom_Dir)

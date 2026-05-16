@@ -3,6 +3,7 @@ import { useSetAtom } from 'jotai'
 import { DefaultStylesDataAtom, EditedStylesDataAtom, store } from '@renderer/utils/context/context'
 import StyleCard from '@renderer/components/StyleCard'
 import { DefaultStylesData } from '@shared/types'
+import Tooltip from '@renderer/components/Tooltip'
 
 const Styles = (): React.JSX.Element => {
     const ogStyles = store.get(DefaultStylesDataAtom)
@@ -46,7 +47,12 @@ const Styles = (): React.JSX.Element => {
     return (
         <div className="screen-content">
             <div className="screen-header">
-                <h1>Colores y Estilos</h1>
+                <h1>
+                    Colores y Estilos{' '}
+                    <Tooltip
+                        text={`Colores de botones, logos, textos y pantallas. Además de algunos elementos como los bordes de botones.`}
+                    />
+                </h1>
                 <div className="actions">
                     <div className="action tertiary">
                         <a onClick={resetAllValues}>

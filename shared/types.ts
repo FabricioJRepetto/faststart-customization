@@ -141,6 +141,10 @@ export const DefaultStylesData = {
     }
 }
 export interface FinalStylesData {
+    logo: {
+        primaryColor: string
+        secondaryColor: string
+    }
     general: {
         primaryColor: string
         secondaryColor: string
@@ -199,6 +203,10 @@ export interface StylesData {
     }
 }
 
+export interface ThirdScreendata {
+    config: ThirdScreenConfig
+    assets: FinalAssetData[]
+}
 export interface CustomConfig {
     version: string
     ID: string
@@ -206,7 +214,7 @@ export interface CustomConfig {
     customEnabled: boolean
     icon: FinalAssetData[]
     background: FinalAssetData[]
-    thirdscreen: FinalAssetData[]
+    thirdscreen: ThirdScreendata
     audio: FinalAssetData[]
     styles: FinalStylesData
     language: LanguageData
@@ -225,4 +233,12 @@ export interface ThemeConfig {
         base64: string
         mime: string
     }
+}
+
+export interface ThirdScreenConfig {
+    intervalSeconds: number
+}
+
+export const DefaultThirdConfigData: ThirdScreenConfig = {
+    intervalSeconds: 5
 }

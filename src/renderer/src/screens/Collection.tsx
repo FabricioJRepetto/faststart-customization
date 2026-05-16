@@ -1,4 +1,5 @@
 import ThemeCard from '@renderer/components/ThemeCard'
+import Tooltip from '@renderer/components/Tooltip'
 import {
     loadAssets,
     loadCustomConfigFile,
@@ -28,7 +29,7 @@ const Collections = (): React.JSX.Element => {
         console.log(themeName)
 
         await window.electronAPI.applyTheme(themeName, clientDir, thirdVersionDir, supVersionDir)
-        //* RELOAD All Assets
+
         await loadAssets(clientDir, thirdVersionDir)
         await loadLanguageFile(clientDir)
         await loadStylesFile(clientDir)
@@ -39,10 +40,8 @@ const Collections = (): React.JSX.Element => {
 
     const deleteTheme = async (themeName: string): Promise<void> => {
         setLoading(true)
-        console.log(themeName)
 
         await window.electronAPI.deleteTheme(themeName)
-        //* RELOAD Library
         await loadThemesLibrary()
 
         setLoading(false)
@@ -51,8 +50,14 @@ const Collections = (): React.JSX.Element => {
     return (
         <div className="screen-content">
             <div className="screen-header">
-                <h1>Colleciones</h1>
-                <p>Temas guardados previamente</p>
+                <h1>
+                    Colleciones
+                    <Tooltip
+                        text={
+                            'En esta sección se meustran "temas" (conjuntos de customizaciones) que han sido guardados previamente para favorecer la rápida aplicación de estilos.'
+                        }
+                    />
+                </h1>
             </div>
 
             <div

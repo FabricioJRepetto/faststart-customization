@@ -1,5 +1,18 @@
-import { AssetData, FinalAssetData, FinalStylesData, LanguageData, StylesData } from '@shared/types'
-import { DefaultLanguageDataAtom, DefaultStylesDataAtom, store } from './context/context'
+import {
+    AssetData,
+    FinalAssetData,
+    FinalStylesData,
+    LanguageData,
+    StylesData,
+    ThirdScreendata
+} from '@shared/types'
+import {
+    DefaultLanguageDataAtom,
+    DefaultStylesDataAtom,
+    EditedThirdScreenAssetsDataAtom,
+    EditedThirdScreenConfigDataAtom,
+    store
+} from './context/context'
 import { langDataFullStructure } from './LangStructureBuilder'
 
 /** Retorna el nombre del archivo */
@@ -47,11 +60,32 @@ export const dataParser = (
     })
 }
 
+export const thirdDataParser = (): ThirdScreendata => {
+    const config = store.get(EditedThirdScreenConfigDataAtom)
+    const newThirdAssets = store.get(EditedThirdScreenAssetsDataAtom)
+
+    const assets = newThirdAssets!.map((e) => {
+        const _path = e?.customPath || e.filePath
+        const _fileType = assetExtention(e?.customPath || e.filePath)
+        return {
+            name: e.name,
+            path: _path,
+            fileType: _fileType
+        }
+    })
+
+    return { config, assets }
+}
+
 /** Convierte 'true' o 'false' a booleano */
 export const stylesDataParser = (newList: StylesData): FinalStylesData => {
     const ogStyles = store.get(DefaultStylesDataAtom) as StylesData
 
     const aux: FinalStylesData = {
+        logo: {
+            primaryColor: '',
+            secondaryColor: ''
+        },
         general: {
             primaryColor: '',
             secondaryColor: '',
@@ -78,7 +112,7 @@ export const stylesDataParser = (newList: StylesData): FinalStylesData => {
             background: ''
         }
     }
-    Object.keys(ogStyles!).map((_parent ) => {
+    Object.keys(ogStyles!).map((_parent) => {
         const parent = _parent as keyof FinalStylesData
         Object.keys(ogStyles![parent]).map((key) => {
             if ((parent === 'button' || parent === 'secondaryButton') && key === 'border') {

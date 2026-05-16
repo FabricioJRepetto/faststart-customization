@@ -8,7 +8,9 @@ import {
     Screens,
     CustomConfig,
     DefaultStylesData,
-    ThemeConfig
+    ThemeConfig,
+    ThirdScreenConfig,
+    DefaultThirdConfigData
 } from '@shared/types'
 
 export const store = createStore()
@@ -57,8 +59,10 @@ export const EditedBackgroundsDataAtom = atom<AssetData[]>()
 /** Nuenos Backgrounds indicados por el usuario */
 export const EditedAudiosDataAtom = atom<AssetData[]>()
 
-/** Nueva meda para mostrar en la Tercera pantalla indicada por el usuario */
-export const EditedThirdScreenDataAtom = atom<AssetData[]>()
+/** Nuevos assets para mostrar en la Tercera pantalla indicada por el usuario */
+export const EditedThirdScreenAssetsDataAtom = atom<AssetData[]>()
+/** Nueva conffig para el carousel de la Tercera pantalla */
+export const EditedThirdScreenConfigDataAtom = atom<ThirdScreenConfig>(DefaultThirdConfigData)
 
 /** Lista de temas previamente guardados en la libreria */
 export const ThemesLibraryDataAtom = atom<ThemeConfig[]>()
