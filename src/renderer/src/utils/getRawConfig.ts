@@ -24,7 +24,7 @@ export const getRawConfig = (themeName?: string): CustomConfig => {
     const newLangs = store.get(EditedLanguageDataAtom)
 
     return {
-        version: '2.0.0',
+        version: '2.0.1',
         themeName: themeName ?? '',
         ID: new Date().getTime().toString(),
         customEnabled: customEnabled,
