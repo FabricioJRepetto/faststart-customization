@@ -83,8 +83,8 @@ export const stylesDataParser = (newList: StylesData): FinalStylesData => {
 
     const aux: FinalStylesData = {
         logo: {
-            primaryColor: '',
-            secondaryColor: ''
+            dark: '',
+            light: ''
         },
         general: {
             primaryColor: '',

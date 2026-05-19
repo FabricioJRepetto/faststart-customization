@@ -67,15 +67,15 @@ const Styles = (): React.JSX.Element => {
                 <div className="grid-divider">Logo</div>
                 <StyleCard
                     parentName={'logo'}
-                    keyName={'primaryColor'}
-                    value={ogStyles?.logo?.primaryColor}
+                    keyName={'dark'}
+                    value={ogStyles?.logo?.dark}
                     reset={resetValue}
                     update={updateCustom}
                 />
                 <StyleCard
                     parentName={'logo'}
-                    keyName={'secondaryColor'}
-                    value={ogStyles?.logo?.secondaryColor}
+                    keyName={'light'}
+                    value={ogStyles?.logo?.light}
                     reset={resetValue}
                     update={updateCustom}
                 />

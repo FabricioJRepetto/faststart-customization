@@ -111,8 +111,8 @@ export enum StylesParentKeys {
 }
 export const DefaultStylesData = {
     logo: {
-        primaryColor: '',
-        secondaryColor: ''
+        dark: '',
+        light: ''
     },
     general: {
         primaryColor: '',
@@ -142,8 +142,8 @@ export const DefaultStylesData = {
 }
 export interface FinalStylesData {
     logo: {
-        primaryColor: string
-        secondaryColor: string
+        dark: string
+        light: string
     }
     general: {
         primaryColor: string
@@ -173,8 +173,8 @@ export interface FinalStylesData {
 }
 export interface StylesData {
     logo: {
-        primaryColor: string
-        secondaryColor: string
+        dark: string
+        light: string
     }
     general: {
         primaryColor: string
