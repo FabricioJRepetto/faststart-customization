@@ -43,7 +43,9 @@ export const loadAssets = async (clientVersion: string, thirdVersion: string): P
             thirdVersion + '/' + DEFAULT_ASSETS_DIR
         )
 
-        const resAssets = await window.electronAPI.getFilesList([clientVersion, thirdVersion])
+        const aux = [clientVersion, thirdVersion].filter(e => !!e)
+
+        const resAssets = await window.electronAPI.getFilesList(aux)
         if (resAssets.success) {
             console.log('- Assets data OK\n', '- Saving data')
             const data = resAssets.data as AssetList

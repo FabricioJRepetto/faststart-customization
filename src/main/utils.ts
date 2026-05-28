@@ -75,12 +75,12 @@ export const parseCustomConfig = async (
 
                 for await (const entry of parentKey) {
                     const root = basePath
-                        ? join(basePath, CUSTOMS_FOLDER_NAME)
+                        ? basePath + '/' + CUSTOMS_FOLDER_NAME
                         : CUSTOMS_FOLDER_NAME
                     const newName = entry.name + extname(basename(entry.path))
 
                     // Modifica el path para que sea relativo
-                    const relativePath = join(root, newName)
+                    const relativePath = root + '/' + newName
                     // Actualiza el pre customConfig
                     newKey.push({ ...entry, path: relativePath })
                 }
@@ -128,11 +128,11 @@ export const moveFilesToApps = async (
                     // Mueve los archivos
                     if (key === 'thirdscreen') {
                         if (third_Temp_Dir)
-                            copyFileSync(entry.path, join(third_Temp_Dir, basename(entry.path)))
+                            copyFileSync(entry.path, join(third_Temp_Dir, entry.name + extname(basename(entry.path))))
                     } else {
-                        copyFileSync(entry.path, join(client_Temp_Dir, basename(entry.path)))
+                        copyFileSync(entry.path, join(client_Temp_Dir, entry.name + extname(basename(entry.path))))
                         if (sup_Temp_Dir)
-                            copyFileSync(entry.path, join(sup_Temp_Dir, basename(entry.path)))
+                            copyFileSync(entry.path, join(sup_Temp_Dir, entry.name + extname(basename(entry.path))))
                     }
                 }
             }
