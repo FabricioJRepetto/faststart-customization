@@ -166,6 +166,7 @@ const Styles = (): React.JSX.Element => {
                     reset={resetValue}
                     update={updateCustom}
                 />
+
                 <div className="grid-divider">Botones secundarios</div>
                 <StyleCard
                     parentName={'secondaryButton'}
@@ -194,6 +195,38 @@ const Styles = (): React.JSX.Element => {
                     parentName={'secondaryButton'}
                     keyName={'border'}
                     value={ogStyles?.secondaryButton?.border ? 'true' : 'false'}
+                    reset={resetValue}
+                    update={updateCustom}
+                />
+
+                <div className="grid-divider">Input</div>
+                <StyleCard
+                    parentName={'inputButton'}
+                    keyName={'color'}
+                    value={ogStyles?.inputButton?.color}
+                    reset={resetValue}
+                    update={updateCustom}
+                />
+                <StyleCard
+                    parentName={'inputButton'}
+                    keyName={'background'}
+                    value={ogStyles?.inputButton?.background}
+                    reset={resetValue}
+                    update={updateCustom}
+                />
+                <StyleCard
+                    type="pixel"
+                    parentName={'inputButton'}
+                    keyName={'borderRadius'}
+                    value={ogStyles?.inputButton?.borderRadius}
+                    reset={resetValue}
+                    update={updateCustom}
+                />
+                <StyleCard
+                    type="boolean"
+                    parentName={'inputButton'}
+                    keyName={'border'}
+                    value={ogStyles?.inputButton?.border ? 'true' : 'false'}
                     reset={resetValue}
                     update={updateCustom}
                 />

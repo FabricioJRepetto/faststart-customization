@@ -107,7 +107,8 @@ export enum StylesParentKeys {
     successScreen = 'successScreen',
     errorScreen = 'errorScreen',
     button = 'button',
-    secondaryButton = 'secondaryButton'
+    secondaryButton = 'secondaryButton',
+    inputButton = 'inputButton'
 }
 export const DefaultStylesData = {
     logo: {
@@ -134,6 +135,12 @@ export const DefaultStylesData = {
         background: ''
     },
     secondaryButton: {
+        border: '',
+        borderRadius: '',
+        color: '',
+        background: ''
+    },
+    inputButton: {
         border: '',
         borderRadius: '',
         color: '',
@@ -170,6 +177,12 @@ export interface FinalStylesData {
         color: string
         background: string
     }
+    inputButton: {
+        border: boolean
+        borderRadius: string
+        color: string
+        background: string
+    }
 }
 export interface StylesData {
     logo: {
@@ -196,6 +209,12 @@ export interface StylesData {
         background: string
     }
     secondaryButton: {
+        border: string
+        borderRadius: string
+        color: string
+        background: string
+    }
+    inputButton: {
         border: string
         borderRadius: string
         color: string
