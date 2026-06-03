@@ -181,8 +181,12 @@ export const validateFiles = (): void => {
                     border: customConfig.styles.button.border.toString()
                 },
                 secondaryButton: {
-                    ...customConfig.styles.button,
-                    border: customConfig.styles.button.border.toString()
+                    ...customConfig.styles.secondaryButton,
+                    border: customConfig.styles.secondaryButton.border.toString()
+                },
+                inputButton: {
+                    ...customConfig.styles.inputButton,
+                    border: customConfig.styles.inputButton.border.toString()
                 }
             })
         }
