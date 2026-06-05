@@ -121,9 +121,19 @@ export const stylesDataParser = (newList: StylesData): FinalStylesData => {
     Object.keys(ogStyles!).map((_parent) => {
         const parent = _parent as keyof FinalStylesData
         Object.keys(ogStyles![parent]).map((key) => {
-            if ((parent === 'button' || parent === 'secondaryButton') && key === 'border') {
+            if (
+                (parent === 'button' ||
+                    parent === 'secondaryButton' ||
+                    parent === 'inputButton') &&
+                key === 'border'
+            ) {
                 aux[parent][key] = newList?.[parent]?.[key] === 'true'
-            } else if ((parent === 'button' || parent === 'secondaryButton') && key === 'borderRadius') {
+            } else if (
+                (parent === 'button' ||
+                    parent === 'secondaryButton' ||
+                    parent === 'inputButton') &&
+                key === 'borderRadius'
+            ) {
                 aux[parent][key] = newList?.[parent]?.[key] + 'px'
             } else {
                 aux[parent][key] = newList?.[parent]?.[key] || ogStyles![parent][key]
