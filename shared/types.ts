@@ -243,7 +243,11 @@ export type CustomConfigKey = keyof CustomConfig
 
 export interface ThemeConfig {
     themeName: string
-    color: string
+    color: {
+        primaryColor: string
+        secondaryColor: string
+        errorMessageColor: string
+    }
     background: {
         base64: string
         mime: string

@@ -27,6 +27,11 @@ const Modal = ({ confirm, close, children }: ModalProps): React.JSX.Element => {
         }
     }, [close, confirm])
 
-    return <>{children}</>
+    return (
+        <>
+            <div className="modal-backdrop" onClick={close}></div>
+            <div className="lang-editor-modal">{children}</div>
+        </>
+    )
 }
 export default Modal

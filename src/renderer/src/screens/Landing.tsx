@@ -38,10 +38,12 @@ const Landing = (): React.JSX.Element => {
     const [thirdVersionDir, setThirdVersionDir] = useAtom(ThirdAppVersionDirAtom)
 
     const openSelectDirectory = async (): Promise<void> => {
-        const path = await window.electronAPI.selectDirectory()
-        if (path) {
-            console.log(path)
-            setBaseDir(path)
+        const res = await window.electronAPI.selectDirectory()
+        if (res.success) {
+            console.log(res.data)
+            setBaseDir(res.data)
+        } else {
+            console.error('Error seleccionando directorio:', res.error)
         }
     }
 

@@ -102,7 +102,7 @@ export const Previewer = (): React.JSX.Element => {
                         borderRadius: currStyle(StylesParentKeys.secondaryButton, 'borderRadius')
                     }}
                 >
-                    {currLang('es', 'button.start')}
+                    {currLang('es', 'button_start')}
                 </button>
             </div>
         </div>

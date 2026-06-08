@@ -42,7 +42,7 @@ export const ThirdCard = ({ data, setValue, resetValue }: CardProps): React.JSX.
                             muted
                             autoPlay
                             loop
-                            onLoadedData={() => setLoaded(true)}
+                            className={'fade-in'}
                         />
                     ) : (
                         <img src={data.customBase64} />

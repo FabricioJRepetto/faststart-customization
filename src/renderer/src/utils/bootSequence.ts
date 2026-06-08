@@ -49,14 +49,14 @@ export const loadAssets = async (clientVersion: string, thirdVersion: string): P
         if (resAssets.success) {
             console.log('- Assets data OK\n', '- Saving data')
             const data = resAssets.data as AssetList
-            console.log(JSON.stringify(data))
+            // console.log(JSON.stringify(data))
             store.set(AssetsDataAtom, data as AssetList)
             store.set(EditedIconsDataAtom, [...data.icon] as AssetData[])
             store.set(EditedBackgroundsDataAtom, [...data.background] as AssetData[])
             store.set(EditedAudiosDataAtom, [...data.audio] as AssetData[])
             store.set(EditedThirdScreenAssetsDataAtom, [...data.thirdscreen] as AssetData[])
         } else {
-            console.error('- Error al cargar assets: ' + resAssets.error)
+            // console.error('- Error al cargar assets: ' + resAssets.error)
             throw resAssets.error
         }
     } catch (error) {
@@ -84,7 +84,6 @@ export const loadLanguageFile = async (clientVersion: string): Promise<boolean> 
             return true
         } else {
             console.warn('- Error al cargar archivo de idioma por defecto:\n' + res.error)
-
             return false
         }
     } catch (error) {
@@ -117,7 +116,6 @@ export const loadStylesFile = async (clientVersion: string): Promise<boolean> =>
             return true
         } else {
             console.warn('- Error al cargar archivo de estilos por defecto:\n' + resStyles.error)
-
             return false
         }
     } catch (error) {
@@ -140,7 +138,7 @@ export const loadCustomConfigFile = async (clientVersion: string): Promise<void>
         )
         if (resCustoms.success) {
             console.log('- customConfig.json data OK\n', '- Saving data')
-            console.log(resCustoms.data)
+            // console.log(resCustoms.data)
             store.set(DefaultConfigAtom, resCustoms.data as CustomConfig)
             store.set(CustomEnabledAtom, (resCustoms.data as CustomConfig).customEnabled)
 

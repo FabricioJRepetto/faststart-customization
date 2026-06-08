@@ -6,7 +6,7 @@ declare global {
         electron: ElectronAPI
         api: unknown
         electronAPI: {
-            selectDirectory: () => Promise<string | null>
+            selectDirectory: () => IpcResponse<string>
             selectFile: (filter?: filterType) => IpcResponse<IpcResponseFileData>
             getFilesList: (dirPaths: string[]) => IpcResponse<unknown>
             getFoldersList: (dirPath: string) => IpcResponse<string[]>

@@ -128,11 +128,20 @@ export const moveFilesToApps = async (
                     // Mueve los archivos
                     if (key === 'thirdscreen') {
                         if (third_Temp_Dir)
-                            copyFileSync(entry.path, join(third_Temp_Dir, entry.name + extname(basename(entry.path))))
+                            copyFileSync(
+                                entry.path,
+                                join(third_Temp_Dir, entry.name + extname(basename(entry.path)))
+                            )
                     } else {
-                        copyFileSync(entry.path, join(client_Temp_Dir, entry.name + extname(basename(entry.path))))
+                        copyFileSync(
+                            entry.path,
+                            join(client_Temp_Dir, entry.name + extname(basename(entry.path)))
+                        )
                         if (sup_Temp_Dir)
-                            copyFileSync(entry.path, join(sup_Temp_Dir, entry.name + extname(basename(entry.path))))
+                            copyFileSync(
+                                entry.path,
+                                join(sup_Temp_Dir, entry.name + extname(basename(entry.path)))
+                            )
                     }
                 }
             }
@@ -204,7 +213,19 @@ export const moveThemeToApps = async (
         const third_Custom_Dir = paths.thirdDir ? join(paths.thirdDir, CUSTOMS_FOLDER_NAME) : null
         const sup_Custom_Dir = paths.supDir ? join(paths.supDir, CUSTOMS_FOLDER_NAME) : null
 
-        //* 1# - Movemos archivos a carpeta _customs_
+        //* 1# - Limpiamos carpeta _customs_ para evitar assets duplicados
+        rmSync(client_Custom_Dir, { recursive: true, force: true })
+        mkdirSync(client_Custom_Dir, { recursive: true })
+        if (third_Custom_Dir) {
+            rmSync(third_Custom_Dir, { recursive: true, force: true })
+            mkdirSync(third_Custom_Dir, { recursive: true })
+        }
+        if (sup_Custom_Dir) {
+            rmSync(sup_Custom_Dir, { recursive: true, force: true })
+            mkdirSync(sup_Custom_Dir, { recursive: true })
+        }
+
+        //* 2# - Movemos archivos a carpeta _customs_
         const keys = Object.keys(rawConfig) as CustomConfigKey[]
         for await (const key of keys) {
             if (
@@ -222,7 +243,7 @@ export const moveThemeToApps = async (
                             copyFileSync(entry.path, join(third_Custom_Dir, basename(entry.path)))
                     } else {
                         copyFileSync(entry.path, join(client_Custom_Dir, basename(entry.path)))
-                        if (sup_Custom_Dir)
+                        if (sup_Custom_Dir && key === 'background')
                             copyFileSync(entry.path, join(sup_Custom_Dir, basename(entry.path)))
                     }
                 }

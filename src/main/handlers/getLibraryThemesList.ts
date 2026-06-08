@@ -20,7 +20,7 @@ export const getLibraryThemesList = async (): Promise<IpcResponse<ThemeConfig[]>
                 )
                 const config = JSON.parse(file) as CustomConfig
                 const themeName = config.themeName
-                const color = config.styles.general.primaryColor
+                const color = config.styles.general
                 const background = getBase64(
                     join(
                         libraryDir,

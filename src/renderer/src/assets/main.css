@@ -1097,6 +1097,9 @@ input[type='number'] {
         z-index: 10;
         height: 20px;
         width: auto;
+        position: absolute;
+        top: 5px;
+        left: 8px;
     }
     p {
         z-index: 10;
