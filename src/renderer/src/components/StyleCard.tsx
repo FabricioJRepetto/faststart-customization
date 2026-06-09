@@ -86,7 +86,7 @@ const StyleCard = ({
                         className="custom-radius-sampler"
                         style={{
                             borderRadius: customStyles?.[parentName]?.borderRadius
-                                ? customStyles?.[parentName]?.borderRadius + 'px'
+                                ? customStyles[parentName].borderRadius + 'px'
                                 : value
                         }}
                     >

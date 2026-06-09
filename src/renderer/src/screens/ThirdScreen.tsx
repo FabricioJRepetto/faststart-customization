@@ -18,33 +18,8 @@ const ThirdScreen = (): React.JSX.Element => {
         setAsset([...OgAssets!.thirdscreen])
     }
 
-    const resetValue = (key: string): void => {
-        setAsset((prev) =>
-            prev!.map((e) => (e.name === key ? { ...e, customPath: '', customBase64: '' } : e))
-        )
-    }
-
     const deleteValue = (key: string): void => {
         setAsset((prev) => prev!.filter((e) => e.name !== key))
-    }
-
-    const setValue = async (key: string): Promise<void> => {
-        console.log(key)
-        const res = await window.electronAPI.selectFile(filterType.ImgVideo)
-        console.log(res)
-
-        if (res.success) {
-            const { filePath, base64, customMimeType } = res.data
-            console.log(filePath)
-
-            setAsset((prev) =>
-                prev!.map((e) =>
-                    e.name === key
-                        ? { ...e, customPath: filePath, customBase64: base64, customMimeType }
-                        : e
-                )
-            )
-        }
     }
 
     const setNewConfig = (key: string, value: number | string): void => {
@@ -65,10 +40,17 @@ const ThirdScreen = (): React.JSX.Element => {
 
             setAsset((prev): AssetData[] => {
                 const aux = prev ? [...prev] : []
+                let fileName =
+                    'thirdscreen_asset_' +
+                    (filePath.split('\\')?.pop()?.split('.')?.[0] ?? 'defname')
+                const used = aux.find((e) => e.name === fileName)
+                if (used) {
+                    fileName = fileName + '_' + (aux.length + 1)
+                }
                 return [
                     ...aux,
                     {
-                        name: `thirdscreen_asset_${aux.length + 1}`,
+                        name: fileName,
                         customPath: filePath,
                         customBase64: base64,
                         assetType: 'thirdscreen',
@@ -118,12 +100,7 @@ const ThirdScreen = (): React.JSX.Element => {
                 {asset?.length ? (
                     asset!.map((_asset, i) =>
                         _asset.filePath ? (
-                            <ThirdCard
-                                key={i}
-                                data={_asset}
-                                setValue={setValue}
-                                resetValue={resetValue}
-                            />
+                            <ThirdCard key={i} data={_asset} deleteValue={deleteValue} />
                         ) : (
                             <NewAssetCard key={i} data={_asset} deleteValue={deleteValue} />
                         )

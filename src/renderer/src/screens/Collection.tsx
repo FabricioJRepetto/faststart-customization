@@ -6,7 +6,8 @@ import {
     loadCustomConfigFile,
     loadLanguageFile,
     loadStylesFile,
-    loadThemesLibrary
+    loadThemesLibrary,
+    validateFiles
 } from '@renderer/utils/bootSequence'
 import {
     ClientAppVersionDirAtom,
@@ -47,6 +48,7 @@ const Collections = (): React.JSX.Element => {
                 await loadLanguageFile(clientDir)
                 await loadStylesFile(clientDir)
                 await loadCustomConfigFile(clientDir)
+                validateFiles()
 
                 setModal({
                     title: `Tema ${themeName} aplicado correctamente`,
@@ -85,7 +87,7 @@ const Collections = (): React.JSX.Element => {
             setDeleteModal(false)
             setModal({ title: `Error al borrar tema`, text: res.error })
         }
-            setLoading(false)
+        setLoading(false)
     }
 
     return (

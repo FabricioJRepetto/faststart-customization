@@ -659,6 +659,8 @@ input[type='number'] {
         position: relative;
         aspect-ratio: 16 / 9;
         overflow: hidden;
+        display: flex;
+        justify-content: center;
 
         span {
             position: absolute;
@@ -666,17 +668,12 @@ input[type='number'] {
             right: 0;
         }
 
-        /* svg {
-            position: absolute;
-            top: 0;
-            right: 0;
-            cursor: pointer;
-            color: var(--ev-c-red-3);
-            background-color: #494949;
+        img {
+            max-height: 100%;
+            max-width: 100%;
+            height: auto;
+            width: auto;
         }
-        svg:hover {
-            color: var(--ev-c-red-1);
-        } */
     }
 }
 .thirdscreen-add-new-container {
