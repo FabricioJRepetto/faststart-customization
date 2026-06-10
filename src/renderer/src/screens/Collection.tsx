@@ -5,12 +5,13 @@ import {
     loadAssets,
     loadCustomConfigFile,
     loadLanguageFile,
-    loadStylesFile,
     loadThemesLibrary,
     validateFiles
 } from '@renderer/utils/bootSequence'
 import {
     ClientAppVersionDirAtom,
+    DefaultStylesDataAtom,
+    store,
     SupervisorAppVersionDirAtom,
     ThemesLibraryDataAtom,
     ThirdAppVersionDirAtom
@@ -44,9 +45,10 @@ const Collections = (): React.JSX.Element => {
             if (res.success) {
                 console.log('success')
 
+                store.set(DefaultStylesDataAtom, undefined)                
+
                 await loadAssets(clientDir, thirdVersionDir)
                 await loadLanguageFile(clientDir)
-                await loadStylesFile(clientDir)
                 await loadCustomConfigFile(clientDir)
                 validateFiles()
 

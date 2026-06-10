@@ -105,14 +105,14 @@ const Styles = (): React.JSX.Element => {
 
                 <div className="grid-divider">Pantallas de éxito</div>
                 <StyleCard
-                    parentName={'succesScreen'}
+                    parentName={'successScreen'}
                     keyName={'primaryColor'}
                     value={ogStyles?.successScreen?.primaryColor}
                     reset={resetValue}
                     update={updateCustom}
                 />
                 <StyleCard
-                    parentName={'succesScreen'}
+                    parentName={'successScreen'}
                     keyName={'secondaryColor'}
                     value={ogStyles?.successScreen?.secondaryColor}
                     reset={resetValue}
