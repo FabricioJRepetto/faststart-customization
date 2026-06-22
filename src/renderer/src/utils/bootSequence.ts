@@ -1,6 +1,8 @@
 import {
+    BACKEND_THEMES_CONFIGS_PATH,
     CUSTOM_CONFIG_FILE_NAME,
     DEFAULT_ASSETS_DIR,
+    DEFAULT_CONFIG_FILENAME,
     DEFAULT_LANGUAGE_DATA_DIR,
     DEFAULT_STYLES_DATA_DIR,
     THEMES_LIBRARY_DIR
@@ -8,7 +10,9 @@ import {
 import {
     AssetData,
     AssetList,
+    AssetType,
     CustomConfig,
+    FinalAssetData,
     LanguageData,
     StylesData,
     ThemeConfig,
@@ -30,9 +34,14 @@ import {
     ThemesLibraryDataAtom
 } from './context/context'
 import { langDataShell } from './LangStructureBuilder'
+import mediaServiceController from './controllers/mediaServer/mediaServiceController'
+import { getMime } from './assetsUtils'
 
 /** Consulta y guarda los assets encontrados en las apps Cliente y Tercera pantalla */
-export const loadAssets = async (clientVersion: string, thirdVersion: string): Promise<void> => {
+export const loadLocalAssets = async (
+    clientVersion: string,
+    thirdVersion: string
+): Promise<void> => {
     try {
         console.log(
             '-----------------------------\n',
@@ -43,7 +52,7 @@ export const loadAssets = async (clientVersion: string, thirdVersion: string): P
             thirdVersion + '/' + DEFAULT_ASSETS_DIR
         )
 
-        const aux = [clientVersion, thirdVersion].filter(e => !!e)
+        const aux = [clientVersion, thirdVersion].filter((e) => !!e)
 
         const resAssets = await window.electronAPI.getFilesList(aux)
         if (resAssets.success) {
@@ -66,7 +75,7 @@ export const loadAssets = async (clientVersion: string, thirdVersion: string): P
 }
 
 /** Consulta y guarda el archivo language.json encontrado en la app Cliente */
-export const loadLanguageFile = async (clientVersion: string): Promise<boolean> => {
+export const loadLocalLanguageFile = async (clientVersion: string): Promise<boolean> => {
     try {
         console.log(
             '-----------------------------\n',
@@ -93,7 +102,7 @@ export const loadLanguageFile = async (clientVersion: string): Promise<boolean> 
 }
 
 /** Consulta y guarda el archivo styles.json encontrado en la app Cliente */
-export const loadStylesFile = async (clientVersion: string): Promise<boolean> => {
+export const loadLocalStylesFile = async (clientVersion: string): Promise<boolean> => {
     try {
         console.log(
             '-----------------------------\n',
@@ -125,7 +134,7 @@ export const loadStylesFile = async (clientVersion: string): Promise<boolean> =>
 }
 
 /** Consulta y guarda el archivo customConfig.json encontrado en la app Cliente */
-export const loadCustomConfigFile = async (clientVersion: string): Promise<void> => {
+export const loadLocalCustomConfigFile = async (clientVersion: string): Promise<void> => {
     try {
         console.log(
             '-----------------------------\n',
@@ -192,7 +201,7 @@ export const validateFiles = (): void => {
 }
 
 /** Consulta y guarda en la store los temas guardados en la libreria */
-export const loadThemesLibrary = async (): Promise<void> => {
+export const loadLocalThemesLibrary = async (): Promise<void> => {
     try {
         console.log(
             '-----------------------------\n',
@@ -209,5 +218,102 @@ export const loadThemesLibrary = async (): Promise<void> => {
         }
     } catch (error) {
         console.error('- Error al cargar libreria de temas:\n', error)
+    }
+}
+
+//_-_-_-_-_-_-_-_-_-_- REMOTE _-_-_-_-_-_-_-_-_-_-_-
+
+export const loadRemoteCustomConfig = async (): Promise<void> => {
+    try {
+        console.log('-----------------------------\n', `- fetching ${DEFAULT_CONFIG_FILENAME}...\n`)
+        const res = await mediaServiceController.getDefaultConfigFile()
+
+        if (res) {
+            console.log(`- fetching ${DEFAULT_CONFIG_FILENAME}. data OK\n`, '- Saving data')
+            console.log(res)
+            store.set(DefaultConfigAtom, res)
+            store.set(CustomEnabledAtom, res.customEnabled)
+
+            if (res.thirdscreen?.config) {
+                store.set(EditedThirdScreenConfigDataAtom, res.thirdscreen.config)
+            }
+        } else {
+            throw new Error(`Error al cargar archivo ${DEFAULT_CONFIG_FILENAME}`)
+        }
+    } catch (error) {
+        console.error(error)
+        throw error
+    }
+}
+
+export const loadRemoteThemesCollection = async (): Promise<void> => {
+    try {
+        console.log(
+            '-----------------------------\n',
+            `- fetching ${BACKEND_THEMES_CONFIGS_PATH}...\n`
+        )
+        const res = await mediaServiceController.getThemes()
+
+        if (res.length) {
+            console.log(`- Themes Collection Library. data OK\n`, '- Saving data')
+            console.log(`Collection found (${res.length} themes):`)
+            res.map((t) => console.log(' - ' + t.themeName))
+
+            store.set(ThemesLibraryDataAtom, res)
+        } else {
+            console.warn(`- Libreria de temas vacía\n`)
+        }
+    } catch (error) {
+        console.error(`- Error al libreria de temas:\n`, error)
+    }
+}
+
+export const parseRemoteAssets = (): void => {
+    try {
+        console.log('-----------------------------\n', '- Parsing remote assets...\n')
+
+        const config = store.get(DefaultConfigAtom)
+        if (config) {
+            const data = parseConfigToAssetList(config)
+            console.log(JSON.stringify(data))
+            store.set(AssetsDataAtom, data)
+            store.set(EditedIconsDataAtom, [...data.icon])
+            store.set(EditedBackgroundsDataAtom, [...data.background])
+            store.set(EditedAudiosDataAtom, [...data.audio])
+            store.set(EditedThirdScreenAssetsDataAtom, [...data.thirdscreen])
+        } else {
+            throw new Error('No config found')
+        }
+    } catch (error) {
+        console.error(`- Error al parsear assets remotos:\n`, error)
+    }
+}
+
+const parseConfigToAssetList = (config: CustomConfig): AssetList => {
+    try {
+        const parse = (list: FinalAssetData[], assetType: AssetType): AssetData[] => {
+            return list.map((e) => ({
+                name: e.name,
+                assetType: assetType,
+                filePath: e.path,
+                base64: '',
+                mimeType: getMime(e.path),
+                customPath: '',
+                customBase64: '',
+                customMimeType: ''
+            }))
+        }
+        const aux: AssetList = {
+            icon: parse(config.icon, 'icon'),
+            background: parse(config.background, 'background'),
+            audio: parse(config.audio, 'audio'),
+            thirdscreen: parse(config.thirdscreen.assets, 'thirdscreen'),
+            other: []
+        }
+
+        return aux
+    } catch (error) {
+        console.error(error)
+        throw error
     }
 }

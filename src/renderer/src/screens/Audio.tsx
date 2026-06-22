@@ -1,14 +1,15 @@
 import { assetName } from '@renderer/utils/assetsUtils'
-import { AssetsDataAtom, EditedAudiosDataAtom } from '@renderer/utils/context/context'
+import { AssetsDataAtom, DistributionMethodAtom, EditedAudiosDataAtom } from '@renderer/utils/context/context'
 import { useAtom, useAtomValue } from 'jotai'
 import ClearSvg from '../assets/clear.svg?react'
 import ResetSvg from '../assets/cancel.svg?react'
-import { filterType } from '@shared/types'
+import { DistributionMethod, filterType } from '@shared/types'
 import Tooltip from '@renderer/components/Tooltip'
 
 const Audio = (): React.JSX.Element => {
     const OgAssets = useAtomValue(AssetsDataAtom)
     const [audios, setAudios] = useAtom(EditedAudiosDataAtom)
+    const isRemote = useAtomValue(DistributionMethodAtom) === DistributionMethod.REMOTE
 
     const resetAllValues = (): void => {
         setAudios([...OgAssets!.audio])
@@ -61,7 +62,7 @@ const Audio = (): React.JSX.Element => {
                     {audios.map((audio) => (
                         <div key={audio.name} className="assets-container audio-asset-container">
                             <p>{assetName(audio.name)}</p>
-                            <audio src={audio.base64} controls />
+                            <audio src={isRemote ? audio.filePath : audio.base64} controls />
                             {audio.customBase64 ? (
                                 <audio src={audio.customBase64} controls />
                             ) : (

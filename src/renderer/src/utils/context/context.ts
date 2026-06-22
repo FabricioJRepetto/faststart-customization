@@ -10,7 +10,9 @@ import {
     DefaultStylesData,
     ThemeConfig,
     ThirdScreenConfig,
-    DefaultThirdConfigData
+    DefaultThirdConfigData,
+    DistributionMethod,
+    UPLOAD_STAGE
 } from '@shared/types'
 
 export const store = createStore()
@@ -18,6 +20,9 @@ export const store = createStore()
 export const FirstLoadAtom = atom<boolean>(true)
 /** Pantalla actual a renderizar */
 export const CurrentScreenAtom = atom<Screens>(Screens.landing)
+
+/** Forma de distribuir los assets, puede ser local (moviendo los archivos al directorio de cada app) o subiendolos a un servidor. */
+export const DistributionMethodAtom = atom<DistributionMethod>()
 
 /** Directorio base de la aplicación. @example 'C:\ncr-cc' */
 export const RootDirectoryAtom = atom<string>('C:\\ncr-cc')
@@ -66,3 +71,17 @@ export const EditedThirdScreenConfigDataAtom = atom<ThirdScreenConfig>(DefaultTh
 
 /** Lista de temas previamente guardados en la libreria */
 export const ThemesLibraryDataAtom = atom<ThemeConfig[]>()
+
+/** Estado del servidor */
+export const ServerStatusAtom = atom<boolean>()
+/** Upload: progreso */
+export const UploadProgressAtom = atom<{ currentFile: string, ok: number; failed: number; total: number }>({
+    currentFile: '',
+    ok: 0,
+    failed: 0,
+    total: 0
+})
+/** Upload: etapa */
+export const UploadStageAtom = atom<UPLOAD_STAGE>()
+
+export const PreviewScreenIndexAtom = atom<number>(0)

@@ -3,8 +3,9 @@ import InfoSvg from '../assets/info.svg?react'
 
 interface Props {
     text: string
+    children?: React.JSX.Element
 }
-const Tooltip = ({ text }: Props): React.JSX.Element => {
+const Tooltip = ({ text, children }: Props): React.JSX.Element => {
     const [showText, setShowText] = useState<boolean>(false)
 
     const hoverEnter = (): void => {
@@ -17,7 +18,7 @@ const Tooltip = ({ text }: Props): React.JSX.Element => {
 
     return (
         <div className="tooltip" onMouseEnter={hoverEnter} onMouseLeave={hoverLeave}>
-            <InfoSvg />
+            {children || <InfoSvg />}
             {showText && <div className={`tooltip-text fade-in`}>{text}</div>}
         </div>
     )

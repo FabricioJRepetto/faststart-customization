@@ -12,7 +12,7 @@ import { langDataShell } from '@renderer/utils/LangStructureBuilder'
 
 const Languages = (): React.JSX.Element => {
     //* Original
-    const [OGLangData] = useAtom(DefaultLanguageDataAtom)
+    const [OGLangData] = useAtom(DefaultLanguageDataAtom) || {}
     //* Nuevo
     const [newLangData, setNewLangData] = useAtom(EditedLanguageDataAtom)
 

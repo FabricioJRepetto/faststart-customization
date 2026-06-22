@@ -1,13 +1,14 @@
 import { assetName } from '@renderer/utils/assetsUtils'
-import { AssetsDataAtom, EditedIconsDataAtom } from '@renderer/utils/context/context'
+import { AssetsDataAtom, DistributionMethodAtom, EditedIconsDataAtom } from '@renderer/utils/context/context'
 import { useAtom, useAtomValue } from 'jotai'
 import ClearSvg from '../assets/clear.svg?react'
-import { filterType } from '@shared/types'
+import { DistributionMethod, filterType } from '@shared/types'
 import Tooltip from '@renderer/components/Tooltip'
 
 const Icons = (): React.JSX.Element => {
     const OgAssets = useAtomValue(AssetsDataAtom)
     const [icons, setIcons] = useAtom(EditedIconsDataAtom)
+    const isRemote = useAtomValue(DistributionMethodAtom) === DistributionMethod.REMOTE
 
     const resetAllValues = (): void => {
         setIcons([...OgAssets!.icon])
@@ -25,12 +26,10 @@ const Icons = (): React.JSX.Element => {
         console.log(res)
 
         if (res.success) {
-            const { filePath, base64 } = res.data
-            console.log(filePath)
-
+            const { filePath, base64, customMimeType } = res.data
             setIcons((prev) =>
                 prev!.map((e) =>
-                    e.name === key ? { ...e, customPath: filePath, customBase64: base64 } : e
+                    e.name === key ? { ...e, customPath: filePath, customBase64: base64, customMimeType } : e
                 )
             )
         }
@@ -64,7 +63,7 @@ const Icons = (): React.JSX.Element => {
                             <p>{assetName(icon.name)}</p>
 
                             <div className="icons-container">
-                                <img src={icon.base64} />
+                                <img src={isRemote ? icon.filePath : icon.base64} />
                                 {icon.customBase64 && <img src={icon.customBase64} />}
                             </div>
 

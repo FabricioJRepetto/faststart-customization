@@ -4,8 +4,9 @@ type ModalProps = {
     confirm: () => void
     close: () => void
     children: React.ReactNode // Explicitly defining the children prop
+    minimodal?: boolean
 }
-const Modal = ({ confirm, close, children }: ModalProps): React.JSX.Element => {
+const Modal = ({ confirm, close, children, minimodal = false }: ModalProps): React.JSX.Element => {
     useEffect(() => {
         const keysListener = (e: KeyboardEvent): void => {
             switch (e.key) {
@@ -29,8 +30,8 @@ const Modal = ({ confirm, close, children }: ModalProps): React.JSX.Element => {
 
     return (
         <>
-            <div className="modal-backdrop" onClick={close}></div>
-            <div className="lang-editor-modal">{children}</div>
+            <div className="modal-backdrop" onClick={close} style={{zIndex: minimodal ? 102 : 101}}></div>
+            <div className="lang-editor-modal" style={{zIndex: minimodal ? 103 : 102}}>{children}</div>
         </>
     )
 }

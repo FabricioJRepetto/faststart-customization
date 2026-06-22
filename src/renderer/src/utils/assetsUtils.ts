@@ -1,5 +1,7 @@
 import {
     AssetData,
+    AssetDataBase,
+    FileForUpload,
     FinalAssetData,
     FinalStylesData,
     LanguageData,
@@ -9,6 +11,8 @@ import {
 import {
     DefaultLanguageDataAtom,
     DefaultStylesDataAtom,
+    EditedLanguageDataAtom,
+    EditedStylesDataAtom,
     EditedThirdScreenAssetsDataAtom,
     EditedThirdScreenConfigDataAtom,
     store
@@ -44,33 +48,56 @@ export const assetExtention = (fileName: string): assetType => {
     return mime as assetType
 }
 
-export const dataParser = (
+export const listParser = async (
     originalDataList: AssetData[],
     newDataList: AssetData[]
+): Promise<FileForUpload[]> => {
+    const aux: FileForUpload[] = []
+
+    for await (const e of originalDataList) {
+        const custom = newDataList.find((c) => c.name === e.name)
+        if (custom?.customBase64) {
+            // const _fileType = assetExtention(custom?.customPath)
+            const file = await b64ToFile(custom.customBase64, e.name)
+            aux.push({ file, assetName: e.name })
+        }
+    }
+
+    return aux
+}
+
+export async function b64ToFile(dataUrl: string, filename: string): Promise<File> {
+    const res = await fetch(dataUrl)
+    const blob = await res.blob()
+    return new File([blob], filename, { type: blob.type })
+}
+
+export const dataParser = (
+    originalDataList: AssetData[],
+    newDataList: AssetDataBase[]
 ): FinalAssetData[] => {
     return originalDataList.map((e) => {
         const custom = newDataList.find((c) => c.name === e.name)
         const _path = custom?.customPath || e.filePath
-        const _fileType = assetExtention(custom?.customPath || e.filePath)
         return {
             name: e.name,
             path: _path,
-            fileType: _fileType
+            fileType: assetExtention(_path)
         }
     })
 }
 
-export const thirdDataParser = (): ThirdScreendata => {
+export const thirdDataParser = (remotePaths?: AssetDataBase[]): ThirdScreendata => {
     const config = store.get(EditedThirdScreenConfigDataAtom)
     const newThirdAssets = store.get(EditedThirdScreenAssetsDataAtom)
 
     const assets = newThirdAssets!.map((e) => {
-        const _path = e?.customPath || e.filePath
-        const _fileType = assetExtention(e?.customPath || e.filePath)
+        const remote = remotePaths?.find((e) => e.name)
+        const _path = remote?.customPath || e?.customPath || e.filePath
         return {
             name: e.name,
             path: _path,
-            fileType: _fileType
+            fileType: assetExtention(_path)
         }
     })
 
@@ -78,8 +105,9 @@ export const thirdDataParser = (): ThirdScreendata => {
 }
 
 /** Convierte 'true' o 'false' a booleano */
-export const stylesDataParser = (newList: StylesData): FinalStylesData => {
+export const stylesDataParser = (): FinalStylesData => {
     const ogStyles = store.get(DefaultStylesDataAtom) as StylesData
+    const newList = store.get(EditedStylesDataAtom)
 
     const aux: FinalStylesData = {
         logo: {
@@ -139,8 +167,9 @@ export const stylesDataParser = (newList: StylesData): FinalStylesData => {
     return aux as FinalStylesData
 }
 
-export const languageParser = (newLang: LanguageData): LanguageData => {
+export const languageParser = (): LanguageData => {
     const ogLang = store.get(DefaultLanguageDataAtom)
+    const newLang = store.get(EditedLanguageDataAtom)
 
     const aux = langDataFullStructure(ogLang)
     Object.keys(ogLang).map((lang) => {
@@ -149,4 +178,26 @@ export const languageParser = (newLang: LanguageData): LanguageData => {
         })
     })
     return aux
+}
+
+export const getMime = (path: string): string => {
+    try {
+        const ext = path.split('/').pop()!.split('.').pop()!.toLowerCase()
+        const mimeTypes: Record<string, string> = {
+            png: 'image/png',
+            jpg: 'image/jpeg',
+            jpeg: 'image/jpeg',
+            webp: 'image/webp',
+            svg: 'image/svg+xml',
+            gif: 'image/gif',
+            webm: 'video/webm',
+            mp4: 'video/mp4',
+            mp3: 'audio/mpeg',
+            wav: 'audio/wav'
+        }
+        return mimeTypes[ext] ?? 'application/octet-stream'
+    } catch (error) {
+        console.error(error)
+        return 'application/octet-stream'
+    }
 }

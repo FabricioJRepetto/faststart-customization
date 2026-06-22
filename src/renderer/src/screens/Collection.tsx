@@ -1,25 +1,32 @@
 import Modal from '@renderer/components/Modal'
+import ThemeSettings from '@renderer/components/ModalBodies/ThemeConfig'
 import ThemeCard from '@renderer/components/ThemeCard'
 import Tooltip from '@renderer/components/Tooltip'
 import {
-    loadAssets,
-    loadCustomConfigFile,
-    loadLanguageFile,
-    loadThemesLibrary,
+    loadLocalAssets,
+    loadLocalCustomConfigFile,
+    loadLocalLanguageFile,
+    loadLocalThemesLibrary,
+    loadRemoteThemesCollection,
     validateFiles
 } from '@renderer/utils/bootSequence'
 import {
     ClientAppVersionDirAtom,
     DefaultStylesDataAtom,
+    DistributionMethodAtom,
     store,
     SupervisorAppVersionDirAtom,
     ThemesLibraryDataAtom,
     ThirdAppVersionDirAtom
 } from '@renderer/utils/context/context'
+import mediaServiceController from '@renderer/utils/controllers/mediaServer/mediaServiceController'
+import { DistributionMethod } from '@shared/types'
 import { useAtom, useAtomValue } from 'jotai'
 import { useState } from 'react'
 
 const Collections = (): React.JSX.Element => {
+    const isRemote = useAtomValue(DistributionMethodAtom) === DistributionMethod.REMOTE
+
     const [collection] = useAtom(ThemesLibraryDataAtom)
     const clientDir = useAtomValue(ClientAppVersionDirAtom)
     const thirdVersionDir = useAtomValue(ThirdAppVersionDirAtom)
@@ -45,11 +52,11 @@ const Collections = (): React.JSX.Element => {
             if (res.success) {
                 console.log('success')
 
-                store.set(DefaultStylesDataAtom, undefined)                
+                store.set(DefaultStylesDataAtom, undefined)
 
-                await loadAssets(clientDir, thirdVersionDir)
-                await loadLanguageFile(clientDir)
-                await loadCustomConfigFile(clientDir)
+                await loadLocalAssets(clientDir, thirdVersionDir)
+                await loadLocalLanguageFile(clientDir)
+                await loadLocalCustomConfigFile(clientDir)
                 validateFiles()
 
                 setModal({
@@ -71,7 +78,7 @@ const Collections = (): React.JSX.Element => {
     const openDeleteModal = (v: string): void => {
         setDeleteModal({
             title: `¿Seguro desea borrar el tema ${v}?`,
-            text: 'Esta acción no se peude deshacer',
+            text: `Esta acción se va a efectuar ${isRemote ? 'en el servidor' : 'de manera local'} y no se puede deshacer.`,
             value: v
         })
     }
@@ -79,9 +86,19 @@ const Collections = (): React.JSX.Element => {
     const deleteTheme = async (themeName: string): Promise<void> => {
         setLoading(true)
 
+        if (isRemote) {
+            await deleteRemoteTheme(themeName)
+        } else {
+            await deleteLocalTheme(themeName)
+        }
+
+        setLoading(false)
+    }
+
+    const deleteLocalTheme = async (themeName: string): Promise<void> => {
         const res = await window.electronAPI.deleteTheme(themeName)
         if (res.success) {
-            await loadThemesLibrary()
+            await loadLocalThemesLibrary()
 
             setDeleteModal(false)
             setModal({ title: `Tema ${themeName} borrado correctamente` })
@@ -89,14 +106,35 @@ const Collections = (): React.JSX.Element => {
             setDeleteModal(false)
             setModal({ title: `Error al borrar tema`, text: res.error })
         }
-        setLoading(false)
+    }
+
+    //_-_-_-_-_-_-_-_-_-_- REMOTE _-_-_-_-_-_-_-_-_-_-
+    const [settingsModal, setSettingsModal] = useState<{ themeName: string } | false>(false)
+
+    const deleteRemoteTheme = async (themeName: string): Promise<void> => {
+        try {
+            const res = await mediaServiceController.deleteTheme(themeName)
+
+            if (res) {
+                await loadRemoteThemesCollection()
+
+                setDeleteModal(false)
+                setModal({ title: `Tema ${themeName} borrado correctamente` })
+            } else {
+                setDeleteModal(false)
+                setModal({ title: `Error al borrar tema` })
+            }
+        } catch (error) {
+            setDeleteModal(false)
+            setModal({ title: `Error al borrar tema`, text: JSON.stringify(error) })
+        }
     }
 
     return (
         <div className="screen-content">
             <div className="screen-header">
                 <h1>
-                    Colleciones
+                    Colecciones
                     <Tooltip
                         text={
                             'En esta sección se meustran "temas" (conjuntos de customizaciones) que han sido guardados previamente para favorecer la rápida aplicación de estilos.'
@@ -116,6 +154,9 @@ const Collections = (): React.JSX.Element => {
                             theme={t}
                             applyCb={(v: string) => !loading && applyTheme(v)}
                             deleteCb={(v: string) => !loading && openDeleteModal(v)}
+                            openSettings={(v: string) =>
+                                !loading && setSettingsModal({ themeName: v })
+                            }
                         />
                     ))
                 ) : (
@@ -147,6 +188,20 @@ const Collections = (): React.JSX.Element => {
                             <a onClick={() => deleteTheme(deleteModal.value)}>Sí, borrar</a>
                         </div>
                     </div>
+                </Modal>
+            )}
+
+            {settingsModal && (
+                <Modal
+                    confirm={() => setSettingsModal(false)}
+                    close={() => setSettingsModal(false)}
+                >
+                    <ThemeSettings
+                        themeData={
+                            collection!.find((t) => t.themeName === settingsModal.themeName)!
+                        }
+                        closeModal={() => setSettingsModal(false)}
+                    />
                 </Modal>
             )}
         </div>

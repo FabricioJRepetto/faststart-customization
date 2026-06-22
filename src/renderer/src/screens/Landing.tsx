@@ -1,26 +1,33 @@
 import { useAtom, useSetAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import Versions from '../components/Versions'
-import NATL from '../assets/NATL-logo.svg'
+import NATL from '../assets/NATL-logo.svg?react'
 import RightSvg from '../assets/right.svg?react'
 import {
     ClientAppVersionDirAtom,
     RootDirectoryAtom,
     CurrentScreenAtom,
     SupervisorAppVersionDirAtom,
-    ThirdAppVersionDirAtom
+    ThirdAppVersionDirAtom,
+    DistributionMethodAtom,
+    ServerStatusAtom
 } from '@renderer/utils/context/context'
-import { Screens } from '@shared/types'
-import { VERSIONS_DIR } from '../../../../shared/CONSTANTS'
+import { DistributionMethod, Screens } from '@shared/types'
+import { BACKEND_BASE_URL, VERSIONS_DIR } from '../../../../shared/CONSTANTS'
 import SpinnerSvg from '../assets/spinner.svg?react'
 import {
-    loadAssets,
-    loadCustomConfigFile,
-    loadLanguageFile,
-    loadStylesFile,
-    loadThemesLibrary,
+    loadLocalAssets,
+    loadLocalCustomConfigFile,
+    loadLocalLanguageFile,
+    loadLocalStylesFile,
+    loadLocalThemesLibrary,
+    loadRemoteCustomConfig,
+    loadRemoteThemesCollection,
+    parseRemoteAssets,
     validateFiles
 } from '@renderer/utils/bootSequence'
+import RemoteSvg from '../assets/wifi.svg?react'
+import LocalSvg from '../assets/box.svg?react'
 
 // TODO Checkear que los directorios seleccionados tienen la estructura correcta antes de avanzar
 
@@ -31,6 +38,9 @@ interface modalData {
 
 const Landing = (): React.JSX.Element => {
     const setScreen = useSetAtom(CurrentScreenAtom)
+    const [serverStatus, setStatus] = useAtom(ServerStatusAtom)
+
+    const [method, setMethod] = useAtom(DistributionMethodAtom)
 
     const [baseDir, setBaseDir] = useAtom(RootDirectoryAtom)
     const [clientVersionDir, setClientVersionDir] = useAtom(ClientAppVersionDirAtom)
@@ -49,6 +59,14 @@ const Landing = (): React.JSX.Element => {
 
     const [loading, setLoading] = useState(false)
     const [modal, setModal] = useState<modalData[] | null>(null)
+
+    useEffect(() => {
+        fetch(BACKEND_BASE_URL)
+            .then((r) => setStatus(r.ok))
+            .catch(() => setStatus(false))
+    }, [setStatus])
+
+    //_-_-_-_-_-_-_-_-_-_- LOCAL _-_-_-_-_-_-_-_-_-_-_-
 
     const continueHandler = async (): Promise<void> => {
         try {
@@ -81,22 +99,22 @@ const Landing = (): React.JSX.Element => {
             console.log('continuing...')
 
             //* LOAD : assets
-            await loadAssets(_clientVer || clientVersionDir, _thirdVer || thirdVersionDir)
+            await loadLocalAssets(_clientVer || clientVersionDir, _thirdVer || thirdVersionDir)
 
             //* LOAD : language.json
-            await loadLanguageFile(_clientVer || clientVersionDir)
+            await loadLocalLanguageFile(_clientVer || clientVersionDir)
 
             //* LOAD : styles.json
-            await loadStylesFile(_clientVer || clientVersionDir)
+            await loadLocalStylesFile(_clientVer || clientVersionDir)
 
             //* LOAD : customConfig.json
-            await loadCustomConfigFile(_clientVer || clientVersionDir)
+            await loadLocalCustomConfigFile(_clientVer || clientVersionDir)
 
             //* VALIDATE : language.json, styles.json / customConfig.json
             validateFiles()
 
             //* Libreria de temas
-            await loadThemesLibrary()
+            await loadLocalThemesLibrary()
 
             setScreen(Screens.main)
         } catch (error) {
@@ -221,40 +239,107 @@ const Landing = (): React.JSX.Element => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [modal])
 
+    //_-_-_-_-_-_-_-_-_-_- REMOTE _-_-_-_-_-_-_-_-_-_-_-
+
+    const remoteStartUp = async (): Promise<void> => {
+        try {
+            setLoading(true)
+
+            //* LOAD : customConfig.json
+            await loadRemoteCustomConfig()
+            validateFiles()
+            //* LOAD : Assets
+            parseRemoteAssets()
+            //* Libreria de temas
+            await loadRemoteThemesCollection()
+
+            setMethod(DistributionMethod.REMOTE)
+            setScreen(Screens.main)
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
     return (
         <div className="landing-screen">
-            <img alt="logo" className="logo" src={NATL} />
-            <div className="creator">Versión de desarrollo</div>
+            <NATL className="logo" />
+            <div className="creator">Versión demo</div>
             <div className="text">
-                Administrador de assets custom para <span className="gradient-text">FastStart</span>
-            </div>
-            <p className="tip">
-                Seleccione el directorio base de faststart para comenzar a administrar sus assets.
-            </p>
-            <p className="tip">
-                Root Dir: <code>{baseDir}</code>
-            </p>
-            <div className="actions landing-buttons">
-                <div className="action">
-                    <input type="file" id="base-dir-input" style={{ display: 'none' }} />
-                    <a target="_blank" rel="noreferrer" onClick={() => openSelectDirectory()}>
-                        Seleccionar Directorio Base
-                    </a>
-                </div>
-                <div
-                    className="action primary waiter"
-                    style={{ pointerEvents: !loading ? 'all' : 'none' }}
-                >
-                    <a target="_blank" rel="noreferrer" onClick={continueHandler}>
-                        {loading && <SpinnerSvg className="spinner" />}
-                        <span style={{ opacity: loading ? '0' : 'unset' }}>
-                            Continuar
-                            <RightSvg />
-                        </span>
-                    </a>
+                Administración Rápida de Customizaciones
+                <div className="text">
+                    para <span className="gradient-text">FastStart</span>
                 </div>
             </div>
-            <Versions></Versions>
+
+            {!method && (
+                <>
+                    <p className="tip">Seleccione el modo de distribución:</p>
+                    <div className="actions landing-buttons">
+                        <div
+                            className={serverStatus ? 'action primary waiter' : 'action waiter'}
+                            style={{
+                                pointerEvents: serverStatus ? 'all' : 'none',
+                                opacity: serverStatus ? '1' : '0.5'
+                            }}
+                        >
+                            <a target="_blank" rel="noreferrer" onClick={remoteStartUp}>
+                                {loading && <SpinnerSvg className="spinner" />}
+                                <span style={{ opacity: loading ? '0' : 'unset' }}>
+                                    <RemoteSvg /> Remoto
+                                </span>
+                            </a>
+                        </div>
+                        <div className="action">
+                            <a
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={() => setMethod(DistributionMethod.LOCAL)}
+                            >
+                                <LocalSvg />
+                                Local
+                            </a>
+                        </div>
+                    </div>
+                </>
+            )}
+
+            {method === DistributionMethod.LOCAL && (
+                <>
+                    <p className="tip">
+                        Seleccione el directorio base de faststart para comenzar a administrar sus
+                        assets.
+                    </p>
+                    <p className="tip">
+                        Root Dir: <code>{baseDir}</code>
+                    </p>
+                    <div className="actions landing-buttons">
+                        <div className="action">
+                            <input type="file" id="base-dir-input" style={{ display: 'none' }} />
+                            <a
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={() => openSelectDirectory()}
+                            >
+                                Seleccionar Directorio Base
+                            </a>
+                        </div>
+                        <div
+                            className="action primary waiter"
+                            style={{ pointerEvents: !loading ? 'all' : 'none' }}
+                        >
+                            <a target="_blank" rel="noreferrer" onClick={continueHandler}>
+                                {loading && <SpinnerSvg className="spinner" />}
+                                <span style={{ opacity: loading ? '0' : 'unset' }}>
+                                    Continuar
+                                    <RightSvg />
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </>
+            )}
 
             {modal && modal[0] && (
                 <>
@@ -279,6 +364,8 @@ const Landing = (): React.JSX.Element => {
                     </div>
                 </>
             )}
+
+            <Versions></Versions>
         </div>
     )
 }

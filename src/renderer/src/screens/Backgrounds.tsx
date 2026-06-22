@@ -1,9 +1,9 @@
 import { assetName } from '@renderer/utils/assetsUtils'
-import { AssetsDataAtom, EditedBackgroundsDataAtom } from '@renderer/utils/context/context'
+import { AssetsDataAtom, DistributionMethodAtom, EditedBackgroundsDataAtom } from '@renderer/utils/context/context'
 import { useAtom, useAtomValue } from 'jotai'
 import ClearSvg from '../assets/clear.svg?react'
 import ResetSvg from '../assets/trash.svg?react'
-import { filterType } from '@shared/types'
+import { DistributionMethod, filterType } from '@shared/types'
 import Tooltip from '@renderer/components/Tooltip'
 
 // TODO Aceptar videos tambien
@@ -11,6 +11,7 @@ import Tooltip from '@renderer/components/Tooltip'
 const Backgrounds = (): React.JSX.Element => {
     const OgAssets = useAtomValue(AssetsDataAtom)
     const [backgrounds, setBackgrounds] = useAtom(EditedBackgroundsDataAtom)
+    const isRemote = useAtomValue(DistributionMethodAtom) === DistributionMethod.REMOTE
 
     const resetAllValues = (): void => {
         setBackgrounds([...OgAssets!.background])
@@ -67,7 +68,7 @@ const Backgrounds = (): React.JSX.Element => {
                             <p>{assetName(bg.name)}</p>
 
                             <div className="bg-container">
-                                <img src={bg.base64} />
+                                <img src={isRemote ? bg.filePath : bg.base64} />
                                 {bg.customBase64 ? (
                                     <div className="custom-bg-container">
                                         <img src={bg.customBase64} />

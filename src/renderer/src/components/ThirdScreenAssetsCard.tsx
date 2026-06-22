@@ -1,8 +1,10 @@
 import { assetName } from '@renderer/utils/assetsUtils'
-import { AssetData } from '@shared/types'
+import { AssetData, DistributionMethod } from '@shared/types'
 import { useState } from 'react'
 import ResetSvg from '../assets/trash.svg?react'
 import AddSvg from '../assets/add.svg?react'
+import { DistributionMethodAtom } from '@renderer/utils/context/context'
+import { useAtomValue } from 'jotai'
 
 interface AddNewProps {
     addNew: () => void
@@ -55,6 +57,7 @@ export const NewAssetCard = ({ data, deleteValue }: NewProps): React.JSX.Element
 
 export const ThirdCard = ({ data, deleteValue }: NewProps): React.JSX.Element => {
     const [loaded, setLoaded] = useState<boolean>(false)
+    const isRemote = useAtomValue(DistributionMethodAtom) === DistributionMethod.REMOTE
 
     return (
         <div key={data.name} className="assets-container thirdscreen-asset-container">
@@ -63,7 +66,7 @@ export const ThirdCard = ({ data, deleteValue }: NewProps): React.JSX.Element =>
                 <div className="custom-thirscreen-container">
                     {data.mimeType.match('video') ? (
                         <video
-                            src={data.base64}
+                            src={isRemote ? data.filePath: data.base64}
                             width={350}
                             muted
                             autoPlay

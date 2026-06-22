@@ -5,7 +5,7 @@ import {
     FirstLoadAtom,
     ThirdAppVersionDirAtom,
     SupervisorAppVersionDirAtom,
-    ThemesLibraryDataAtom
+    DistributionMethodAtom
 } from '@renderer/utils/context/context'
 import { Previewer } from '@renderer/components/Previewer'
 import { useEffect, useState } from 'react'
@@ -14,11 +14,19 @@ import AppsVersions from '@renderer/components/AppsVersions'
 import Modal from '@renderer/components/Modal'
 import { getRawConfig } from '@renderer/utils/getRawConfig'
 import SpinnerSvg from '../assets/spinner.svg?react'
-import { loadThemesLibrary } from '@renderer/utils/bootSequence'
+import { loadLocalThemesLibrary } from '@renderer/utils/bootSequence'
 import ApplySvg from '../assets/apply.svg?react'
 import StorageSvg from '../assets/storage.svg?react'
+import UploadSvg from '../assets/upload.svg?react'
+import { DistributionMethod } from '@shared/types'
+import RemotePill from '@renderer/components/RemotePill'
+import UploadDialog from '@renderer/components/ModalBodies/UploadDialog'
+import { test, unicName } from '@renderer/utils/themesUtils'
+import mediaServiceController from '@renderer/utils/controllers/mediaServer/mediaServiceController'
 
 export const MainScreen = (): React.JSX.Element => {
+    const isRemote = useAtomValue(DistributionMethodAtom) === DistributionMethod.REMOTE
+
     const clientDir = useAtomValue(ClientAppVersionDirAtom)
     const thirdDir = useAtomValue(ThirdAppVersionDirAtom)
     const supDir = useAtomValue(SupervisorAppVersionDirAtom)
@@ -31,7 +39,6 @@ export const MainScreen = (): React.JSX.Element => {
 
     const [modal, setModal] = useState<boolean>(false)
     const [themeName, setThemeName] = useState<string>('')
-    const [themes] = useAtom(ThemesLibraryDataAtom)
 
     const [modalNotif, setModalNotif] = useState<{ title: string; text?: string } | false>(false)
 
@@ -50,33 +57,31 @@ export const MainScreen = (): React.JSX.Element => {
         setModal(true)
     }
 
-    const test = (): boolean => {
-        return /^[a-z0-9]+[a-z0-9 _.-]*$/gi.test(themeName)
-    }
-
-    const unicName = (): boolean => {
-        return !themes?.map((t) => t.themeName.toLowerCase()).includes(themeName.toLowerCase())
-    }
-
     const toggleCustomEnabled = async (): Promise<void> => {
         setLoadingApply(true)
         setCustomEnabled(!customEnabled)
 
-        const res = await window.electronAPI.toggleEnabled(
-            !customEnabled,
-            clientDir,
-            thirdDir,
-            supDir
-        )
-        res.success
-            ? console.log(res.data + '/3 custom files updated correctly')
-            : console.error('Error enabling customs')
-
+        if (isRemote) {
+            const res = await mediaServiceController.toggleCustomization()
+            if (res) console.log('Customization toggled')                
+            else console.log('Error toggling customizations');
+            
+        } else {
+            const res = await window.electronAPI.toggleEnabled(
+                !customEnabled,
+                clientDir,
+                thirdDir,
+                supDir
+            )
+            res.success
+                ? console.log(res.data + '/3 custom files updated correctly')
+                : console.error('Error enabling customs')
+        }
         setLoadingApply(false)
     }
 
     const saveConfig = async (): Promise<void> => {
-        if (!test() || !unicName() || loadingApply) {
+        if (!test(themeName) || !unicName(themeName) || loadingApply) {
             return
         }
 
@@ -84,10 +89,10 @@ export const MainScreen = (): React.JSX.Element => {
         const aux = getRawConfig(themeName)
         const res = await window.electronAPI.saveThemeData(aux)
 
-        let notif = {title: '', text: ''}
+        let notif = { title: '', text: '' }
         if (res.success) {
             console.log('[SAVE] Custom config file writen')
-            await loadThemesLibrary()
+            await loadLocalThemesLibrary()
             notif = {
                 title: `Tema ${themeName} guardado`,
                 text: 'Puede verse en la sección "Colecciones"'
@@ -135,10 +140,20 @@ export const MainScreen = (): React.JSX.Element => {
         setLoadingApply(false)
     }
 
+    //_-_-_-_-_-_-_-_-_-_- REMOTE _-_-_-_-_-_-_-_-_-_-
+
+    const [loadingUpload, setLoadingUpload] = useState<boolean>(false)
+    const [modalUpload, setModalUpload] = useState<boolean>(false)
+
+    const openUploadModal = (): void => {
+        setModalUpload(true)
+        setLoadingUpload(true)
+    }
+
     return (
-        <div className={`screen-content main-container ${firstLoad ? 'fade-in' : ''}`}>
-            <div>
-                <div className="main-header">
+        <div className={`screen-content main-screen-container ${firstLoad ? 'fade-in' : ''}`}>
+            <>
+                <div className="screen-header">
                     <h1>Previsualización</h1>
                     <div className="toggler">
                         <div
@@ -147,88 +162,125 @@ export const MainScreen = (): React.JSX.Element => {
                         >
                             Customización
                             <button className={customEnabled ? '' : 'power-off'}>
-                                <PowerSvg />
+                                {loadingApply ? <SpinnerSvg className="spinner" /> : <PowerSvg />}
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <Previewer />
+                <div className="main-screen-content">
+                    <Previewer />
 
-                <div className="actions main-actions">
-                    <div
-                        className="action"
-                        style={{ pointerEvents: !loadingApply && !loadingSave ? 'all' : 'none' }}
-                    >
-                        <a onClick={() => !loadingApply && !loadingSave && openModal()}>
-                            Guardar
-                            <StorageSvg />
-                        </a>
-                    </div>
-
-                    <div
-                        className="action primary waiter"
-                        style={{ pointerEvents: !loadingApply && !loadingSave ? 'all' : 'none' }}
-                    >
-                        <a onClick={() => !loadingApply && !loadingSave && applyConfig()}>
-                            {loadingApply && <SpinnerSvg className="spinner" />}
-                            {
-                                <span style={{ opacity: loadingApply ? '0' : 'unset' }}>
-                                    Aplicar <ApplySvg />
-                                </span>
-                            }
-                        </a>
-                    </div>
-                </div>
-
-                <AppsVersions />
-
-                {modal && (
-                    <Modal confirm={saveConfig} close={closeModal}>
-                        <h2>
-                            Guardar <span className="gradient-text">tema</span> nuevo
-                        </h2>
-                        <p>Indica un nombre para identificarlo</p>
-                        <input
-                            type="text"
-                            autoFocus
-                            value={themeName}
-                            id="lang-value-input"
-                            onChange={(e) => setThemeName(e.target.value)}
-                        />
-                        <p className="error-messagge">
-                            {!test()
-                                ? 'Solo se permiten letras, números, puntos y guiones'
-                                : unicName()
-                                  ? ''
-                                  : 'El nombre ya está en uso'}
-                        </p>
-                        <div className="actions">
+                    {isRemote ? (
+                        <div className="actions main-actions">
                             <div
                                 className="action primary"
-                                style={{ pointerEvents: test() && unicName() ? 'all' : 'none' }}
+                                style={{
+                                    pointerEvents: !loadingApply && !loadingSave ? 'all' : 'none'
+                                }}
                             >
-                                <a onClick={saveConfig}>Aplicar</a>
-                            </div>
-                            <div className="action">
-                                <a onClick={closeModal}>Cancelar</a>
+                                <a onClick={openUploadModal}>
+                                    Subir
+                                    <UploadSvg />
+                                </a>
                             </div>
                         </div>
-                    </Modal>
-                )}
+                    ) : (
+                        <div className="actions main-actions">
+                            <div
+                                className="action"
+                                style={{
+                                    pointerEvents: !loadingApply && !loadingSave ? 'all' : 'none'
+                                }}
+                            >
+                                <a onClick={() => !loadingApply && !loadingSave && openModal()}>
+                                    Guardar
+                                    <StorageSvg />
+                                </a>
+                            </div>
 
-                {modalNotif && (
-                    <Modal confirm={() => setModalNotif(false)} close={() => setModalNotif(false)}>
-                        <h2>{modalNotif.title}</h2>
-                        <p>{modalNotif.text}</p>
-                        <div className="actions">
-                            <div className="action primary">
-                                <a onClick={() => setModalNotif(false)}>Continuar</a>
+                            <div
+                                className="action primary waiter"
+                                style={{
+                                    pointerEvents: !loadingApply && !loadingSave ? 'all' : 'none'
+                                }}
+                            >
+                                <a onClick={() => !loadingApply && !loadingSave && applyConfig()}>
+                                    {loadingApply && <SpinnerSvg className="spinner" />}
+                                    {
+                                        <span style={{ opacity: loadingApply ? '0' : 'unset' }}>
+                                            Aplicar <ApplySvg />
+                                        </span>
+                                    }
+                                </a>
                             </div>
                         </div>
-                    </Modal>
-                )}
-            </div>
+                    )}
+
+                    {isRemote ? <RemotePill /> : <AppsVersions />}
+
+                    {modal && (
+                        <Modal confirm={saveConfig} close={closeModal}>
+                            <h2>
+                                Guardar <span className="gradient-text">tema</span> nuevo
+                            </h2>
+                            <p>Indica un nombre para identificarlo</p>
+                            <input
+                                type="text"
+                                autoFocus
+                                value={themeName}
+                                id="lang-value-input"
+                                onChange={(e) => setThemeName(e.target.value)}
+                            />
+                            <p className="info-message error-messagge">
+                                {!test(themeName)
+                                    ? 'Solo se permiten letras, números, puntos y guiones'
+                                    : unicName(themeName)
+                                      ? ''
+                                      : 'El nombre ya está en uso'}
+                            </p>
+                            <div className="actions">
+                                <div
+                                    className="action primary"
+                                    style={{
+                                        pointerEvents:
+                                            test(themeName) && unicName(themeName) ? 'all' : 'none'
+                                    }}
+                                >
+                                    <a onClick={saveConfig}>Aplicar</a>
+                                </div>
+                                <div className="action">
+                                    <a onClick={closeModal}>Cancelar</a>
+                                </div>
+                            </div>
+                        </Modal>
+                    )}
+
+                    {modalNotif && (
+                        <Modal
+                            confirm={() => setModalNotif(false)}
+                            close={() => setModalNotif(false)}
+                        >
+                            <h2>{modalNotif.title}</h2>
+                            <p>{modalNotif.text}</p>
+                            <div className="actions">
+                                <div className="action primary">
+                                    <a onClick={() => setModalNotif(false)}>Continuar</a>
+                                </div>
+                            </div>
+                        </Modal>
+                    )}
+
+                    {modalUpload && (
+                        <Modal
+                            confirm={() => !loadingUpload && setModalUpload(false)}
+                            close={() => !loadingUpload && setModalUpload(false)}
+                        >
+                            <UploadDialog closeModal={() => setModalUpload(false)} />
+                        </Modal>
+                    )}
+                </div>
+            </>
         </div>
     )
 }

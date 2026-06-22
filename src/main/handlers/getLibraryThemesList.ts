@@ -31,12 +31,18 @@ export const getLibraryThemesList = async (): Promise<IpcResponse<ThemeConfig[]>
                 const logo = getBase64(
                     join(libraryDir, e.name, config.icon.find((b) => b.name === 'icon_logo')!.path)
                 )
+                const customEnabled = config.customEnabled
+                const isActive = config?.isActive ?? false
+                const isDefaultTheme = config?.isDefaultTheme ?? false
 
                 return {
                     themeName,
                     color,
                     background,
-                    logo
+                    logo,
+                    customEnabled,
+                    isActive,
+                    isDefaultTheme
                 }
             })
         return { success: true, data: aux }

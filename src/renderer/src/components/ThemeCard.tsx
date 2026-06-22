@@ -1,20 +1,29 @@
-import { ThemeConfig } from '@shared/types'
+import { DistributionMethod, ThemeConfig } from '@shared/types'
 import ApplySvg from '../assets/apply.svg?react'
 import DeleteSvg from '../assets/trash.svg?react'
-import ThemeSvg from '../assets/theme.svg?react'
+import StarSvg from '../assets/star.svg?react'
+import BlockSvg from '../assets/block.svg?react'
+import SettingsSvg from '../assets/settings.svg?react'
 import { DEFAULT_THEME } from '@shared/CONSTANTS'
 import { useEffect, useState } from 'react'
+import DynamicSvg from './DynSvg'
+import { useAtomValue } from 'jotai'
+import { DistributionMethodAtom } from '@renderer/utils/context/context'
+import Tooltip from './Tooltip'
 
 interface Props {
     theme: ThemeConfig
     applyCb: (v: string) => void
     deleteCb: (v: string) => void
+    openSettings: (v: string) => void
 }
-const ThemeCard = ({ theme, applyCb, deleteCb }: Props): React.JSX.Element => {
+const ThemeCard = ({ theme, applyCb, deleteCb, openSettings }: Props): React.JSX.Element => {
     const notDefaultTheme = theme.themeName !== DEFAULT_THEME
     const [COLOR, setCOLOR] = useState('white')
+    const isRemote = useAtomValue(DistributionMethodAtom) === DistributionMethod.REMOTE
 
-    useEffect(() => {        
+    useEffect(() => {
+        console.log(theme)
         ;(async () => {
             const themeSchema = await calculateContrast(
                 theme.color.primaryColor,
@@ -30,18 +39,47 @@ const ThemeCard = ({ theme, applyCb, deleteCb }: Props): React.JSX.Element => {
     return (
         <div className="theme-card-container">
             <span className="theme-card-name">
-                <ThemeSvg />
                 {theme.themeName}
+                <div className="theme-config-state-icons-container">
+                    {theme.isDefaultTheme && (
+                        <div className="theme-config-default-icon">
+                            <Tooltip text={'Designado como tema por defecto'}>
+                                <StarSvg />
+                            </Tooltip>
+                        </div>
+                    )}
+                    {theme.isActive && (
+                        <div className="theme-config-disabled-icon">
+                            <Tooltip text={'Tema desactivado'}>
+                                <BlockSvg />
+                            </Tooltip>
+                        </div>
+                    )}
+                </div>
             </span>
             <div className="theme-card" style={{ color: COLOR }}>
                 <img src={theme.background.base64} className="theme-card-background" />
-                <img src={theme.logo.base64} className="theme-card-logo" />
-                <p>{theme.themeName.toUpperCase()}</p>
+                <div className="theme-card-logo">
+                    {theme.logo.mime.match('svg') ? (
+                        <DynamicSvg path={theme.logo.base64} />
+                    ) : (
+                        <img src={theme.logo.base64} />
+                    )}
+                </div>
             </div>
             <div className="theme-card-footer">
-                <span className="button apply-buton" onClick={() => applyCb(theme.themeName)}>
-                    <ApplySvg />
-                </span>
+                {!isRemote ? (
+                    <span
+                        className="button apply-buton"
+                        onClick={() => openSettings(theme.themeName)}
+                    >
+                        <SettingsSvg />
+                    </span>
+                ) : (
+                    <span className="button apply-buton" onClick={() => applyCb(theme.themeName)}>
+                        <ApplySvg />
+                    </span>
+                )}
                 {notDefaultTheme && (
                     <span className="button delete-buton" onClick={() => deleteCb(theme.themeName)}>
                         <DeleteSvg />
@@ -105,7 +143,7 @@ const calculateContrast = async (
     primaryColor: string,
     bgPath: string
 ): Promise<'DARK' | 'LIGHT'> => {
-    const bgColor = await getDominantColorFromUrl(bgPath)    
+    const bgColor = await getDominantColorFromUrl(bgPath)
     const ratio = getContrastRatio(primaryColor, bgColor)
     return ratio >= 4.5 ? 'DARK' : 'LIGHT'
 }

@@ -3,14 +3,18 @@ import { CurrentScreenAtom } from '../context/context'
 import Landing from '@renderer/screens/Landing'
 import Icons from '@renderer/screens/Icons'
 import Backgrounds from '@renderer/screens/Backgrounds'
+import ThirdScreen from '@renderer/screens/ThirdScreen'
+import Audio from '@renderer/screens/Audio'
 import Languages from '@renderer/screens/Languages'
 import { Screens } from '@shared/types'
 import ScreenWrapper from '@renderer/components/ScreenWrapper'
 import Styles from '@renderer/screens/Styles'
-import ThirdScreen from '@renderer/screens/ThirdScreen'
-import Audio from '@renderer/screens/Audio'
 import MainScreen from '@renderer/screens/MainScreen'
 import Collections from '@renderer/screens/Collection'
+// import R_Icons from '@renderer/remoteScreens/Icons'
+// import R_Backgrounds from '@renderer/remoteScreens/Backgrounds'
+// import R_ThirdScreen from '@renderer/remoteScreens/ThirdScreen'
+// import R_Audio from '@renderer/remoteScreens/Audio'
 
 // TODO: Saltearse la landing si no hace falta input del usuario
 
@@ -22,13 +26,13 @@ const useCurrentScreen = (): React.JSX.Element => {
     const allScreens: Record<Screens, React.JSX.Element> = {
         [Screens.landing]: <Landing />,
         [Screens.main]: <MainScreen />,
-        [Screens.icons]: <Icons />,
         [Screens.styles]: <Styles />,
-        [Screens.backgrounds]: <Backgrounds />,
         [Screens.languages]: <Languages />,
+        [Screens.collections]: <Collections />,
+        [Screens.icons]: <Icons />,
+        [Screens.backgrounds]: <Backgrounds />,
         [Screens.thirdScreen]: <ThirdScreen />,
         [Screens.audio]: <Audio />,
-        [Screens.collections]: <Collections />
     }
 
     return <ScreenWrapper>{allScreens[currentScreen]}</ScreenWrapper>

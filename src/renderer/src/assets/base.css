@@ -12,12 +12,16 @@
     --ev-c-gray-3: #32363f;
 
     --ev-c-green-1: #00806c;
-    --ev-c-green-2: #006858;
-    --ev-c-green-3: #004e42;
+    --ev-c-green-2: #006152;
+    --ev-c-green-3: #003a31;
 
-    --ev-c-red-1: #7c091c;
-    --ev-c-red-2: #5f0010;
+    --ev-c-red-1: #99001a;
+    --ev-c-red-2: #720013;
     --ev-c-red-3: #4b000c;
+
+    --ev-c-orange-1: #dd7b1e;
+    --ev-c-orange-2: #a55e1c;
+    --ev-c-orange-3: #834c18;
 
     --ev-c-text-1: rgba(255, 255, 245, 0.86);
     --ev-c-text-2: rgba(235, 235, 245, 0.6);
@@ -32,10 +36,10 @@
 
     --ev-button-primary-border: transparent;
     --ev-button-primary-text: var(--ev-c-text-1);
-    --ev-button-primary-bg: var(--ev-c-green-3);
+    --ev-button-primary-bg: var(--ev-c-green-2);
     --ev-button-primary-hover-border: transparent;
     --ev-button-primary-hover-text: var(--ev-c-text-1);
-    --ev-button-primary-hover-bg: var(--ev-c-green-2);
+    --ev-button-primary-hover-bg: var(--ev-c-green-1);
 
     --ev-button-tertiary-border: transparent;
     --ev-button-tertiary-text: var(--ev-c-text-1);

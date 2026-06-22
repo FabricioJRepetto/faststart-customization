@@ -18,6 +18,11 @@ export interface IpcResponseFileData {
     customMimeType: string
 }
 
+export enum DistributionMethod {
+    LOCAL = 'LOCAL',
+    REMOTE = 'REMOTE'
+}
+
 export enum Screens {
     landing = 'landing',
     main = 'main',
@@ -68,8 +73,13 @@ export interface AppSettingsConfigModule {
     }[]
 }
 
-type AssetType = 'icon' | 'background' | 'audio' | 'thirdscreen' | 'other'
-export interface AssetData {
+export interface AssetDataBase {
+    name: string
+    customPath: string
+}
+
+export type AssetType = 'icon' | 'background' | 'audio' | 'thirdscreen' | 'other'
+export interface AssetData extends AssetDataBase {
     name: string
     assetType: AssetType
     filePath: string
@@ -231,6 +241,8 @@ export interface CustomConfig {
     ID: string
     themeName: string
     customEnabled: boolean
+    isDefaultTheme: boolean
+    isActive: boolean
     icon: FinalAssetData[]
     background: FinalAssetData[]
     thirdscreen: ThirdScreendata
@@ -243,6 +255,9 @@ export type CustomConfigKey = keyof CustomConfig
 
 export interface ThemeConfig {
     themeName: string
+    customEnabled: boolean
+    isDefaultTheme: boolean
+    isActive: boolean
     color: {
         primaryColor: string
         secondaryColor: string
@@ -264,4 +279,58 @@ export interface ThirdScreenConfig {
 
 export const DefaultThirdConfigData: ThirdScreenConfig = {
     intervalSeconds: 5
+}
+
+export interface MediaServiceBase {
+    getThemesList: () => Promise<CustomConfig[] | null>
+    getDefaultConfig: () => Promise<CustomConfig | null>
+    uploadFile: (file: File | Blob, themeName: string, fileName?: string) => Promise<DBFile | null>
+    delete: (path: string) => Promise<boolean>
+}
+
+export interface FileForUpload {
+    file: File
+    assetName: string
+}
+export interface UploadedFile extends AssetDataBase {
+    name: string
+    customPath: string
+}
+
+export enum UPLOAD_STAGE {
+    NAME = 'name',
+    PROCESSING = 'processing',
+    UPLOADING = 'uploading',
+    FINISHING = 'finishing',
+    DONE = 'done',
+    ERROR = 'error',
+    NOTHING_TO_DO = 'nothingToDo'
+}
+
+//_-_-_-_-_-_-_- TEMPORAL _-_-_-_-_-_-_-
+export interface DBFile {
+    /** Nombre del archivo */
+    name: string
+    /** Path, muestra subcarpetas si hay. @example test/bbva_sparks.png */
+    path: string
+    /** URL sin la Base. @example /files/test/bbva_sparks.png */
+    url: string
+    /** Tamaño del archivo */
+    sizeBytes: number
+    /** ISO string */
+    modified: string
+}
+export interface DBTheme {
+    name: string
+    config: DBFile
+    assets: DBFile[]
+}
+export interface RawDBFilesListRes {
+    count: number
+    files: DBFile[]
+}
+
+export interface RawDBUploadFileRes {
+    ok: number
+    file: DBFile
 }

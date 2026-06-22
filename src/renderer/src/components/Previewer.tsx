@@ -1,18 +1,33 @@
 import {
     DefaultConfigAtom,
-    // DefaultConfigAtom,
     DefaultLanguageDataAtom,
     DefaultStylesDataAtom,
+    DistributionMethodAtom,
     EditedBackgroundsDataAtom,
     EditedIconsDataAtom,
     EditedLanguageDataAtom,
-    EditedStylesDataAtom
+    EditedStylesDataAtom,
+    PreviewScreenIndexAtom
 } from '@renderer/utils/context/context'
-import { StylesParentKeys } from '@shared/types'
-import { useAtom } from 'jotai'
+import { DistributionMethod, StylesParentKeys } from '@shared/types'
+import { useAtom, useAtomValue } from 'jotai'
 import ThemeSvg from '../assets/theme.svg?react'
+import Idle from './previewr-screens/Idle'
+import Menu from './previewr-screens/Menu'
+import Input from './previewr-screens/Input'
+import DynamicSvg from './DynSvg'
+
+export interface PreviewScreenProps {
+    currBg: (name?: string) => string
+    currIcon: (name: string) => React.JSX.Element
+    currLang: (lang: string, name: string) => string
+    currStyle: (parentKey: StylesParentKeys, name: string) => string
+}
 
 export const Previewer = (): React.JSX.Element => {
+    const isRemote = useAtomValue(DistributionMethodAtom) === DistributionMethod.REMOTE
+    const [screen, setScreen] = useAtom(PreviewScreenIndexAtom)
+
     const [ogData] = useAtom(DefaultConfigAtom)
 
     const [bgData] = useAtom(EditedBackgroundsDataAtom)
@@ -22,23 +37,28 @@ export const Previewer = (): React.JSX.Element => {
     const [stylesData] = useAtom(EditedStylesDataAtom)
     const [ogStylesData] = useAtom(DefaultStylesDataAtom)
 
-    const currBg = (): string => {
+    const currBg = (name?: string): string => {
         try {
-            const bg = bgData?.find((e) => e?.name === 'background_Idle')
-            return bg?.customBase64 || bg!.base64
+            const bg = bgData?.find((e) => e?.name === (name ?? 'background_Idle'))
+            return bg?.customBase64 || (isRemote ? bg!.filePath : bg!.base64)
         } catch (error) {
             console.error(error)
             return ''
         }
     }
 
-    const currIcon = (name: string): string => {
+    const currIcon = (name: string): React.JSX.Element => {
         try {
+            
             const ico = iconData?.find((e) => e?.name === name)
-            return ico?.customBase64 || ico!.base64
+            console.log(ico)
+            const isSVG = (ico?.customMimeType || (isRemote ? ico!.mimeType : ico!.mimeType)).match('svg')
+            const path = ico?.customBase64 || (isRemote ? ico!.filePath : ico!.base64)
+
+            return isSVG ? <DynamicSvg path={path} /> : <img src={path} />
         } catch (error) {
             console.error(error)
-            return ''
+            return <></>
         }
     }
 
@@ -52,7 +72,7 @@ export const Previewer = (): React.JSX.Element => {
         }
     }
 
-    const currStyle = (parentKey: StylesParentKeys, name: string): string => {
+    function currStyle(parentKey: StylesParentKeys, name: string): string {
         try {
             const style = stylesData?.[parentKey]?.[name] || ogStylesData?.[parentKey]?.[name]
             if (name === 'borderRadius')
@@ -65,45 +85,56 @@ export const Previewer = (): React.JSX.Element => {
         }
     }
 
+    const SCREENS = [
+        <Idle
+            key={'Idle'}
+            currBg={currBg}
+            currIcon={currIcon}
+            currLang={currLang}
+            currStyle={currStyle}
+        />,
+        <Menu
+            key={'Menu'}
+            currBg={currBg}
+            currIcon={currIcon}
+            currLang={currLang}
+            currStyle={currStyle}
+        />,
+        <Input
+            key={'Input'}
+            currBg={currBg}
+            currIcon={currIcon}
+            currLang={currLang}
+            currStyle={currStyle}
+        />
+    ]
+
     return (
-        <div className="preview-container">
-            {ogData?.themeName && (
+        <div className="preview-wrapper">
+            <div className="preview-container">
                 <span className="preview-theme-name">
-                    <ThemeSvg />
-                    <p>{ogData?.themeName}</p>
+                    {ogData?.themeName && (
+                        <div>
+                            <ThemeSvg />
+                            <p>{ogData?.themeName}</p>
+                        </div>
+                    )}
+                    <p>{SCREENS[screen].key}</p>
                 </span>
-            )}
-            <div className="preview-content">
-                <img className="preview-bg" src={currBg()} />
-                <img className="preview-logo" src={currIcon('icon_logo')} />
 
-                <div
-                    className="preview-lang-btn"
-                    style={{
-                        color: currStyle(StylesParentKeys.secondaryButton, 'color'),
-                        backgroundColor: currStyle(StylesParentKeys.secondaryButton, 'background'),
-                        border: `3px solid ${currStyle(StylesParentKeys.secondaryButton, 'color')}`,
-                        borderRadius: currStyle(StylesParentKeys.secondaryButton, 'borderRadius')
-                    }}
-                >
-                    <img className="preview-lang-icon" src={currIcon('icon_world')} />
-                    es
-                </div>
-                <h1 style={{ color: currStyle(StylesParentKeys.general, 'primaryColor') }}>
-                    {currLang('es', 'thankYou')}
-                </h1>
+                {SCREENS[screen]}
 
-                <button
-                    className="preview-start-btn"
-                    style={{
-                        color: currStyle(StylesParentKeys.secondaryButton, 'color'),
-                        backgroundColor: currStyle(StylesParentKeys.secondaryButton, 'background'),
-                        border: `2px solid ${currStyle(StylesParentKeys.secondaryButton, 'border') === 'true' ? currStyle(StylesParentKeys.secondaryButton, 'color') : 'transparent'}`,
-                        borderRadius: currStyle(StylesParentKeys.secondaryButton, 'borderRadius')
-                    }}
-                >
-                    {currLang('es', 'button_start')}
-                </button>
+                {SCREENS.length > 1 && (
+                    <div className="preview-control">
+                        {SCREENS.map((e, i) => (
+                            <div
+                                key={e.key}
+                                onClick={() => setScreen(i)}
+                                style={{ backgroundColor: screen === i ? 'white' : '' }}
+                            ></div>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     )
