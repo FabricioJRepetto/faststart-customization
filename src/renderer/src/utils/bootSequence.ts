@@ -257,7 +257,12 @@ export const loadRemoteThemesCollection = async (): Promise<void> => {
         if (res.length) {
             console.log(`- Themes Collection Library. data OK\n`, '- Saving data')
             console.log(`Collection found (${res.length} themes):`)
-            res.map((t) => console.log(' - ' + t.themeName))
+            res.map((t) => {
+                console.log(' --- ', t.themeName)
+                console.log('  · isActive ' + t.isActive)
+                console.log('  · isDefaultTheme ' + t.isDefaultTheme)
+                console.log('  · customEnabled ' + t.customEnabled)
+            })
 
             store.set(ThemesLibraryDataAtom, res)
         } else {
@@ -268,6 +273,7 @@ export const loadRemoteThemesCollection = async (): Promise<void> => {
     }
 }
 
+/** Carga assets basandose en la configuración por defecto actual */
 export const parseRemoteAssets = (): void => {
     try {
         console.log('-----------------------------\n', '- Parsing remote assets...\n')
@@ -275,7 +281,6 @@ export const parseRemoteAssets = (): void => {
         const config = store.get(DefaultConfigAtom)
         if (config) {
             const data = parseConfigToAssetList(config)
-            console.log(JSON.stringify(data))
             store.set(AssetsDataAtom, data)
             store.set(EditedIconsDataAtom, [...data.icon])
             store.set(EditedBackgroundsDataAtom, [...data.background])

@@ -74,14 +74,19 @@ export const ThemesLibraryDataAtom = atom<ThemeConfig[]>()
 
 /** Estado del servidor */
 export const ServerStatusAtom = atom<boolean>()
-/** Upload: progreso */
+
+/** Indica si el tema a carga debe setearse como tema default también */
+export const UploadSetAsDefaultThemeAtom = atom<boolean>(false)
+
+/** Upload progress */
 export const UploadProgressAtom = atom<{ currentFile: string, ok: number; failed: number; total: number }>({
     currentFile: '',
     ok: 0,
     failed: 0,
     total: 0
 })
-/** Upload: etapa */
-export const UploadStageAtom = atom<UPLOAD_STAGE>()
+/** Upload stage */
+export const UploadStageAtom = atom<UPLOAD_STAGE>(UPLOAD_STAGE.NAME)
 
+/** Pantalla activa en la previsualización */
 export const PreviewScreenIndexAtom = atom<number>(0)

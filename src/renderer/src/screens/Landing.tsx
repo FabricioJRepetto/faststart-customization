@@ -61,8 +61,12 @@ const Landing = (): React.JSX.Element => {
     const [modal, setModal] = useState<modalData[] | null>(null)
 
     useEffect(() => {
-        fetch(BACKEND_BASE_URL)
-            .then((r) => setStatus(r.ok))
+        fetch(BACKEND_BASE_URL,{
+            method: 'HEAD',
+            mode: 'no-cors',
+            cache: 'no-cache'
+        })
+            .then(() => setStatus(true))
             .catch(() => setStatus(false))
     }, [setStatus])
 

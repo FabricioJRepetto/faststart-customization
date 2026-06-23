@@ -38,6 +38,8 @@ const Collections = (): React.JSX.Element => {
         { title: string; text?: string; value: string } | false
     >(false)
 
+
+
     const applyTheme = async (themeName: string): Promise<void> => {
         try {
             setLoading(true)
@@ -152,6 +154,7 @@ const Collections = (): React.JSX.Element => {
                         <ThemeCard
                             key={i}
                             theme={t}
+                            isDefault={t.isDefaultTheme}
                             applyCb={(v: string) => !loading && applyTheme(v)}
                             deleteCb={(v: string) => !loading && openDeleteModal(v)}
                             openSettings={(v: string) =>

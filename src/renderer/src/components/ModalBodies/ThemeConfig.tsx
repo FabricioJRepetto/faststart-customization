@@ -2,14 +2,24 @@ import { ThemeConfig } from '@shared/types'
 import DynamicSvg from '../DynSvg'
 import DownloadSvg from '../../assets/download.svg?react'
 import DeleteSvg from '../../assets/trash.svg?react'
+import ShieldSvg from '../../assets/shield.svg?react'
 import StarSvg from '../../assets/star.svg?react'
+import ToolSvg from '../../assets/tool.svg?react'
 import BlockSvg from '../../assets/block.svg?react'
 import AsyncOption from './theme-config-components/AsyncOption'
 import mediaServiceController from '@renderer/utils/controllers/mediaServer/mediaServiceController'
 import Modal from '../Modal'
 import { useState } from 'react'
-import { loadRemoteThemesCollection } from '@renderer/utils/bootSequence'
+import {
+    loadRemoteThemesCollection,
+    parseRemoteAssets,
+    validateFiles
+} from '@renderer/utils/bootSequence'
 import Tooltip from '../Tooltip'
+import { DEFAULT_THEME } from '@shared/CONSTANTS'
+import { DefaultConfigAtom } from '@renderer/utils/context/context'
+import { useSetAtom } from 'jotai'
+import { softReset } from '@renderer/utils/reset'
 
 interface Props {
     themeData: ThemeConfig
@@ -17,6 +27,12 @@ interface Props {
 }
 
 const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
+    const originalTheme = themeData.themeName === DEFAULT_THEME
+
+    const setDefaultConfig = useSetAtom(DefaultConfigAtom)
+    const defaultTheme = themeData.isDefaultTheme
+    const [infoModal, setInfoModal] = useState<boolean>(false)
+
     const [deleteModal, setDeleteModal] = useState<boolean>(false)
     const [modalRes, setModalRes] = useState<{ r: (v: unknown) => void }>()
     const [loading, setLoading] = useState<boolean>(false)
@@ -26,13 +42,29 @@ const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
     }
 
     const setAsDefault = async (): Promise<void> => {
-        await mediaServiceController.setDefaultTheme(themeData.themeName)
+        try {
+            setLoading(true)
+
+            const res = await mediaServiceController.setDefaultTheme(themeData.themeName)
+            if (!res) {
+                throw new Error('Error al definir tema como predefinido')
+            }
+
+            await loadRemoteThemesCollection()
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setLoading(false)
+        }
     }
+
     const deleteTheme = async (): Promise<void> => {
+        //? Modal promise, esperar interacción del usuario para continuar
+        setLoading(true)
+
         const res = await new Promise((res) => {
             setModalRes({ r: res })
             setDeleteModal(true)
-            setLoading(true)
         })
 
         setModalRes(undefined)
@@ -50,7 +82,51 @@ const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
         setLoading(false)
     }
 
-    const toggleActive = async (): Promise<void> => {}
+    const modifyTheme = async (): Promise<void> => {
+        try {
+            setLoading(true)
+            softReset()
+
+            const config = await mediaServiceController.getThemeConfig(themeData.themeName)
+            if (!config) {
+                throw new Error('Configuración no encontrada')
+            }
+            setDefaultConfig(config)
+
+            validateFiles()
+            parseRemoteAssets()
+
+            setInfoModal(true)
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const toggleActive = async (): Promise<void> => {
+        try {
+            setLoading(true)
+
+            const config = await mediaServiceController.getThemeConfig(themeData.themeName)
+            if (!config) {
+                throw new Error('Configuración no encontrada')
+            }
+            config.isActive = !config.isActive
+            const res = await mediaServiceController.uploadThemeConfig(config, themeData.themeName)
+            if (!res) {
+                throw new Error('Error al actualizar datos del tema')
+            }
+
+            await loadRemoteThemesCollection()
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    //TODO - descargar archivos
     const downloadTheme = async (): Promise<void> => {}
 
     return (
@@ -68,14 +144,21 @@ const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
             </div>
 
             <div className="theme-config-state-icons-container">
-                {themeData.isDefaultTheme && (
+                {originalTheme && (
+                    <div className="theme-config-original-icon">
+                        <Tooltip text={'Tema original de FastStart'}>
+                            <ShieldSvg />
+                        </Tooltip>
+                    </div>
+                )}
+                {defaultTheme && (
                     <div className="theme-config-default-icon">
                         <Tooltip text={'Designado como tema por defecto'}>
                             <StarSvg />
                         </Tooltip>
                     </div>
                 )}
-                {themeData.isActive && (
+                {!themeData.isActive && (
                     <div className="theme-config-disabled-icon">
                         <Tooltip text={'Tema desactivado'}>
                             <BlockSvg />
@@ -88,14 +171,21 @@ const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
                 <AsyncOption
                     title={'Definir Default'}
                     action={setAsDefault}
-                    status={themeData.isDefaultTheme}
+                    status={defaultTheme}
                     disabled={loading || false}
                 />
                 <AsyncOption
                     title={themeData.isActive ? 'Activo' : 'Inactivo'}
                     action={toggleActive}
                     status={themeData.isActive}
-                    disabled={loading || true}
+                    disabled={loading || false}
+                />
+                <AsyncOption
+                    title={'Modificar'}
+                    action={modifyTheme}
+                    status={null}
+                    disabled={loading || false}
+                    Icon={<ToolSvg />}
                 />
                 <AsyncOption
                     title={'Descargar'}
@@ -108,7 +198,7 @@ const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
                     title={'Eliminar'}
                     action={deleteTheme}
                     status={null}
-                    disabled={loading || false}
+                    disabled={originalTheme || loading || false}
                     style="tertiary"
                     Icon={<DeleteSvg />}
                 />
@@ -141,7 +231,7 @@ const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
                     minimodal={true}
                 >
                     <div className="mini-modal">
-                        <h2>Borrar tema?</h2>
+                        <h2>¿Borrar tema?</h2>
                         <div className="actions">
                             <div className="action tertiary">
                                 <a onClick={() => modalRes!.r(true)}>Borrar</a>
@@ -150,6 +240,15 @@ const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
                                 <a onClick={() => modalRes!.r(false)}>Cancelar</a>
                             </div>
                         </div>
+                    </div>
+                </Modal>
+            )}
+
+            {infoModal && (
+                <Modal confirm={() => setInfoModal(false)} close={() => setInfoModal(false)}>
+                    <div className="mini-modal">
+                        <h2>Configuración de tema cargada</h2>
+                        <p>Todo listo para aplicar modificaciones</p>
                     </div>
                 </Modal>
             )}

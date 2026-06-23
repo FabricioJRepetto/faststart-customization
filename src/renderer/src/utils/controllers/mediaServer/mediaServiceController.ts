@@ -4,6 +4,7 @@ import {
     BACKEND_THEMES_ASSETS_PATH,
     BACKEND_THEMES_CONFIGS_PATH,
     DEFAULT_CONFIG_FILENAME,
+    SERVICES_APPSETTINGS_DIR,
     THEME_CONFIG_FILENAME
 } from '@shared/CONSTANTS'
 import _TempMediaServer from './_TempMediaServer'
@@ -15,7 +16,12 @@ import {
     UPLOAD_STAGE,
     UploadedFile
 } from '@shared/types'
-import { store, UploadProgressAtom, UploadStageAtom } from '@renderer/utils/context/context'
+import {
+    store,
+    UploadProgressAtom,
+    UploadSetAsDefaultThemeAtom,
+    UploadStageAtom
+} from '@renderer/utils/context/context'
 import { getMime } from '@renderer/utils/assetsUtils'
 import { getUploadList } from '@renderer/utils/getRawConfig'
 
@@ -48,7 +54,7 @@ class MediaService {
         this.failedUploads = 0
         this.totalUploads = 0
         store.set(UploadProgressAtom, { currentFile: '', ok: 0, failed: 0, total: 0 })
-        store.set(UploadStageAtom, undefined)
+        store.set(UploadStageAtom, UPLOAD_STAGE.NAME)
     }
 
     private simplifyTheme(e: CustomConfig): ThemeConfig {
@@ -148,7 +154,6 @@ class MediaService {
     public async getThemeConfig(themeName: string): Promise<CustomConfig | undefined> {
         try {
             store.set(UploadStageAtom, UPLOAD_STAGE.FINISHING)
-
             const res = await this.service.getThemesList()
             if (!res) return undefined
             const theme = res.find((t) => t.themeName === themeName)
@@ -171,10 +176,14 @@ class MediaService {
     }
 
     public async uploadThemeAssets(themeName: string): Promise<UploadedFile[]> {
+        console.log(themeName)
+
         this.resetUploadProgress()
-        const start = Math.floor(Date.now() / 1000)
+        const start = performance.now()
 
         try {
+            const asDefault = store.get(UploadSetAsDefaultThemeAtom)
+
             store.set(UploadStageAtom, UPLOAD_STAGE.PROCESSING)
             const files = await getUploadList()
             console.log('Starting Upload for', files.length, 'files...')
@@ -184,24 +193,26 @@ class MediaService {
                 return []
             }
 
-            this.setTotalFilesToUpload = files.length + 1
+            this.setTotalFilesToUpload = files.length + (asDefault ? 2 : 1)
             this.updateUploadProgress()
             store.set(UploadStageAtom, UPLOAD_STAGE.UPLOADING)
 
             const aux: UploadedFile[] = []
             for await (const el of files) {
-                this.setFile = el.assetName
+                this.setFile = el.file.name
+                console.log(el.file.name, '-', el.assetName)
                 this.updateUploadProgress()
 
                 const res = await this.service.uploadFile(
                     el.file,
-                    `${BACKEND_THEMES_ASSETS_PATH}/${themeName}`
+                    `${BACKEND_THEMES_ASSETS_PATH}/${themeName}`,
+                    el.file.name
                 )
                 // const res = await this.simulateUplaod(themeName)
 
                 if (res) {
                     aux.push({
-                        customPath: `${BACKEND_BASE_URL}/${res.path}`,
+                        customPath: `${BACKEND_BASE_URL}${res.url}`,
                         name: el.assetName
                     })
                     this.addOk = 1
@@ -220,9 +231,9 @@ class MediaService {
                 this.ok,
                 'fail:',
                 this.fail,
-                'Files uploaded in',
-                Math.floor(Date.now() / 1000) - start,
-                'seconds'
+                'Upload time',
+                Math.round(performance.now() - start),
+                'ms'
             )
         }
     }
@@ -232,6 +243,8 @@ class MediaService {
         themeName: string
     ): Promise<DBFile | null> {
         try {
+            const asDefault = store.get(UploadSetAsDefaultThemeAtom)
+
             const fileName = `${themeName}${THEME_CONFIG_FILENAME}`
             this.setFile = fileName
             this.updateUploadProgress()
@@ -245,9 +258,25 @@ class MediaService {
 
             if (!res) {
                 this.addFail = 1
+                console.error('Error al subir archivo de configuración')
+
                 return null
             }
             this.addOk = 1
+
+            if (asDefault) {
+                this.setFile = DEFAULT_CONFIG_FILENAME
+                this.updateUploadProgress()
+
+                const res = await this.uploadDefaultConfig(config)
+                if (!res) {
+                    console.error('Error al setear tema como predeterminado')
+                    this.addFail = 1
+                } else {
+                    this.addOk = 1
+                }
+            }
+
             return res as DBFile
         } catch (error) {
             console.error(error)
@@ -261,6 +290,7 @@ class MediaService {
 
     public async uploadDefaultConfig(config: CustomConfig): Promise<DBFile | null> {
         try {
+            await SERVICES_APPSETTINGS_DIR
             const jsonFile = this.objectToJsonFile(config, DEFAULT_CONFIG_FILENAME)
             const res = await this.service.uploadFile(
                 jsonFile,
@@ -281,7 +311,7 @@ class MediaService {
             const config = await this.getDefaultConfigFile()
             if (!config) return null
             config.customEnabled = !config.customEnabled
-            
+
             const res = await this.uploadDefaultConfig(config)
 
             if (!res) return null
@@ -295,13 +325,23 @@ class MediaService {
     public async setDefaultTheme(themeName: string): Promise<DBFile | null> {
         try {
             const theme = await this.getThemeConfig(themeName)
-            if (!theme) return null
+            if (!theme) {
+                console.error('Configuración no encontrada')
+                return null
+            }
 
-            theme.customEnabled = true
+            theme.isDefaultTheme = true
+            const updateRes = await this.uploadThemeConfig(theme, themeName)
+            if (!updateRes) {
+                console.error('Error al actualizar configuración')
+            }
 
             const res = await this.uploadDefaultConfig(theme)
+            if (!res) {
+                console.error('Error al establecer configuración como predeterminada')
+                return null
+            }
 
-            if (!res) return null
             return res
         } catch (error) {
             console.error(error)

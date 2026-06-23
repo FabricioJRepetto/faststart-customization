@@ -48,10 +48,8 @@ export const Previewer = (): React.JSX.Element => {
     }
 
     const currIcon = (name: string): React.JSX.Element => {
-        try {
-            
+        try {            
             const ico = iconData?.find((e) => e?.name === name)
-            console.log(ico)
             const isSVG = (ico?.customMimeType || (isRemote ? ico!.mimeType : ico!.mimeType)).match('svg')
             const path = ico?.customBase64 || (isRemote ? ico!.filePath : ico!.base64)
 

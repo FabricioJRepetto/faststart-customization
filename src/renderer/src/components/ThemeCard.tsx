@@ -1,6 +1,7 @@
 import { DistributionMethod, ThemeConfig } from '@shared/types'
 import ApplySvg from '../assets/apply.svg?react'
 import DeleteSvg from '../assets/trash.svg?react'
+import ShieldSvg from '../assets/shield.svg?react'
 import StarSvg from '../assets/star.svg?react'
 import BlockSvg from '../assets/block.svg?react'
 import SettingsSvg from '../assets/settings.svg?react'
@@ -13,12 +14,19 @@ import Tooltip from './Tooltip'
 
 interface Props {
     theme: ThemeConfig
+    isDefault: boolean
     applyCb: (v: string) => void
     deleteCb: (v: string) => void
     openSettings: (v: string) => void
 }
-const ThemeCard = ({ theme, applyCb, deleteCb, openSettings }: Props): React.JSX.Element => {
-    const notDefaultTheme = theme.themeName !== DEFAULT_THEME
+const ThemeCard = ({
+    theme,
+    isDefault,
+    applyCb,
+    deleteCb,
+    openSettings
+}: Props): React.JSX.Element => {
+    const originalTheme = theme.themeName === DEFAULT_THEME
     const [COLOR, setCOLOR] = useState('white')
     const isRemote = useAtomValue(DistributionMethodAtom) === DistributionMethod.REMOTE
 
@@ -41,14 +49,21 @@ const ThemeCard = ({ theme, applyCb, deleteCb, openSettings }: Props): React.JSX
             <span className="theme-card-name">
                 {theme.themeName}
                 <div className="theme-config-state-icons-container">
-                    {theme.isDefaultTheme && (
+                    {originalTheme && (
+                        <div className="theme-config-original-icon">
+                            <Tooltip text={'Tema original de FastStart'}>
+                                <ShieldSvg />
+                            </Tooltip>
+                        </div>
+                    )}
+                    {isDefault && (
                         <div className="theme-config-default-icon">
                             <Tooltip text={'Designado como tema por defecto'}>
                                 <StarSvg />
                             </Tooltip>
                         </div>
                     )}
-                    {theme.isActive && (
+                    {!theme.isActive && (
                         <div className="theme-config-disabled-icon">
                             <Tooltip text={'Tema desactivado'}>
                                 <BlockSvg />
@@ -68,7 +83,7 @@ const ThemeCard = ({ theme, applyCb, deleteCb, openSettings }: Props): React.JSX
                 </div>
             </div>
             <div className="theme-card-footer">
-                {!isRemote ? (
+                {isRemote ? (
                     <span
                         className="button apply-buton"
                         onClick={() => openSettings(theme.themeName)}
@@ -80,7 +95,7 @@ const ThemeCard = ({ theme, applyCb, deleteCb, openSettings }: Props): React.JSX
                         <ApplySvg />
                     </span>
                 )}
-                {notDefaultTheme && (
+                {!originalTheme && (
                     <span className="button delete-buton" onClick={() => deleteCb(theme.themeName)}>
                         <DeleteSvg />
                     </span>

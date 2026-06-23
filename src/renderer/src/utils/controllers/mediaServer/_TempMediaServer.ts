@@ -1,8 +1,10 @@
 import {
+    BACKEND_DEFAULT_CONFIG_PATH,
     BACKEND_DELETE,
     BACKEND_GET_FILE,
     BACKEND_GET_FILELIST,
-    BACKEND_POST_UPLOAD
+    BACKEND_POST_UPLOAD,
+    DEFAULT_CONFIG_FILENAME
 } from '@shared/CONSTANTS'
 import {
     CustomConfig,
@@ -39,7 +41,8 @@ export default class _TempMediaServer implements MediaServiceBase {
 
     async delete(path: string): Promise<boolean> {
         try {
-            const res = await fetch(`${BACKEND_DELETE}/${path}`)
+            console.log('[Deleting]')
+            const res = await fetch(`${BACKEND_DELETE}/${path}`, { method: 'DELETE' })
             return res.ok
         } catch (error) {
             console.error(error)
@@ -49,9 +52,10 @@ export default class _TempMediaServer implements MediaServiceBase {
 
     async uploadFile(file: File | Blob, path: string, fileName?: string): Promise<DBFile | null> {
         try {
+            console.log('[Uploading]')
             const formData = new FormData()
-            formData.append('file', file, fileName)
             formData.append('folder', path)
+            formData.append('file', file, fileName)
 
             const res = await fetch(BACKEND_POST_UPLOAD, {
                 method: 'POST',
@@ -71,6 +75,7 @@ export default class _TempMediaServer implements MediaServiceBase {
 
     async getThemesList(): Promise<CustomConfig[] | null> {
         try {
+            console.log('[Getting]')
             const res = await this.getFilesList()
 
             if (res?.files) {
@@ -96,7 +101,10 @@ export default class _TempMediaServer implements MediaServiceBase {
 
     async getDefaultConfig(): Promise<CustomConfig | null> {
         try {
-            const res = await this.getFile<CustomConfig>('customConfig.json')
+            console.log('[Getting]')
+            const res = await this.getFile<CustomConfig>(
+                `${BACKEND_DEFAULT_CONFIG_PATH}/${DEFAULT_CONFIG_FILENAME}`
+            )
             return res
         } catch (error) {
             console.error(error)

@@ -7,13 +7,15 @@ import {
     EditedIconsDataAtom,
     EditedThirdScreenAssetsDataAtom,
     store,
+    UploadSetAsDefaultThemeAtom
 } from './context/context'
 import {
     dataParser,
     languageParser,
     thirdDataParser,
     stylesDataParser,
-    listParser
+    assetsToFiles,
+    thirdAssetsToFiles
 } from './assetsUtils'
 import { CUSTOM_FILE_VERSION } from '@shared/CONSTANTS'
 
@@ -55,13 +57,13 @@ export const getUploadList = async (): Promise<FileForUpload[]> => {
         const newAudios = store.get(EditedAudiosDataAtom)
         const newThirds = store.get(EditedThirdScreenAssetsDataAtom)
 
-        const iconsList = await listParser(ogData.icon, newIcons!)
+        const iconsList = await assetsToFiles(ogData.icon, newIcons!)
         console.log(iconsList.length, 'icons converted')
-        const bgsList = await listParser(ogData.background, newBgs!)
+        const bgsList = await assetsToFiles(ogData.background, newBgs!)
         console.log(bgsList.length, 'backgrounds converted')
-        const audiosList = await listParser(ogData.audio, newAudios!)
+        const audiosList = await assetsToFiles(ogData.audio, newAudios!)
         console.log(audiosList.length, 'audios converted')
-        const thirdList = await listParser(ogData.thirdscreen, newThirds!)
+        const thirdList = await thirdAssetsToFiles(newThirds!)
         console.log(thirdList.length, 'third screen assets converted')
 
         const aux: FileForUpload[] = [...iconsList, ...bgsList, ...audiosList, ...thirdList]
@@ -77,13 +79,14 @@ export const getUploadList = async (): Promise<FileForUpload[]> => {
 export const getThemeConfig = (files: UploadedFile[], themeName: string): CustomConfig => {
     try {
         const ogData = store.get(AssetsDataAtom)!
-        
+        const asDefault = store.get(UploadSetAsDefaultThemeAtom)
+
         return {
             version: CUSTOM_FILE_VERSION,
             themeName: themeName,
             ID: new Date().getTime().toString(),
             customEnabled: true,
-            isDefaultTheme: false,
+            isDefaultTheme: asDefault,
             isActive: true,
             language: languageParser(),
             styles: stylesDataParser(),
@@ -94,6 +97,6 @@ export const getThemeConfig = (files: UploadedFile[], themeName: string): Custom
         }
     } catch (error) {
         console.error(error)
-        throw error                
+        throw error
     }
 }

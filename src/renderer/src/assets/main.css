@@ -591,6 +591,14 @@ input[type='number'] {
     color: var(--ev-c-text-2);
 }
 
+.upload-modal-checkbox {
+    cursor: pointer;
+
+    span {
+        padding-left: 10px;
+    }
+}
+
 .upload-modal-info-box {
     height: 30px;
     width: 100%;
@@ -1404,11 +1412,8 @@ input[type='number'] {
     background: var(--color-background-soft);
     padding: 0 10px 0 10px;
     border-radius: 5px;
+    height: 35px;
 
-    .tooltip {
-        height: auto;
-    }
-    
     .theme-config-state-icons-container {
         position: unset;
         display: flex;
@@ -1418,6 +1423,7 @@ input[type='number'] {
 
     svg {
         height: 25px;
+        margin-top: 5px;
     }
 }
 
@@ -1548,6 +1554,9 @@ input[type='number'] {
     display: flex;
     gap: 10px;
 
+    .theme-config-original-icon > * {
+        color: var(--ev-c-text-3);
+    }
     .theme-config-default-icon > * {
         color: var(--ev-c-orange-1);
     }

@@ -24,7 +24,7 @@ export const assetName = (fileName: string): string => {
     return fileName.replace(/^[A-Z]*_/i, '').split('.')[0]
 }
 
-type assetType = 'image' | 'svg' | 'video' | 'audio' | 'unknown'
+type assetType = 'image' | 'svg' | 'video' | 'audio' | 'json' | 'text' | 'unknown'
 /** Retorna el tipo de archivo.
  * @returns
  */
@@ -39,7 +39,9 @@ export const assetExtention = (fileName: string): assetType => {
         webm: 'video',
         mp4: 'video',
         mp3: 'audio',
-        wav: 'audio'
+        wav: 'audio',
+        json: 'json',
+        txt: 'text'
     }
 
     const ext = fileName.split('.').pop() || ''
@@ -48,7 +50,7 @@ export const assetExtention = (fileName: string): assetType => {
     return mime as assetType
 }
 
-export const listParser = async (
+export const assetsToFiles = async (
     originalDataList: AssetData[],
     newDataList: AssetData[]
 ): Promise<FileForUpload[]> => {
@@ -57,8 +59,24 @@ export const listParser = async (
     for await (const e of originalDataList) {
         const custom = newDataList.find((c) => c.name === e.name)
         if (custom?.customBase64) {
-            // const _fileType = assetExtention(custom?.customPath)
-            const file = await b64ToFile(custom.customBase64, e.name)
+            const _fileName = custom.customPath.replaceAll('\\', '/').split('/').pop()!
+            const file = await b64ToFile(custom.customBase64, _fileName)
+            aux.push({ file, assetName: e.name })
+        }
+    }
+
+    return aux
+}
+
+export const thirdAssetsToFiles = async (
+    dataList: AssetData[]
+): Promise<FileForUpload[]> => {
+    const aux: FileForUpload[] = []
+
+    for await (const e of dataList) {
+        if (e?.customBase64) {
+            const _fileName = e.customPath.replaceAll('\\', '/').split('/').pop()!
+            const file = await b64ToFile(e.customBase64, _fileName)
             aux.push({ file, assetName: e.name })
         }
     }

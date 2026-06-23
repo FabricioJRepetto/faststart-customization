@@ -79,7 +79,7 @@ const ThirdScreen = (): React.JSX.Element => {
                     <div className="action tertiary">
                         <a onClick={resetAllValues}>
                             <ClearSvg />
-                            Resetear todo
+                            Descartar cambios
                         </a>
                     </div>
                 </div>
