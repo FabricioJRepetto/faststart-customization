@@ -22,7 +22,7 @@ export const THEMES_LIBRARY_DIR = 'library'
 
 export const DEFAULT_THEME = 'FastStart'
 
-export const BACKEND_BASE_URL = 'http://153.81.238.232:9000'
+export const BACKEND_BASE_URL = 'https://153.81.238.232:4005'
 export const BACKEND_GET_FILELIST = `${BACKEND_BASE_URL}/files-list`
 export const BACKEND_GET_FILE = `${BACKEND_BASE_URL}/files`
 export const BACKEND_POST_UPLOAD = `${BACKEND_BASE_URL}/upload`

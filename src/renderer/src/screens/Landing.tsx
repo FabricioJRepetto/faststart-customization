@@ -61,13 +61,21 @@ const Landing = (): React.JSX.Element => {
     const [modal, setModal] = useState<modalData[] | null>(null)
 
     useEffect(() => {
-        fetch(BACKEND_BASE_URL,{
-            method: 'HEAD',
-            mode: 'no-cors',
-            cache: 'no-cache'
-        })
-            .then(() => setStatus(true))
-            .catch(() => setStatus(false))
+        const ping = (): void => {
+            fetch(BACKEND_BASE_URL, {
+                method: 'HEAD',
+                mode: 'no-cors',
+                cache: 'no-cache'
+            })
+                .then(() => setStatus(true))
+                .catch(() => {
+                    setStatus(false)
+                    setTimeout(() => {
+                        ping()
+                    }, 5000);
+                })
+        }
+        ping()
     }, [setStatus])
 
     //_-_-_-_-_-_-_-_-_-_- LOCAL _-_-_-_-_-_-_-_-_-_-_-
