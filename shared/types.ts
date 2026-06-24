@@ -32,7 +32,8 @@ export enum Screens {
     languages = 'languages',
     thirdScreen = 'thirdScreen',
     audio = 'audio',
-    collections = 'collections'
+    collections = 'collections',
+    thePit = 'thePit'
 }
 
 export type LanguageData = Record<string, Record<string, string>>

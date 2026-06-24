@@ -436,7 +436,7 @@ input[type='number'] {
             min-width: 36px;
         }
 
-        &:nth-last-child(3) {
+        &:nth-last-child(4) {
             margin-top: auto;
         }
     }

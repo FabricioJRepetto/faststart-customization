@@ -11,6 +11,7 @@ import ScreenWrapper from '@renderer/components/ScreenWrapper'
 import Styles from '@renderer/screens/Styles'
 import MainScreen from '@renderer/screens/MainScreen'
 import Collections from '@renderer/screens/Collection'
+import ThePit from '@renderer/screens/ThePitt'
 // import R_Icons from '@renderer/remoteScreens/Icons'
 // import R_Backgrounds from '@renderer/remoteScreens/Backgrounds'
 // import R_ThirdScreen from '@renderer/remoteScreens/ThirdScreen'
@@ -26,9 +27,10 @@ const useCurrentScreen = (): React.JSX.Element => {
     const allScreens: Record<Screens, React.JSX.Element> = {
         [Screens.landing]: <Landing />,
         [Screens.main]: <MainScreen />,
+        [Screens.collections]: <Collections />,
+        [Screens.thePit]: <ThePit />,
         [Screens.styles]: <Styles />,
         [Screens.languages]: <Languages />,
-        [Screens.collections]: <Collections />,
         [Screens.icons]: <Icons />,
         [Screens.backgrounds]: <Backgrounds />,
         [Screens.thirdScreen]: <ThirdScreen />,
