@@ -64,10 +64,18 @@ const Styles = (): React.JSX.Element => {
             </div>
 
             <div className="assets-grid grid-styles scrolleable">
-                <div className="grid-divider">Logo</div>
+                <div className="grid-divider">
+                    <h3>Logo</h3>
+                    <p>
+                        Colores del logo. La aplicación calcula el contraste entre el color de los
+                        fondos y el logo, para que siempre sea disitngible de los fondos de
+                        pantalla.
+                    </p>
+                </div>
                 <StyleCard
                     parentName={'logo'}
                     keyName={'dark'}
+                    // description={'Color del logo cuando el fondo es claro'}
                     value={ogStyles?.logo?.dark}
                     reset={resetValue}
                     update={updateCustom}
@@ -75,15 +83,20 @@ const Styles = (): React.JSX.Element => {
                 <StyleCard
                     parentName={'logo'}
                     keyName={'light'}
+                    // description={'Color del logo cuando el fondo es oscuro'}
                     value={ogStyles?.logo?.light}
                     reset={resetValue}
                     update={updateCustom}
                 />
 
-                <div className="grid-divider">General</div>
+                <div className="grid-divider">
+                    <h3>General</h3>
+                    <p>Colores de la mayoría de los flujos.</p>
+                </div>
                 <StyleCard
                     parentName={'general'}
                     keyName={'primaryColor'}
+                    // description={'Color de texto e iconos en la mayoría de las pantallas'}
                     value={ogStyles?.general?.primaryColor}
                     reset={resetValue}
                     update={updateCustom}
@@ -91,6 +104,7 @@ const Styles = (): React.JSX.Element => {
                 <StyleCard
                     parentName={'general'}
                     keyName={'secondaryColor'}
+                    // description={'Color de texto en cajas de texto'}
                     value={ogStyles?.general?.secondaryColor}
                     reset={resetValue}
                     update={updateCustom}
@@ -98,15 +112,20 @@ const Styles = (): React.JSX.Element => {
                 <StyleCard
                     parentName={'general'}
                     keyName={'errorMessageColor'}
+                    // description={'Color de texto en mensajes de error'}
                     value={ogStyles?.general?.errorMessageColor}
                     reset={resetValue}
                     update={updateCustom}
                 />
 
-                <div className="grid-divider">Pantallas de éxito</div>
+                <div className="grid-divider">
+                    <h3>Pantallas de éxito</h3>
+                    <p>Estilos de pantalla de exito, etc.</p>
+                </div>
                 <StyleCard
                     parentName={'successScreen'}
                     keyName={'primaryColor'}
+                    // description={'Color de texto e iconos en las pantallas de éxito'}
                     value={ogStyles?.successScreen?.primaryColor}
                     reset={resetValue}
                     update={updateCustom}
@@ -119,10 +138,14 @@ const Styles = (): React.JSX.Element => {
                     update={updateCustom}
                 />
 
-                <div className="grid-divider">Pantallas de error</div>
+                <div className="grid-divider">
+                    <h3>Pantallas de error</h3>
+                    <p>Estilos de pantalla de error.</p>
+                </div>
                 <StyleCard
                     parentName={'errorScreen'}
                     keyName={'primaryColor'}
+                    // description={'Color de texto e iconos en las pantallas de error'}
                     value={ogStyles?.errorScreen?.primaryColor}
                     reset={resetValue}
                     update={updateCustom}
@@ -135,7 +158,10 @@ const Styles = (): React.JSX.Element => {
                     update={updateCustom}
                 />
 
-                <div className="grid-divider">Botones</div>
+                <div className="grid-divider">
+                    <h3>Botones</h3>
+                    <p>Estilo de los botones en los flujos de la aplicación.</p>
+                </div>
                 <StyleCard
                     parentName={'button'}
                     keyName={'color'}
@@ -167,7 +193,10 @@ const Styles = (): React.JSX.Element => {
                     update={updateCustom}
                 />
 
-                <div className="grid-divider">Botones secundarios</div>
+                <div className="grid-divider">
+                    <h3>Pantalla de Inicio</h3>
+                    <p>Estilos de botones en la pantalla inicial. También aplica al códico QR.</p>
+                </div>
                 <StyleCard
                     parentName={'secondaryButton'}
                     keyName={'color'}
@@ -199,7 +228,10 @@ const Styles = (): React.JSX.Element => {
                     update={updateCustom}
                 />
 
-                <div className="grid-divider">Input</div>
+                <div className="grid-divider">
+                    <h3>Input</h3>
+                    <p>Estilo de botones en la pantalla de ingreso de monto.</p>
+                </div>
                 <StyleCard
                     parentName={'inputButton'}
                     keyName={'color'}

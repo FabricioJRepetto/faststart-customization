@@ -6,6 +6,7 @@ import ClearSvg from '../assets/clear.svg?react'
 
 interface Props {
     keyName: string
+    description?: string
     parentName: string
     value: string
     reset: (key: string, parent: string) => void
@@ -15,6 +16,7 @@ interface Props {
 
 const StyleCard = ({
     keyName,
+    description,
     parentName,
     value,
     reset,
@@ -31,6 +33,7 @@ const StyleCard = ({
         <div className="assets-container color-asset-container" key={keyName}>
             <div className="header">
                 <p>{keyName}</p>
+                <p className="style-card-description">{description}</p>
                 {customStyles?.[parentName]?.[keyName] && (
                     <span
                         className="button delete-buton"

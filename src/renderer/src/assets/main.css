@@ -435,24 +435,24 @@ input[type='number'] {
             height: 36px;
             min-width: 36px;
         }
-
-        &:nth-last-child(4) {
-            margin-top: auto;
-        }
     }
 
-    > img {
+    a > img {
         margin-left: auto;
         width: 30px;
         height: 30px;
     }
 
-    span {
+    .tooltip {
         line-height: 8px;
         text-overflow: clip;
         text-wrap: nowrap;
         opacity: 0;
         animation: fadeIn 0.15s ease-in-out 0.3s forwards;
+
+        &:nth-last-child(4) {
+            margin-top: auto;
+        }
     }
 
     .selected {
@@ -645,6 +645,10 @@ input[type='number'] {
     grid-column: 1/-1;
     width: 100%;
     border-top: 1px solid var(--ev-c-green-3);
+
+    p {
+        color: var(--ev-c-text-2);
+    }
 }
 
 .grid-bg {
@@ -1494,14 +1498,14 @@ input[type='number'] {
 
 .tooltip {
     position: relative;
-    margin-top: 3px;
     color: var(--ev-c-text-3);
-    /* cursor: pointer; */
+    height: fit-content;
+    width: fit-content;
 
     .tooltip-text {
         position: absolute;
         top: 50%;
-        left: 30%;
+        left: 100%;
         z-index: 9999;
 
         max-width: 250px;
@@ -1513,6 +1517,11 @@ input[type='number'] {
         font-weight: 100;
         background-color: var(--color-background);
         color: white;
+    }
+
+    > img,
+    > svg {
+        margin-top: 3px;
     }
 }
 
