@@ -61,7 +61,9 @@ const Landing = (): React.JSX.Element => {
     const [modal, setModal] = useState<modalData[] | null>(null)
 
     useEffect(() => {
+        let _to: NodeJS.Timeout | null = null
         const ping = (): void => {
+            setStatus(undefined)
             fetch(BACKEND_BASE_URL, {
                 method: 'HEAD',
                 mode: 'no-cors',
@@ -70,12 +72,15 @@ const Landing = (): React.JSX.Element => {
                 .then(() => setStatus(true))
                 .catch(() => {
                     setStatus(false)
-                    setTimeout(() => {
+                    _to = setTimeout(() => {
                         ping()
-                    }, 5000);
+                    }, 5000)
                 })
         }
         ping()
+        return () => {
+            clearTimeout(_to!)
+        }
     }, [setStatus])
 
     //_-_-_-_-_-_-_-_-_-_- LOCAL _-_-_-_-_-_-_-_-_-_-_-
