@@ -11,7 +11,7 @@ import ScreenWrapper from '@renderer/components/ScreenWrapper'
 import Styles from '@renderer/screens/Styles'
 import Collections from '@renderer/screens/Collection'
 import ThePit from '@renderer/screens/ThePitt'
-import NewMain from '@renderer/screens/NewMain'
+import MainScreen from '@renderer/screens/MainScreen'
 
 // TODO: Saltearse la landing si no hace falta input del usuario
 
@@ -22,8 +22,8 @@ const useCurrentScreen = (): React.JSX.Element => {
 
     const allScreens: Record<Screens, React.JSX.Element> = {
         [Screens.landing]: <Landing />,
-        // [Screens.main]: <MainScreen />,
-        [Screens.main]: <NewMain />,
+        [Screens.main]: <MainScreen />,
+        // [Screens.main]: <NewMain />,
         [Screens.collections]: <Collections />,
         [Screens.thePit]: <ThePit />,
         [Screens.styles]: <Styles />,
