@@ -631,6 +631,35 @@ input[type='number'] {
     }
 }
 
+.card-row-container {
+    width: 80vw;
+    display: flex;
+    justify-content: start;
+    gap: 10px;
+    overflow-x: hidden;
+    border: 1px lime solid;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    div {
+        padding: 15px;
+        border-radius: 25px;
+        border: 1px solid #bebebe1a;
+        background-color: #bebebe13;
+        width: 130px;
+        /* overflow: hidden; */
+
+        p:first-child {
+            font-weight: 600;
+            color: var(--ev-c-text-1);
+        }
+        p {
+            color: var(--ev-c-text-2);
+        }
+    }
+}
+
 /* : Assets : */
 .assets-grid {
     width: 100%;
