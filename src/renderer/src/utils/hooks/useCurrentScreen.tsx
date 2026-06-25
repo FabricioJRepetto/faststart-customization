@@ -24,6 +24,7 @@ const useCurrentScreen = (): React.JSX.Element => {
         [Screens.landing]: <Landing />,
         [Screens.main]: <MainScreen />,
         // [Screens.main]: <NewMain />,
+        // [Screens.main]: <GravityGrid />,
         [Screens.collections]: <Collections />,
         [Screens.thePit]: <ThePit />,
         [Screens.styles]: <Styles />,
