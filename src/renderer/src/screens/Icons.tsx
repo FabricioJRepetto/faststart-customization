@@ -1,9 +1,16 @@
 import { assetName } from '@renderer/utils/assetsUtils'
-import { AssetsDataAtom, DistributionMethodAtom, EditedIconsDataAtom } from '@renderer/utils/context/context'
+import {
+    AssetsDataAtom,
+    DistributionMethodAtom,
+    EditedIconsDataAtom
+} from '@renderer/utils/context/context'
 import { useAtom, useAtomValue } from 'jotai'
 import ClearSvg from '../assets/clear.svg?react'
+import ResetSvg from '../assets/trash.svg?react'
 import { DistributionMethod, filterType } from '@shared/types'
 import Tooltip from '@renderer/components/Tooltip'
+import DropZone from '@renderer/components/DropZone'
+import { fileToBase64 } from '@renderer/utils/filesManager'
 
 const Icons = (): React.JSX.Element => {
     const OgAssets = useAtomValue(AssetsDataAtom)
@@ -20,19 +27,34 @@ const Icons = (): React.JSX.Element => {
         )
     }
 
-    const setValue = async (key: string): Promise<void> => {
-        console.log(key)
+    const setValue = async (assetName: string): Promise<void> => {
         const res = await window.electronAPI.selectFile(filterType.ImgSvg)
-        console.log(res)
-
         if (res.success) {
             const { filePath, base64, customMimeType } = res.data
             setIcons((prev) =>
                 prev!.map((e) =>
-                    e.name === key ? { ...e, customPath: filePath, customBase64: base64, customMimeType } : e
+                    e.name === assetName
+                        ? { ...e, customPath: filePath, customBase64: base64, customMimeType }
+                        : e
                 )
             )
         }
+    }
+
+    //_-_-_-_-_-_-_- Drop _-_-_-_-_-_-_-
+    const allowedExtensions = ['.svg', '.png', '.jpg', '.jpeg', '.webp', '.gif']
+
+    const setValueFromDrop = async (f: File, key: string): Promise<void> => {
+        const filePath = f.webkitRelativePath
+        const base64 = await fileToBase64(f) as string
+        const customMimeType = f.type
+        setIcons((prev) =>
+            prev!.map((e) =>
+                e.name === key
+                    ? { ...e, customPath: filePath, customBase64: base64, customMimeType }
+                    : e
+            )
+        )
     }
 
     return (
@@ -58,24 +80,34 @@ const Icons = (): React.JSX.Element => {
 
             {icons?.length ? (
                 <div className="assets-grid scrolleable">
-                    {icons.map((icon) => (
-                        <div key={icon.name} className="assets-container icon-asset-container">
-                            <p>{assetName(icon.name)}</p>
+                    {icons.map((icon, i) => (
+                        <DropZone
+                            key={i}
+                            fileHandler={(f) => setValueFromDrop(f as File, icon.name)}
+                            configuration={{ allowedExtensions }}
+                        >
+                            <div key={icon.name} className="assets-container icon-asset-container">
+                                <p>{assetName(icon.name)}</p>
 
-                            <div className="icons-container">
-                                <img src={isRemote ? icon.filePath : icon.base64} />
-                                {icon.customBase64 && <img src={icon.customBase64} />}
-                            </div>
+                                <div className="icons-container">
+                                    <img src={isRemote ? icon.filePath : icon.base64} />
+                                    {icon.customBase64 && <img src={icon.customBase64} />}
+                                </div>
 
-                            <div className="actions">
-                                <div className="action primary">
-                                    <a onClick={() => setValue(icon.name)}>Cambiar</a>
-                                </div>
-                                <div className="action">
-                                    <a onClick={() => resetValue(icon.name)}>Resetear</a>
+                                <div className="actions">
+                                    <div className="action primary">
+                                        <a onClick={() => setValue(icon.name)}>Cambiar</a>
+                                    </div>
+                                    {icons.find((e) => e.name === icon.name)?.customPath && (
+                                        <div className="action">
+                                            <a onClick={() => resetValue(icon.name)}>
+                                                <ResetSvg />
+                                            </a>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
-                        </div>
+                        </DropZone>
                     ))}
                 </div>
             ) : (

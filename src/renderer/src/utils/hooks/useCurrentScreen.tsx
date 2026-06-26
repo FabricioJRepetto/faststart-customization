@@ -10,7 +10,7 @@ import { Screens } from '@shared/types'
 import ScreenWrapper from '@renderer/components/ScreenWrapper'
 import Styles from '@renderer/screens/Styles'
 import Collections from '@renderer/screens/Collection'
-import ThePit from '@renderer/screens/ThePitt'
+import ThePit from '@renderer/screens/ThePit'
 import MainScreen from '@renderer/screens/MainScreen'
 
 // TODO: Saltearse la landing si no hace falta input del usuario
