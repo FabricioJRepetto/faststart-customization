@@ -76,7 +76,7 @@ const DropZone = ({
         setHasError(false)
     }
 
-    return !isRemote ? (
+    return isRemote ? (
         <div
             onDrop={handleDrop}
             onDragOver={handleDragOver}

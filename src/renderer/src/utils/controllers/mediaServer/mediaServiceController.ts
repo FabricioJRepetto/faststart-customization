@@ -371,27 +371,27 @@ class MediaService {
         }
     }
 
-    public async uploadLocalTheme(fileList: {file: File, assetName: string}[], themeName: string): Promise<void> {
-        try {
-              const uploadPromises = fileList.map(async ({ file, assetName }) => {
-                  const category = getCategory(file.name)
-                  const assetType = getAssetType(file.name)
-                  const url = await this.service.uploadFile(file, themeName)
+    // public async uploadLocalTheme(fileList: {file: File, assetName: string}[], themeName: string): Promise<void> {
+    //     try {
+    //           const uploadPromises = fileList.map(async ({ file, assetName }) => {
+    //               const category = getCategory(file.name)
+    //               const assetType = getAssetType(file.name)
+    //               const url = await this.service.uploadFile(file, themeName)
 
-                  return {
-                      category,
-                      assetType,
-                      url,
-                      assetName
-                  }
-              })
+    //               return {
+    //                   category,
+    //                   assetType,
+    //                   url,
+    //                   assetName
+    //               }
+    //           })
 
-              return Promise.all(uploadPromises)
-        } catch (error) {
-            console.error(error)
-            throw error                        
-        }
-    }
+    //           return Promise.all(uploadPromises)
+    //     } catch (error) {
+    //         console.error(error)
+    //         throw error
+    //     }
+    // }
 }
 
 export default new MediaService()

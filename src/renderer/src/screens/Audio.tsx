@@ -1,15 +1,15 @@
-import { assetName } from '@renderer/utils/assetsUtils'
-import { AssetsDataAtom, DistributionMethodAtom, EditedAudiosDataAtom } from '@renderer/utils/context/context'
+import { AssetsDataAtom, EditedAudiosDataAtom } from '@renderer/utils/context/context'
 import { useAtom, useAtomValue } from 'jotai'
 import ClearSvg from '../assets/clear.svg?react'
-import ResetSvg from '../assets/cancel.svg?react'
-import { DistributionMethod, filterType } from '@shared/types'
+import { filterType } from '@shared/types'
 import Tooltip from '@renderer/components/Tooltip'
+import DropZone from '@renderer/components/DropZone'
+import AudioCard from '@renderer/components/AssetsCards/AudioCard'
+import { fileToBase64 } from '@renderer/utils/filesManager'
 
 const Audio = (): React.JSX.Element => {
     const OgAssets = useAtomValue(AssetsDataAtom)
     const [audios, setAudios] = useAtom(EditedAudiosDataAtom)
-    const isRemote = useAtomValue(DistributionMethodAtom) === DistributionMethod.REMOTE
 
     const resetAllValues = (): void => {
         setAudios([...OgAssets!.audio])
@@ -38,6 +38,16 @@ const Audio = (): React.JSX.Element => {
         }
     }
 
+    const allowedExtensions = ['.mp3', '.wav', '.ogg']
+
+    const setDropedValue = async (f: File, key: string): Promise<void> => {
+        const base64 = (await fileToBase64(f)) as string
+
+        setAudios((prev) =>
+            prev!.map((e) => (e.name === key ? { ...e, customPath: '', customBase64: base64 } : e))
+        )
+    }
+
     return (
         <div className="screen-content">
             <div className="screen-header">
@@ -60,26 +70,13 @@ const Audio = (): React.JSX.Element => {
             {audios?.length ? (
                 <div className="assets-grid grid-audio scrolleable">
                     {audios.map((audio) => (
-                        <div key={audio.name} className="assets-container audio-asset-container">
-                            <p>{assetName(audio.name)}</p>
-                            <audio src={isRemote ? audio.filePath : audio.base64} controls />
-                            {audio.customBase64 ? (
-                                <audio src={audio.customBase64} controls />
-                            ) : (
-                                <div
-                                    className="custom-placeholder"
-                                    onClick={() => setValue(audio.name)}
-                                >
-                                    Seleccionar
-                                </div>
-                            )}
-                            {audio.customBase64 && (
-                                <ResetSvg
-                                    className="audio-reset-btn"
-                                    onClick={() => resetValue(audio.name)}
-                                />
-                            )}
-                        </div>
+                        <DropZone
+                            key={audio.name}
+                            fileHandler={(f: File) => setDropedValue(f, audio.name)}
+                            configuration={{ allowedExtensions }}
+                        >
+                            <AudioCard audio={audio} setValue={setValue} resetValue={resetValue} />
+                        </DropZone>
                     ))}
                 </div>
             ) : (

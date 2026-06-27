@@ -1,7 +1,7 @@
 import ClearSvg from '../assets/clear.svg?react'
 import { useSetAtom } from 'jotai'
 import { DefaultStylesDataAtom, EditedStylesDataAtom, store } from '@renderer/utils/context/context'
-import StyleCard from '@renderer/components/StyleCard'
+import StyleCard from '@renderer/components/AssetsCards/StyleCard'
 import { DefaultStylesData } from '@shared/types'
 import Tooltip from '@renderer/components/Tooltip'
 
@@ -18,11 +18,15 @@ const Styles = (): React.JSX.Element => {
         )
 
     const updateCustom = (key: string, parent: string, value: string): void => {
-        if (parent === 'button' || parent === 'secondaryButton') {
+        if (parent === 'button' || parent === 'secondaryButton' || parent === 'inputButton') {
             if (key === 'border') {
+                const og_v = ogStyles[parent][key] === 'true'
+                const _v = value === 'true' ? true : false
+                const new_v = _v === og_v ? '' : _v
+
                 setCustomStyles((prev) => ({
                     ...prev,
-                    [parent]: { ...prev[parent], [key]: prev[parent][key] ? 'false' : 'true' }
+                    [parent]: { ...prev[parent], [key]: new_v.toString() }
                 }))
             }
             if (key === 'borderRadius') {
@@ -41,7 +45,14 @@ const Styles = (): React.JSX.Element => {
     }
 
     const resetValue = (key: string, parent: string): void => {
-        setCustomStyles((prev) => ({ ...prev, [parent]: { ...prev[parent], [key]: '' } }))
+        if (key === 'borderRadius') {
+            setCustomStyles((prev) => ({
+                ...prev,
+                [parent]: { ...prev[parent], [key]: '', border: '' }
+            }))
+        } else {
+            setCustomStyles((prev) => ({ ...prev, [parent]: { ...prev[parent], [key]: '' } }))
+        }
     }
 
     return (
@@ -177,18 +188,10 @@ const Styles = (): React.JSX.Element => {
                     update={updateCustom}
                 />
                 <StyleCard
-                    type="pixel"
+                    type="border"
                     parentName={'button'}
                     keyName={'borderRadius'}
                     value={ogStyles?.button?.borderRadius}
-                    reset={resetValue}
-                    update={updateCustom}
-                />
-                <StyleCard
-                    type="boolean"
-                    parentName={'button'}
-                    keyName={'border'}
-                    value={ogStyles?.button?.border ? 'true' : 'false'}
                     reset={resetValue}
                     update={updateCustom}
                 />
@@ -212,18 +215,10 @@ const Styles = (): React.JSX.Element => {
                     update={updateCustom}
                 />
                 <StyleCard
-                    type="pixel"
+                    type="border"
                     parentName={'secondaryButton'}
                     keyName={'borderRadius'}
                     value={ogStyles?.secondaryButton?.borderRadius}
-                    reset={resetValue}
-                    update={updateCustom}
-                />
-                <StyleCard
-                    type="boolean"
-                    parentName={'secondaryButton'}
-                    keyName={'border'}
-                    value={ogStyles?.secondaryButton?.border ? 'true' : 'false'}
                     reset={resetValue}
                     update={updateCustom}
                 />
@@ -247,18 +242,10 @@ const Styles = (): React.JSX.Element => {
                     update={updateCustom}
                 />
                 <StyleCard
-                    type="pixel"
+                    type="border"
                     parentName={'inputButton'}
                     keyName={'borderRadius'}
                     value={ogStyles?.inputButton?.borderRadius}
-                    reset={resetValue}
-                    update={updateCustom}
-                />
-                <StyleCard
-                    type="boolean"
-                    parentName={'inputButton'}
-                    keyName={'border'}
-                    value={ogStyles?.inputButton?.border ? 'true' : 'false'}
                     reset={resetValue}
                     update={updateCustom}
                 />

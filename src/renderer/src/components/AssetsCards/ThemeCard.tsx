@@ -1,16 +1,16 @@
 import { DistributionMethod, ThemeConfig } from '@shared/types'
-import ApplySvg from '../assets/apply.svg?react'
-import DeleteSvg from '../assets/trash.svg?react'
-import ShieldSvg from '../assets/shield.svg?react'
-import StarSvg from '../assets/star.svg?react'
-import BlockSvg from '../assets/block.svg?react'
-import SettingsSvg from '../assets/settings.svg?react'
+import ApplySvg from '../../assets/apply.svg?react'
+import DeleteSvg from '../../assets/trash.svg?react'
+import ShieldSvg from '../../assets/shield.svg?react'
+import StarSvg from '../../assets/star.svg?react'
+import BlockSvg from '../../assets/block.svg?react'
+import SettingsSvg from '../../assets/settings.svg?react'
 import { DEFAULT_THEME } from '@shared/CONSTANTS'
 import { useEffect, useState } from 'react'
-import DynamicSvg from './DynSvg'
+import DynamicSvg from '../DynSvg'
 import { useAtomValue } from 'jotai'
 import { DistributionMethodAtom } from '@renderer/utils/context/context'
-import Tooltip from './Tooltip'
+import Tooltip from '../Tooltip'
 
 interface Props {
     theme: ThemeConfig
@@ -85,13 +85,13 @@ const ThemeCard = ({
             <div className="theme-card-footer">
                 {isRemote ? (
                     <span
-                        className="button apply-buton"
+                        className="button apply-button"
                         onClick={() => openSettings(theme.themeName)}
                     >
                         <SettingsSvg />
                     </span>
                 ) : (
-                    <span className="button apply-buton" onClick={() => applyCb(theme.themeName)}>
+                    <span className="button apply-button" onClick={() => applyCb(theme.themeName)}>
                         <ApplySvg />
                     </span>
                 )}

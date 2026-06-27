@@ -5,7 +5,7 @@ import { filterType } from '@shared/types'
 import Tooltip from '@renderer/components/Tooltip'
 import DropZone from '@renderer/components/DropZone'
 import { fileToBase64 } from '@renderer/utils/filesManager'
-import { IconCard } from '@renderer/components/IconCard'
+import { IconCard } from '@renderer/components/AssetsCards/IconCard'
 
 const Icons = (): React.JSX.Element => {
     const OgAssets = useAtomValue(AssetsDataAtom)

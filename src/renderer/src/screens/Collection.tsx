@@ -1,6 +1,6 @@
 import Modal from '@renderer/components/Modal'
 import ThemeSettings from '@renderer/components/ModalBodies/ThemeConfig'
-import ThemeCard from '@renderer/components/ThemeCard'
+import ThemeCard from '@renderer/components/AssetsCards/ThemeCard'
 import Tooltip from '@renderer/components/Tooltip'
 import {
     loadLocalAssets,
@@ -37,8 +37,6 @@ const Collections = (): React.JSX.Element => {
     const [deleteModal, setDeleteModal] = useState<
         { title: string; text?: string; value: string } | false
     >(false)
-
-
 
     const applyTheme = async (themeName: string): Promise<void> => {
         try {

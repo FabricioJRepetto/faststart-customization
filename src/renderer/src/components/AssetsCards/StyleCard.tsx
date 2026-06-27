@@ -1,8 +1,9 @@
-import { EditedStylesDataAtom } from '@renderer/utils/context/context'
-import { useAtom } from 'jotai'
-import CheckSvg from '../assets/check.svg?react'
-import CancelSvg from '../assets/cancel.svg?react'
-import ClearSvg from '../assets/clear.svg?react'
+import { DefaultStylesDataAtom, EditedStylesDataAtom } from '@renderer/utils/context/context'
+import { useAtom, useAtomValue } from 'jotai'
+import CheckSvg from '../../assets/check.svg?react'
+import CancelSvg from '../../assets/cancel.svg?react'
+import UndoSvg from '../../assets/undo.svg?react'
+import Tooltip from '../Tooltip'
 
 interface Props {
     keyName: string
@@ -11,7 +12,7 @@ interface Props {
     value: string
     reset: (key: string, parent: string) => void
     update: (key: string, parent: string, value: string) => void
-    type?: 'color' | 'pixel' | 'boolean'
+    type?: 'color' | 'border'
 }
 
 const StyleCard = ({
@@ -23,69 +24,71 @@ const StyleCard = ({
     update,
     type = 'color'
 }: Props): React.JSX.Element => {
+    const ogStyles = useAtomValue(DefaultStylesDataAtom)
     const [customStyles] = useAtom(EditedStylesDataAtom)
+
+    const hasCustom =
+        (type === 'border' && customStyles?.[parentName]?.border) ||
+        customStyles?.[parentName]?.[keyName]
 
     const b = (v: string): boolean => {
         return v === 'true'
     }
 
     return (
-        <div className="assets-container color-asset-container" key={keyName}>
+        <div
+            className={`assets-container color-asset-container ${hasCustom ? 'asset-card-has-custom' : 'asset-card-initial'}`}
+            key={keyName}
+        >
             <div className="header">
                 <p>{keyName}</p>
                 <p className="style-card-description">{description}</p>
-                {customStyles?.[parentName]?.[keyName] && (
-                    <span
-                        className="button delete-buton"
-                        onClick={() => reset(keyName, parentName)}
-                    >
-                        <ClearSvg />
-                    </span>
+                {hasCustom && (
+                    <Tooltip text="Restablecer valor">
+                        <span
+                            className="button delete-buton"
+                            onClick={() => reset(keyName, parentName)}
+                        >
+                            <UndoSvg />
+                        </span>
+                    </Tooltip>
                 )}
             </div>
 
-            {type === 'boolean' && (
+            {type === 'border' && (
                 <>
-                    <p className="tag">Original {value || 'false'}</p>
+                    <p className="tag">
+                        Mostrar borde (inicinal:{' '}
+                        {ogStyles?.[parentName]?.border === 'true' ? 'si' : 'no'})
+                    </p>
                     <div
                         className="original-color-sample input-wrapper"
                         onClick={() =>
                             update(
-                                keyName,
+                                'border',
                                 parentName,
-                                b(customStyles?.[parentName]?.[keyName]) ? 'false' : 'true'
+                                b(customStyles?.[parentName]?.border) ? 'false' : 'true'
                             )
                         }
                     >
-                        <p>{customStyles?.[parentName]?.[keyName] || 'false'}</p>
-                        <button
-                            className={b(customStyles?.[parentName]?.[keyName]) ? '' : 'inactive'}
-                        >
-                            {b(customStyles?.[parentName]?.[keyName]) ? (
-                                <CheckSvg />
-                            ) : (
-                                <CancelSvg />
-                            )}
+                        <p>{customStyles?.[parentName]?.border || 'false'}</p>
+                        <button className={b(customStyles?.[parentName]?.border) ? '' : 'inactive'}>
+                            {b(customStyles?.[parentName]?.border) ? <CheckSvg /> : <CancelSvg />}
                         </button>
                     </div>
-                </>
-            )}
 
-            {type === 'pixel' && (
-                <>
-                    <p className="tag">Original {value || 'Sin indicar'}</p>
-
+                    <p className="tag">Suavizado (inicinal: {value ?? '0px'})</p>
                     <div className="input-wrapper">
                         <input
                             type="number"
                             placeholder="Sin indicar"
                             min={0}
-                            value={parseInt(customStyles?.[parentName]?.borderRadius) || ''}
+                            value={parseInt(customStyles?.[parentName]?.borderRadius ?? 0) + ''}
                             onChange={(e) => update(keyName, parentName, e.target.value)}
                         ></input>
                     </div>
 
-                    <div
+                    {/* <div
                         className="custom-radius-sampler"
                         style={{
                             borderRadius: customStyles?.[parentName]?.borderRadius
@@ -94,12 +97,12 @@ const StyleCard = ({
                         }}
                     >
                         PREVIEW
-                    </div>
+                    </div> */}
                 </>
             )}
             {type === 'color' && (
                 <>
-                    <p className="tag">Original</p>
+                    <p className="tag">Inicinal</p>
                     <div className="original-color-sample">
                         <p>{value || 'Sin indicar'}</p>
                         <div className="color-sample" style={{ backgroundColor: value }}></div>

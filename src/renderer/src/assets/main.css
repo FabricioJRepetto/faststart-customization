@@ -409,6 +409,7 @@ input[type='number'] {
 
 .scrolleable {
     overflow-y: auto;
+    padding-bottom: 100px;
 }
 
 /* : Sidebar : */
@@ -772,7 +773,7 @@ input[type='number'] {
 
 .assets-container {
     padding: 15px;
-    border-radius: 25px;
+    border-radius: 15px;
 
     --bg-gradient-color: var(--ev-c-item-asset);
     border: 1px solid #bebebe1a;
@@ -825,6 +826,13 @@ input[type='number'] {
     padding: none;
     display: flex;
     justify-content: space-between;
+
+    p {
+        width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 }
 
 .asset-card-show-buton {
@@ -839,54 +847,24 @@ input[type='number'] {
 }
 
 .thirdscreen-asset-container {
-    height: fit-content;
+    /* height: 100%; */
+    width: 200px;
 
-    video {
-        width: 175px;
-        opacity: 0;
-    }
-
-    img {
-        width: 175px;
-    }
-
-    .thirdscreen-container {
-        width: 175px;
-        height: 98px;
-        margin-bottom: 15px;
-        background-color: var(--color-background-soft);
-    }
-
-    .thirdscreen-placeholder {
-        cursor: pointer;
-        width: auto;
-        aspect-ratio: 16 / 9;
-        border-radius: 10px;
-        border: 1px solid var(--ev-c-green-3);
-        color: var(--ev-c-green-1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    .asset-card-header {
+        margin-bottom: 10px;
     }
 
     .custom-thirscreen-container {
-        position: relative;
-        aspect-ratio: 16 / 9;
-        overflow: hidden;
         display: flex;
         justify-content: center;
+        height: 120px;
+        margin-bottom: 10px;
 
-        span {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-        }
-
-        img {
-            max-height: 100%;
-            max-width: 100%;
-            height: auto;
-            width: auto;
+        img,
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
     }
 }
@@ -929,8 +907,6 @@ input[type='number'] {
 }
 
 .audio-asset-container {
-    position: relative;
-
     p {
         margin: 0 20px 10px 10px;
     }
@@ -939,33 +915,14 @@ input[type='number'] {
         background-color: transparent;
     }
 
-    .audio-reset-btn {
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        cursor: pointer;
-        color: var(--ev-c-red-3);
-
-        &:hover {
-            color: var(--ev-c-red-1);
-        }
-    }
-
-    .custom-placeholder {
-        cursor: pointer;
-        width: auto;
-        height: 54px;
-        border-radius: 50px;
-        border: 1px solid var(--ev-c-green-3);
-        color: var(--ev-c-green-1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
     .actions {
-        margin-top: 8px;
-        justify-content: space-between;
+        margin: 8px 0px 0 0;
+        justify-content: end;
+        gap: 8px;
+
+        .button svg {
+            margin-top: 5px;
+        }
     }
 }
 
@@ -1545,11 +1502,11 @@ input[type='number'] {
         filter: brightness(125%);
     }
 }
-.apply-buton {
+.apply-button {
     background-color: var(--ev-c-green-2);
 }
-.delete-buton {
-    /* background-color: var(--ev-c-red-1); */
+.delete-button {
+    background-color: var(--ev-c-red-2);
 }
 
 .theme-card {
@@ -1747,5 +1704,16 @@ input[type='number'] {
     > div {
         border-color: red;
         --bg-gradient-color: var(--ev-c-red-3);
+    }
+}
+
+/* the pit */
+.the-pit-container {
+    > svg {
+        position: absolute;
+        top: 0%;
+        left: -33%;
+        /* height: 100vh; */
+        /* width: 100vw; */
     }
 }

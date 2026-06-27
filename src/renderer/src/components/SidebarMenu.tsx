@@ -43,17 +43,6 @@ const SidebarMenu = (): React.JSX.Element => {
                     <IconsSvg />
                 </a>
             </Tooltip>
-
-            <Tooltip text="Estilos">
-                <a
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={() => setScreen(Screens.styles)}
-                    className={screen === Screens.styles ? 'selected' : ''}
-                >
-                    <ColorsSvg />
-                </a>
-            </Tooltip>
             <Tooltip text="Fondos de pantalla">
                 <a
                     target="_blank"
@@ -62,16 +51,6 @@ const SidebarMenu = (): React.JSX.Element => {
                     className={screen === Screens.backgrounds ? 'selected' : ''}
                 >
                     <BackgroundsSvg />
-                </a>
-            </Tooltip>
-            <Tooltip text="Diccionario">
-                <a
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={() => setScreen(Screens.languages)}
-                    className={screen === Screens.languages ? 'selected' : ''}
-                >
-                    <LanguageSvg />
                 </a>
             </Tooltip>
             <Tooltip text="Tercer pantalla">
@@ -92,6 +71,27 @@ const SidebarMenu = (): React.JSX.Element => {
                     className={screen === Screens.audio ? 'selected' : ''}
                 >
                     <AudioSvg />
+                </a>
+            </Tooltip>
+
+            <Tooltip text="Estilos">
+                <a
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={() => setScreen(Screens.styles)}
+                    className={screen === Screens.styles ? 'selected' : ''}
+                >
+                    <ColorsSvg />
+                </a>
+            </Tooltip>
+            <Tooltip text="Diccionario">
+                <a
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={() => setScreen(Screens.languages)}
+                    className={screen === Screens.languages ? 'selected' : ''}
+                >
+                    <LanguageSvg />
                 </a>
             </Tooltip>
 

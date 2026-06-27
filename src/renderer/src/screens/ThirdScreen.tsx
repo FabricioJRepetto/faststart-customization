@@ -6,8 +6,14 @@ import {
 import { useAtom, useAtomValue } from 'jotai'
 import ClearSvg from '../assets/clear.svg?react'
 import { AssetData, filterType } from '@shared/types'
-import { ThirdCard, AddNewAsset, NewAssetCard } from '@renderer/components/ThirdScreenAssetsCard'
+import {
+    ThirdCard,
+    AddNewAsset,
+    NewAssetCard
+} from '@renderer/components/AssetsCards/ThirdScreenAssetsCard'
 import Tooltip from '@renderer/components/Tooltip'
+import DropZone from '@renderer/components/DropZone'
+import { fileToBase64 } from '@renderer/utils/filesManager'
 
 const ThirdScreen = (): React.JSX.Element => {
     const OgAssets = useAtomValue(AssetsDataAtom)
@@ -52,6 +58,38 @@ const ThirdScreen = (): React.JSX.Element => {
                     {
                         name: fileName,
                         customPath: filePath,
+                        customBase64: base64,
+                        assetType: 'thirdscreen',
+                        filePath: '',
+                        base64: '',
+                        mimeType: '',
+                        customMimeType
+                    }
+                ]
+            })
+        }
+    }
+
+    const allowedExtensions = ['.webm', '.png', '.jpg', '.jpeg', '.webp', '.gif']
+
+    const addNewDrop = async (files: File[]): Promise<void> => {
+        for await (const f of files) {
+            const fileName = f.name
+            const base64 = (await fileToBase64(f)) as string
+            const customMimeType = f.type
+
+            setAsset((prev): AssetData[] => {
+                const aux = prev ? [...prev] : []
+                let newFileName = 'thirdscreen_asset_' + (fileName.split('.')?.[0] ?? 'defname')
+                const used = aux.find((e) => e.name === newFileName)
+                if (used) {
+                    newFileName = newFileName + '_' + (aux.length + 1)
+                }
+                return [
+                    ...aux,
+                    {
+                        name: newFileName,
+                        customPath: '',
                         customBase64: base64,
                         assetType: 'thirdscreen',
                         filePath: '',
@@ -109,7 +147,12 @@ const ThirdScreen = (): React.JSX.Element => {
                     <h2>No assets</h2>
                 )}
 
-                <AddNewAsset addNew={addNew} />
+                <DropZone
+                    fileHandler={addNewDrop}
+                    configuration={{ allowedExtensions, allowMultiple: true }}
+                >
+                    <AddNewAsset addNew={addNew} />
+                </DropZone>
             </div>
         </div>
     )

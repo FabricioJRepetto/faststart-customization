@@ -3,7 +3,7 @@ import { useAtom, useAtomValue } from 'jotai'
 import ClearSvg from '../assets/clear.svg?react'
 import { filterType } from '@shared/types'
 import Tooltip from '@renderer/components/Tooltip'
-import { BackgroundCard } from '@renderer/components/BackgroundCard'
+import { BackgroundCard } from '@renderer/components/AssetsCards/BackgroundCard'
 import DropZone from '@renderer/components/DropZone'
 import { fileToBase64 } from '@renderer/utils/filesManager'
 

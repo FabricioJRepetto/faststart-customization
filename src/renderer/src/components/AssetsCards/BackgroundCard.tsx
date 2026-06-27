@@ -1,12 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { assetName } from '@renderer/utils/assetsUtils'
-import { EditedBackgroundsDataAtom } from '@renderer/utils/context/context'
 import { AssetData } from '@shared/types'
-import { useAtomValue } from 'jotai'
-import UploadSvg from '../assets/upload.svg?react'
-import ResetSvg from '../assets/trash.svg?react'
-import EyeSvg from '../assets/eye.svg?react'
-import Tooltip from './Tooltip'
+import UploadSvg from '../../assets/upload.svg?react'
+import ResetSvg from '../../assets/undo.svg?react'
+import EyeSvg from '../../assets/eye.svg?react'
+import Tooltip from '../Tooltip'
 
 interface Props {
     bg: AssetData
@@ -15,25 +13,16 @@ interface Props {
 }
 
 export const BackgroundCard = ({ bg, setValue, resetValue }: Props): React.JSX.Element => {
-    const backgrounds = useAtomValue(EditedBackgroundsDataAtom)
     const [showOriginal, setShowOriginal] = useState(false)
-    const [hasCustom, setHasCustom] = useState<boolean>(false)
-
-    useEffect(() => {
-        const f = (): void => {
-            setHasCustom(() => Boolean(backgrounds?.find((e) => e.name === bg.name)?.customBase64))
-        }
-        f()
-    }, [bg.name, backgrounds])
 
     return (
         <div
             key={bg.name}
-            className={`assets-container bg-asset-container ${hasCustom ? 'asset-card-has-custom' : 'asset-card-initial'}`}
+            className={`assets-container bg-asset-container ${bg.customBase64 ? 'asset-card-has-custom' : 'asset-card-initial'}`}
         >
             <div className="asset-card-header">
                 <p>{assetName(bg.name)}</p>
-                {hasCustom && (
+                {bg.customBase64 && (
                     <Tooltip text="Ver fondo original">
                         <div
                             className="button asset-card-show-buton"
@@ -47,7 +36,7 @@ export const BackgroundCard = ({ bg, setValue, resetValue }: Props): React.JSX.E
             </div>
 
             <div className="bg-container asset-card-asset-trasition">
-                {!hasCustom || showOriginal ? (
+                {!bg.customBase64 || showOriginal ? (
                     <img src={bg.base64} />
                 ) : (
                     <img src={bg.customBase64} />
@@ -55,9 +44,9 @@ export const BackgroundCard = ({ bg, setValue, resetValue }: Props): React.JSX.E
             </div>
 
             <div className="actions">
-                {hasCustom && (
+                {bg.customBase64 && (
                     <Tooltip text="Volver al fondo original">
-                        <div className="button delete-buton">
+                        <div className="button">
                             <a onClick={() => resetValue(bg.name)}>
                                 <ResetSvg />
                             </a>
@@ -66,7 +55,7 @@ export const BackgroundCard = ({ bg, setValue, resetValue }: Props): React.JSX.E
                 )}
 
                 <Tooltip text="Remplazar fondo">
-                    <div className="button delete-buton">
+                    <div className="button">
                         <a onClick={() => setValue(bg.name)}>
                             <UploadSvg />
                         </a>

@@ -8,22 +8,24 @@ const GRAVITY_RADIUS = 220 // hasta dónde llega la influencia del cursor
 const GRAVITY_STRENGTH = 240 // cuánto se "hunden" las líneas en el punto máximo
 const PERSPECTIVE = 0.25 // 0 = sin perspectiva, 1 = perspectiva fuerte
 
+type Coord = { x: number; y: number }
+
 export const GravityGrid = (): React.JSX.Element => {
-    const svgRef = useRef(null)
+    const svgRef = useRef<SVGSVGElement | null>(null)
     const [size, setSize] = useState({ w: window.innerWidth * 1.75, h: window.innerHeight })
     const mouse = useRef({ x: -9999, y: -9999, active: false })
-    const linesH = useRef([]) // refs a <path> horizontales
-    const linesV = useRef([]) // refs a <path> verticales
-    const rafId = useRef(null)
+    const linesH = useRef<(SVGPathElement | null)[]>([]) // refs a <path> horizontales
+    const linesV = useRef<(SVGPathElement | null)[]>([]) // refs a <path> verticales
+    const rafId = useRef<number | null>(null)
 
     useEffect(() => {
-        const onResize = () => setSize({ w: window.innerWidth * 1.75, h: window.innerHeight })
+        const onResize = (): void => setSize({ w: window.innerWidth * 1.75, h: window.innerHeight })
         window.addEventListener('resize', onResize)
         return () => window.removeEventListener('resize', onResize)
     }, [])
 
     // Proyección con perspectiva simple: puntos más "lejos" (arriba) se acercan al centro y se comprimen en Y
-    const project = useCallback((u, v, w, h) => {
+    const project = useCallback((u, v, w, h): Coord => {
         // u, v en [0,1]: u = horizontal, v = vertical (0 = arriba/lejos, 1 = abajo/cerca)
         const cx = w / 2
         const vanishY = h * 0.08
@@ -40,20 +42,20 @@ export const GravityGrid = (): React.JSX.Element => {
     const basePoints = useMemo(() => {
         const w = size.w,
             h = size.h
-        const horiz = []
+        const horiz: Coord[][] = []
         for (let r = 0; r <= ROWS; r++) {
             const v = r / ROWS
-            const pts = []
+            const pts: Coord[] = []
             for (let s = 0; s <= SEGMENTS; s++) {
                 const u = s / SEGMENTS
                 pts.push(project(u, v, w, h))
             }
             horiz.push(pts)
         }
-        const vert = []
+        const vert: Coord[][] = []
         for (let c = 0; c <= COLS; c++) {
             const u = c / COLS
-            const pts = []
+            const pts: Coord[] = []
             for (let s = 0; s <= SEGMENTS; s++) {
                 const v = s / SEGMENTS
                 pts.push(project(u, v, w, h))
@@ -65,7 +67,7 @@ export const GravityGrid = (): React.JSX.Element => {
 
     // Convierte una serie de puntos en un path suave usando Catmull-Rom -> Bézier cúbica.
     // Esto evita los ángulos duros en cada vértice cuando los puntos se desplazan.
-    const pointsToPath = (pts) => {
+    const pointsToPath = (pts: Coord[]): string => {
         const n = pts.length
         if (n < 3) {
             // fallback simple para series muy cortas
@@ -74,7 +76,7 @@ export const GravityGrid = (): React.JSX.Element => {
             return d
         }
 
-        const get = (i) => pts[Math.max(0, Math.min(n - 1, i))] // clamp en los extremos
+        const get = (i: number): Coord => pts[Math.max(0, Math.min(n - 1, i))] // clamp en los extremos
 
         let d = `M ${pts[0].x.toFixed(2)} ${pts[0].y.toFixed(2)}`
         for (let i = 0; i < n - 1; i++) {
@@ -95,7 +97,7 @@ export const GravityGrid = (): React.JSX.Element => {
     }
 
     // El "campo gravitacional": cuánto se hunde un punto según distancia al cursor
-    const gravityOffset = (x, y, mx, my) => {
+    const gravityOffset = (x: number, y: number, mx: number, my: number): number => {
         const dx = x - mx
         const dy = y - my
         const dist = Math.sqrt(dx * dx + dy * dy)
@@ -106,49 +108,33 @@ export const GravityGrid = (): React.JSX.Element => {
         return falloff * GRAVITY_STRENGTH
     }
 
-    const render = useCallback(() => {
-        const { x: mx, y: my, active } = mouse.current
-        const factor = active ? 1 : 0
+    // const render = useCallback((): void => {
+    //     const { x: mx, y: my, active } = mouse.current
+    //     const factor = active ? 1 : 0
 
-        basePoints.horiz.forEach((pts, idx) => {
-            const el = linesH.current[idx]
-            if (!el) return
-            const deformed = pts.map((p) => {
-                const sink = gravityOffset(p.x, p.y, mx, my) * factor
-                return { x: p.x, y: p.y + sink }
-            })
-            el.setAttribute('d', pointsToPath(deformed))
-        })
+    //     basePoints.horiz.forEach((pts, idx) => {
+    //         const el = linesH.current[idx]
+    //         if (!el) return
+    //         const deformed = pts.map((p): Coord => {
+    //             const sink = gravityOffset(p.x, p.y, mx, my) * factor
+    //             return { x: p.x, y: p.y + sink }
+    //         })
+    //         el.setAttribute('d', pointsToPath(deformed))
+    //     })
 
-        basePoints.vert.forEach((pts, idx) => {
-            const el = linesV.current[idx]
-            if (!el) return
-            const deformed = pts.map((p) => {
-                const sink = gravityOffset(p.x, p.y, mx, my) * factor
-                return { x: p.x, y: p.y + sink }
-            })
-            el.setAttribute('d', pointsToPath(deformed))
-        })
-    }, [basePoints])
+    //     basePoints.vert.forEach((pts, idx) => {
+    //         const el = linesV.current[idx]
+    //         if (!el) return
+    //         const deformed = pts.map((p) => {
+    //             const sink = gravityOffset(p.x, p.y, mx, my) * factor
+    //             return { x: p.x, y: p.y + sink }
+    //         })
+    //         el.setAttribute('d', pointsToPath(deformed))
+    //     })
+    // }, [basePoints])
 
     // Animación: interpolamos el mouse target con suavizado para que no sea brusco
     const smoothed = useRef({ x: -9999, y: -9999, active: false })
-
-    useEffect(() => {
-        const loop = () => {
-            const target = mouse.current
-            const s = smoothed.current
-            const ease = 0.15
-            s.x += (target.x - s.x) * ease
-            s.y += (target.y - s.y) * ease
-            s.active = target.active
-            mouseForRender.current = s
-            renderWithSmoothed()
-            rafId.current = requestAnimationFrame(loop)
-        }
-        rafId.current = requestAnimationFrame(loop)
-        return () => cancelAnimationFrame(rafId.current)
-    }, [basePoints])
 
     const mouseForRender = useRef({ x: -9999, y: -9999, active: false })
 
@@ -177,16 +163,32 @@ export const GravityGrid = (): React.JSX.Element => {
         })
     }, [basePoints])
 
-    const handleMouseMove = (e) => {
-        const rect = svgRef.current.getBoundingClientRect()
+    const handleMouseMove = (e): void => {
+        const rect = svgRef.current!.getBoundingClientRect()
         mouse.current.x = e.clientX - rect.left
         mouse.current.y = e.clientY - rect.top
         mouse.current.active = true
     }
 
-    const handleMouseLeave = () => {
+    const handleMouseLeave = (): void => {
         mouse.current.active = false
     }
+
+    useEffect(() => {
+        const loop = (): void => {
+            const target = mouse.current
+            const s = smoothed.current
+            const ease = 0.15
+            s.x += (target.x - s.x) * ease
+            s.y += (target.y - s.y) * ease
+            s.active = target.active
+            mouseForRender.current = s
+            renderWithSmoothed()
+            rafId.current = requestAnimationFrame(loop)
+        }
+        rafId.current = requestAnimationFrame(loop)
+        return () => cancelAnimationFrame(rafId.current!)
+    }, [basePoints, renderWithSmoothed])
 
     return (
         <svg
@@ -204,11 +206,11 @@ export const GravityGrid = (): React.JSX.Element => {
             <defs>
                 <linearGradient id="fadeH" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#3a4570" stopOpacity="0.05" />
-                    <stop offset="100%" stopColor="#7d8cff" stopOpacity="0.85" />
+                    <stop offset="100%" stopColor="#00b196" stopOpacity="0.85" />
                 </linearGradient>
                 <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-                    <stop offset="10%" stopColor="#7d8cff" stopOpacity="0.25" />
-                    <stop offset="100%" stopColor="#7d8cff" stopOpacity="0" />
+                    <stop offset="10%" stopColor="#00b196" stopOpacity="0.25" />
+                    <stop offset="100%" stopColor="#00b196" stopOpacity="0" />
                 </radialGradient>
             </defs>
 
@@ -229,7 +231,7 @@ export const GravityGrid = (): React.JSX.Element => {
                         key={`h-${idx}`}
                         ref={(el) => (linesH.current[idx] = el)}
                         fill="none"
-                        stroke="#7d8cff"
+                        stroke="#00b196"
                         strokeOpacity={opacity}
                         strokeWidth="1"
                     />

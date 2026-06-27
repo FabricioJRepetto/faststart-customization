@@ -1,0 +1,53 @@
+import { DistributionMethodAtom, store } from '@renderer/utils/context/context'
+import { AssetData, DistributionMethod } from '@shared/types'
+import ResetSvg from '../../assets/undo.svg?react'
+import UploadSvg from '../../assets/upload.svg?react'
+import Tooltip from '../Tooltip'
+
+interface Props {
+    audio: AssetData
+    setValue: (v: string) => void
+    resetValue: (v: string) => void
+}
+
+const AudioCard = ({ audio, setValue, resetValue }: Props): React.JSX.Element => {
+    const isRemote = store.get(DistributionMethodAtom) === DistributionMethod.REMOTE
+
+    return (
+        <div
+            key={audio.name}
+            className={`assets-container audio-asset-container ${audio.customBase64 ? 'asset-card-has-custom' : 'asset-card-initial'}`}
+        >
+            <div className="asset-card-header">
+                <p>{audio.name}</p>
+            </div>
+
+            {!audio.customBase64 ? (
+                <audio src={isRemote ? audio.filePath : audio.base64} controls />
+            ) : (
+                <audio src={audio.customBase64} controls />
+            )}
+
+            <div className="actions">
+                {audio.customBase64 && (
+                    <Tooltip text="Volver al audio original">
+                        <div className="button">
+                            <a onClick={() => resetValue(audio.name)}>
+                                <ResetSvg />
+                            </a>
+                        </div>
+                    </Tooltip>
+                )}
+
+                <Tooltip text="Remplazar audio">
+                    <div className="button">
+                        <a onClick={() => setValue(audio.name)}>
+                            <UploadSvg />
+                        </a>
+                    </div>
+                </Tooltip>
+            </div>
+        </div>
+    )
+}
+export default AudioCard

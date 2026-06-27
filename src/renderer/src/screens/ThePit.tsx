@@ -8,6 +8,7 @@ import {
 import { CUSTOM_CONFIG_FILE_NAME } from '@shared/CONSTANTS'
 import { CustomConfig } from '@shared/types'
 import React, { useState, useRef, useCallback, DragEvent } from 'react'
+import { GravityGrid } from './Gravity'
 
 export default function ThePit(): React.JSX.Element {
     const [files, setFiles] = useState<{ file: File; assetName: string }[]>([])
@@ -103,7 +104,8 @@ export default function ThePit(): React.JSX.Element {
     }
 
     return (
-        <div>
+        <div className="the-pit-container">
+            <GravityGrid />
             <div
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
