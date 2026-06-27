@@ -1,4 +1,7 @@
+import { DistributionMethodAtom } from '@renderer/utils/context/context'
 import { extractFilesFromDataTransfer, hasAllowedExtension } from '@renderer/utils/filesManager'
+import { DistributionMethod } from '@shared/types'
+import { useAtomValue } from 'jotai'
 import { DragEvent, ReactNode, useState } from 'react'
 
 type HandlerArgs = File | File[]
@@ -19,6 +22,9 @@ const DropZone = ({
 }: DropZoneProps): React.JSX.Element => {
     const { allowMultiple, allowedExtensions } = configuration
     const [isDraggingOver, setIsDraggingOver] = useState(false)
+    const [hasError, setHasError] = useState(false)
+
+    const isRemote = useAtomValue(DistributionMethodAtom) === DistributionMethod.REMOTE
 
     const handleDrop = async (
         event: DragEvent<HTMLInputElement>
@@ -30,6 +36,7 @@ const DropZone = ({
 
         if (!allowMultiple && droppedFiles.length > 1) {
             console.error('Seleccionado de multiples archivos no permitida')
+            showError()
             return
         }
 
@@ -39,6 +46,7 @@ const DropZone = ({
 
         if (!assetFiles.length) {
             console.error('Tipos de archivos no aceptados')
+            showError()
             return
         }
 
@@ -60,18 +68,25 @@ const DropZone = ({
         setIsDraggingOver(false)
     }
 
-    return (
+    const showError = async (): Promise<void> => {
+        await new Promise((r) => {
+            setHasError(true)
+            setTimeout(r, 300)
+        })
+        setHasError(false)
+    }
+
+    return !isRemote ? (
         <div
             onDrop={handleDrop}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
-            style={{
-                borderColor: isDraggingOver ? '#4a90d9' : 'none'
-            }}
-            className={isDraggingOver ? `dragging-over` : ''}
+            className={`${isDraggingOver ? 'dragging-over' : ''} ${hasError ? 'dragging-error' : ''}`}
         >
             {children}
         </div>
+    ) : (
+        <>{children}</>
     )
 }
 

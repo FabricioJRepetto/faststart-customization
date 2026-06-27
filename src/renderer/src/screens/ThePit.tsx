@@ -128,10 +128,7 @@ export default function ThePit(): React.JSX.Element {
                         pointerEvents: 'none'
                     }}
                 >
-                    <a
-                        onClick={() => !isUploading && handleUpload()}
-                        style={{ opacity: '0.5' }}
-                    >
+                    <a onClick={() => !isUploading && handleUpload()} style={{ opacity: '0.5' }}>
                         {isUploading ? 'Subiendo...' : 'Subir archivos'}
                     </a>
                 </div>

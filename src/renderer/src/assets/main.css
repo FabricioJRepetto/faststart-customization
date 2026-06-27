@@ -1,5 +1,17 @@
 @import './base.css';
 
+@property --bg-gradient-color {
+    syntax: '<color>';
+    initial-value: #bebebe13;
+    inherits: false;
+}
+
+@property --bg-gradient-black {
+    syntax: '<color>';
+    initial-value: #bebebe13;
+    inherits: false;
+}
+
 body {
     display: flex;
     align-items: center;
@@ -381,8 +393,11 @@ input[type='number'] {
 
     h1 {
         display: flex;
-        justify-content: baseline;
         gap: 10px;
+
+        .tooltip {
+            margin: 3px 0 -3px 0;
+        }
     }
 
     .header-group {
@@ -444,12 +459,6 @@ input[type='number'] {
     }
 
     .tooltip {
-        line-height: 8px;
-        text-overflow: clip;
-        text-wrap: nowrap;
-        opacity: 0;
-        animation: fadeIn 0.15s ease-in-out 0.3s forwards;
-
         &:nth-last-child(4) {
             margin-top: auto;
         }
@@ -511,6 +520,9 @@ input[type='number'] {
         .edited {
             background-color: var(--ev-c-green-2);
         }
+    }
+    .lang-key-column {
+        color: var(--ev-c-green-1);
     }
 }
 
@@ -681,7 +693,7 @@ input[type='number'] {
 }
 
 .grid-bg {
-    grid-template-columns: repeat(auto-fit, minmax(233px, 233px));
+    grid-template-columns: repeat(auto-fit, minmax(210px, 210px));
 }
 .grid-third {
     grid-template-columns: repeat(auto-fit, minmax(210px, 210px));
@@ -693,84 +705,135 @@ input[type='number'] {
     grid-template-columns: repeat(auto-fit, minmax(330px, 330px));
 }
 
-.assets-container {
-    padding: 15px;
-    border-radius: 25px;
-    border: 1px solid #bebebe1a;
-    background-color: #bebebe13;
-}
-
 .bg-asset-container {
-    img {
-        width: 200px;
-        aspect-ratio: 16 / 9;
-    }
-
-    .bg-container {
-        height: 250px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    .bg-placeholder {
-        cursor: pointer;
-        width: 200px;
-        aspect-ratio: 16 / 9;
-        border-radius: 10px;
-        border: 1px solid var(--ev-c-green-3);
-        color: var(--ev-c-green-1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .custom-bg-container {
-        position: relative;
-        width: 200px;
-
-        span {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-        }
-    }
-
-    .actions {
-        margin-top: 8px;
-        justify-content: space-between;
-    }
-}
-
-.icon-asset-container {
+    position: relative;
     width: 200px;
     margin-bottom: 10px;
 
     p {
-        margin: 0 20px 10px 10px;
+        margin: 0 10px 10px 0px;
     }
 
-    .icons-container {
-        width: 100%;
-        padding: 0 10px;
-        display: flex;
-        justify-content: space-between;
-    }
     img {
-        height: 70px;
-        max-width: 70px;
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+
+    .bg-container {
+        width: 100%;
+        height: 95px;
+        display: flex;
+        justify-content: center;
     }
 
     .actions {
-        /* width: 100%; */
-        margin-top: 8px;
-        justify-content: space-between;
+        margin: 8px 0px 0 0;
+        justify-content: end;
+        gap: 8px;
 
-        a {
-            width: 78px;
-            padding: unset;
-            justify-content: center;
-            line-height: 25px;
+        .button svg {
+            margin-top: 5px;
+        }
+    }
+}
+
+.icon-asset-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin-bottom: 10px;
+
+    .icons-container {
+        width: 100%;
+        height: 105px;
+        padding: 0 10px;
+        display: flex;
+        justify-content: center;
+
+        img,
+        svg {
+            height: 105px;
+            max-width: 105px;
+            width: auto;
+        }
+    }
+
+    .actions {
+        margin: 8px 0px 0 0;
+        justify-content: end;
+        gap: 8px;
+
+        .button svg {
+            margin-top: 5px;
+        }
+    }
+}
+
+.assets-container {
+    padding: 15px;
+    border-radius: 25px;
+
+    --bg-gradient-color: var(--ev-c-item-asset);
+    border: 1px solid #bebebe1a;
+    background: -webkit-linear-gradient(
+        90deg,
+        var(--bg-gradient-color),
+        var(--bg-gradient-black) 90%
+    );
+
+    transition:
+        --bg-gradient-color 0.5s ease,
+        border-color 0.5s ease;
+}
+
+.asset-card-has-custom {
+    --bg-gradient-color: var(--ev-c-green-3);
+    border: 1px solid var(--ev-c-green-1);
+    background: -webkit-linear-gradient(
+        90deg,
+        var(--bg-gradient-color),
+        var(--bg-gradient-black) 90%
+    );
+
+    transition:
+        --bg-gradient-color 0.5s ease,
+        border-color 0.5s ease;
+
+    p {
+        color: var(--ev-c-green-0);
+    }
+}
+
+.asset-card-initial {
+    --bg-gradient-color: var(--ev-c-item-asset);
+    border: 1px solid #bebebe1a;
+    background: -webkit-linear-gradient(
+        90deg,
+        var(--bg-gradient-color),
+        var(--bg-gradient-black) 90%
+    );
+
+    transition:
+        --bg-gradient-color 0.5s ease,
+        border-color 0.5s ease;
+}
+
+.asset-card-header {
+    width: 100%;
+    height: auto;
+    padding: none;
+    display: flex;
+    justify-content: space-between;
+}
+
+.asset-card-show-buton {
+    opacity: 0;
+    animation: fadeIn 0.3s forwards ease;
+
+    .tooltip {
+        > svg {
+            margin-top: 8px;
         }
     }
 }
@@ -1164,7 +1227,8 @@ input[type='number'] {
         position: absolute;
         left: 0;
         height: 100%;
-        width: auto;
+        width: 100%;
+        object-fit: cover;
         transform: translateY(calc(-50% + calc(1080 / 2)));
     }
 
@@ -1527,7 +1591,6 @@ input[type='number'] {
 
 .tooltip {
     position: relative;
-    color: var(--ev-c-text-3);
     height: fit-content;
     width: fit-content;
 
@@ -1539,12 +1602,13 @@ input[type='number'] {
 
         max-width: 250px;
         width: max-content;
-        min-width: 100px;
+        min-width: fit-content;
         padding: 5px 10px;
-        opacity: 0;
         font-size: 0.95rem;
         font-weight: 100;
-        background-color: var(--color-background);
+        opacity: 0;
+        border-radius: 5px;
+        background-color: black;
         color: white;
     }
 
@@ -1672,9 +1736,16 @@ input[type='number'] {
 
 /* DRAG ZONE */
 .dragging-over {
-    filter: brightness(1.75);
+    filter: brightness(1.5);
 
     > div {
-        border-color: #bebebe71;
+        border-color: #d1d1d171;
+    }
+}
+
+.dragging-error {
+    > div {
+        border-color: red;
+        --bg-gradient-color: var(--ev-c-red-3);
     }
 }

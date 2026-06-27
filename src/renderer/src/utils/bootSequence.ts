@@ -118,8 +118,8 @@ export const loadLocalStylesFile = async (clientVersion: string): Promise<boolea
             const data = resStyles.data as StylesData
             store.set(DefaultStylesDataAtom, {
                 ...data,
-                button: { ...data.button, border: data.button.border.toString() },
-                secondaryButton: { ...data.button, border: data.button.border.toString() }
+                button: { ...data.button, border: data.button.border?.toString() },
+                secondaryButton: { ...data.button, border: data.button.border?.toString() }
             })
 
             return true
@@ -185,15 +185,15 @@ export const validateFiles = (): void => {
                 ...customConfig.styles,
                 button: {
                     ...customConfig.styles.button,
-                    border: customConfig.styles.button.border.toString()
+                    border: customConfig.styles.button?.border.toString()
                 },
                 secondaryButton: {
                     ...customConfig.styles.secondaryButton,
-                    border: customConfig.styles.secondaryButton.border.toString()
+                    border: customConfig.styles.secondaryButton?.border.toString()
                 },
                 inputButton: {
                     ...customConfig.styles.inputButton,
-                    border: customConfig.styles.inputButton.border.toString()
+                    border: customConfig.styles.inputButton?.border.toString()
                 }
             })
         }

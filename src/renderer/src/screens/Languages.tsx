@@ -142,7 +142,7 @@ const Languages = (): React.JSX.Element => {
                 </div>
                 {keysList.textK.map((key) => (
                     <div key={key} className="lang-row">
-                        <p>{key}</p>
+                        <p className="lang-key-column">{key}</p>
                         {keysList.langK.map((lang) => (
                             <p
                                 key={lang}

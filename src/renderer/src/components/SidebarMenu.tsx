@@ -105,7 +105,7 @@ const SidebarMenu = (): React.JSX.Element => {
                     <CollectionSvg />
                 </a>
             </Tooltip>
-            <Tooltip text="">
+            <Tooltip text="the_Pit">
                 <a
                     target="_blank"
                     rel="noreferrer"

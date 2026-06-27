@@ -4,7 +4,6 @@ import {
     DefaultStylesDataAtom,
     DistributionMethodAtom,
     EditedBackgroundsDataAtom,
-    EditedIconsDataAtom,
     EditedLanguageDataAtom,
     EditedStylesDataAtom,
     PreviewScreenIndexAtom
@@ -15,7 +14,7 @@ import ThemeSvg from '../assets/theme.svg?react'
 import Idle from './previewr-screens/Idle'
 import Menu from './previewr-screens/Menu'
 import Input from './previewr-screens/Input'
-import DynamicSvg from './DynSvg'
+import { currentIcon } from '@renderer/utils/currentIcon'
 
 export interface PreviewScreenProps {
     currBg: (name?: string) => string
@@ -31,7 +30,6 @@ export const Previewer = (): React.JSX.Element => {
     const [ogData] = useAtom(DefaultConfigAtom)
 
     const [bgData] = useAtom(EditedBackgroundsDataAtom)
-    const [iconData] = useAtom(EditedIconsDataAtom)
     const [lngData] = useAtom(EditedLanguageDataAtom)
     const [ogLngData] = useAtom(DefaultLanguageDataAtom)
     const [stylesData] = useAtom(EditedStylesDataAtom)
@@ -48,16 +46,7 @@ export const Previewer = (): React.JSX.Element => {
     }
 
     const currIcon = (name: string): React.JSX.Element => {
-        try {            
-            const ico = iconData?.find((e) => e?.name === name)
-            const isSVG = (ico?.customMimeType || (isRemote ? ico!.mimeType : ico!.mimeType)).match('svg')
-            const path = ico?.customBase64 || (isRemote ? ico!.filePath : ico!.base64)
-
-            return isSVG ? <DynamicSvg path={path} /> : <img src={path} />
-        } catch (error) {
-            console.error(error)
-            return <></>
-        }
+        return currentIcon(name)
     }
 
     const currLang = (lang: string, name: string): string => {
@@ -70,7 +59,7 @@ export const Previewer = (): React.JSX.Element => {
         }
     }
 
-    function currStyle(parentKey: StylesParentKeys, name: string): string {
+    const currStyle = (parentKey: StylesParentKeys, name: string): string => {
         try {
             const style = stylesData?.[parentKey]?.[name] || ogStylesData?.[parentKey]?.[name]
             if (name === 'borderRadius')

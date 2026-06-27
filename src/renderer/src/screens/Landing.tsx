@@ -61,7 +61,8 @@ const Landing = (): React.JSX.Element => {
     const [modal, setModal] = useState<modalData[] | null>(null)
 
     useEffect(() => {
-        let _to: NodeJS.Timeout | null = null
+        let _to: NodeJS.Timeout
+        let retries = 0
         const ping = (): void => {
             setStatus(undefined)
             fetch(BACKEND_BASE_URL, {
@@ -71,6 +72,8 @@ const Landing = (): React.JSX.Element => {
             })
                 .then(() => setStatus(true))
                 .catch(() => {
+                    if (retries === 5) return
+                    retries++
                     setStatus(false)
                     _to = setTimeout(() => {
                         ping()
@@ -79,7 +82,7 @@ const Landing = (): React.JSX.Element => {
         }
         ping()
         return () => {
-            clearTimeout(_to!)
+            clearTimeout(_to)
         }
     }, [setStatus])
 
