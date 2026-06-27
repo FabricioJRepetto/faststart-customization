@@ -328,11 +328,8 @@ const Landing = (): React.JSX.Element => {
             {method === DistributionMethod.LOCAL && (
                 <>
                     <p className="tip">
-                        Seleccione el directorio base de faststart para comenzar a administrar sus
-                        assets.
-                    </p>
-                    <p className="tip">
-                        Root Dir: <code>{baseDir}</code>
+                        Seleccione directorio (<code>{baseDir}</code>) base de faststart a
+                        modificar.
                     </p>
                     <div className="actions landing-buttons">
                         <div className="action">
@@ -342,7 +339,7 @@ const Landing = (): React.JSX.Element => {
                                 rel="noreferrer"
                                 onClick={() => openSelectDirectory()}
                             >
-                                Seleccionar Directorio Base
+                                Cambiar Directorio Base
                             </a>
                         </div>
                         <div

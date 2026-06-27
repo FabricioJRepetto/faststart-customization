@@ -25,7 +25,7 @@ interface Props {
     keyName: string
     description?: string
     parentName: string
-    value: string
+    value: string | undefined
     reset: (key: string, parent: string) => void
     update: (key: string, parent: string, value: string) => void
 }
@@ -93,7 +93,7 @@ export const ColorStyleCard = ({
 interface BorderProps {
     description?: string
     parentName: string
-    value: { border: string; borderRadius: string }
+    value: { border: string | undefined; borderRadius: string | undefined }
     reset: (key: string, parent: string) => void
     update: (key: string, parent: string, value: string) => void
 }
@@ -197,7 +197,7 @@ export const PreviewStyleCard = ({ parentName }: PreviewProps): React.JSX.Elemen
 
     return (
         <div
-            // className="style-button-preview"
+            className="style-button-preview"
             style={{
                 borderRadius: borderRadius!,
                 border: `3px solid ${border ? color : 'transparent'}`,

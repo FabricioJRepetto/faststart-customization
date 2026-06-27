@@ -79,7 +79,12 @@ export const ServerStatusAtom = atom<boolean>()
 export const UploadSetAsDefaultThemeAtom = atom<boolean>(false)
 
 /** Upload progress */
-export const UploadProgressAtom = atom<{ currentFile: string, ok: number; failed: number; total: number }>({
+export const UploadProgressAtom = atom<{
+    currentFile: string
+    ok: number
+    failed: number
+    total: number
+}>({
     currentFile: '',
     ok: 0,
     failed: 0,

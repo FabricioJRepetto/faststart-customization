@@ -198,39 +198,39 @@ export interface FinalStylesData {
 }
 export interface StylesData {
     logo: {
-        dark: string
-        light: string
+        dark: string | undefined
+        light: string | undefined
     }
     general: {
-        primaryColor: string
-        secondaryColor: string
-        errorMessageColor: string
+        primaryColor: string | undefined
+        secondaryColor: string | undefined
+        errorMessageColor: string | undefined
     }
     successScreen: {
-        primaryColor: string
-        secondaryColor: string
+        primaryColor: string | undefined
+        secondaryColor: string | undefined
     }
     errorScreen: {
-        primaryColor: string
-        secondaryColor: string
+        primaryColor: string | undefined
+        secondaryColor: string | undefined
     }
     button: {
-        border: string
-        borderRadius: string
-        color: string
-        background: string
+        border: string | undefined
+        borderRadius: string | undefined
+        color: string | undefined
+        background: string | undefined
     }
     secondaryButton: {
-        border: string
-        borderRadius: string
-        color: string
-        background: string
+        border: string | undefined
+        borderRadius: string | undefined
+        color: string | undefined
+        background: string | undefined
     }
     inputButton: {
-        border: string
-        borderRadius: string
-        color: string
-        background: string
+        border: string | undefined
+        borderRadius: string | undefined
+        color: string | undefined
+        background: string | undefined
     }
 }
 
