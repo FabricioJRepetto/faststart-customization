@@ -17,7 +17,12 @@ const Input = ({
     return (
         <div className="preview-content">
             <img className="preview-bg" src={currBg('background_UserAction')} />
-            <div className="preview-logo">{currIcon('icon_logo')}</div>
+            <div
+                className="preview-logo"
+                style={{ color: currStyle(StylesParentKeys.logo, 'dark') }}
+            >
+                {currIcon('icon_logo')}
+            </div>
 
             <div
                 className="preview-lang-btn"

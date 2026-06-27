@@ -114,6 +114,7 @@ export interface FinalAssetData {
 }
 
 export enum StylesParentKeys {
+    logo = 'logo',
     general = 'general',
     successScreen = 'successScreen',
     errorScreen = 'errorScreen',
@@ -123,39 +124,39 @@ export enum StylesParentKeys {
 }
 export const DefaultStylesData = {
     logo: {
-        dark: '',
-        light: ''
+        dark: undefined,
+        light: undefined
     },
     general: {
-        primaryColor: '',
-        secondaryColor: '',
-        errorMessageColor: ''
+        primaryColor: undefined,
+        secondaryColor: undefined,
+        errorMessageColor: undefined
     },
     successScreen: {
-        primaryColor: '',
-        secondaryColor: ''
+        primaryColor: undefined,
+        secondaryColor: undefined
     },
     errorScreen: {
-        primaryColor: '',
-        secondaryColor: ''
+        primaryColor: undefined,
+        secondaryColor: undefined
     },
     button: {
-        border: '',
-        borderRadius: '',
-        color: '',
-        background: ''
+        border: undefined,
+        borderRadius: undefined,
+        color: undefined,
+        background: undefined
     },
     secondaryButton: {
-        border: '',
-        borderRadius: '',
-        color: '',
-        background: ''
+        border: undefined,
+        borderRadius: undefined,
+        color: undefined,
+        background: undefined
     },
     inputButton: {
-        border: '',
-        borderRadius: '',
-        color: '',
-        background: ''
+        border: undefined,
+        borderRadius: undefined,
+        color: undefined,
+        background: undefined
     }
 }
 export interface FinalStylesData {

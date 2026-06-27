@@ -962,15 +962,6 @@ input[type='number'] {
         border: var(--color-background) 2px solid;
     }
 
-    .custom-radius-sampler {
-        min-width: 150px;
-        padding: 40px;
-        background-color: white;
-        color: var(--ev-c-gray-1);
-        font-weight: 700;
-        text-align: center;
-    }
-
     .tag {
         margin-left: 20px;
         font-size: 12px;
@@ -1027,6 +1018,18 @@ input[type='number'] {
         top: 9px;
         right: 7px;
     }
+}
+
+.style-button-preview {
+    min-width: 273px;
+    width: 273px;
+    height: 100px;
+    padding: 40px;
+    font-weight: 700;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .fade-in {

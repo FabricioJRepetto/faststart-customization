@@ -28,12 +28,12 @@ export const Previewer = (): React.JSX.Element => {
     const [screen, setScreen] = useAtom(PreviewScreenIndexAtom)
 
     const [ogData] = useAtom(DefaultConfigAtom)
+    const [OgStyleData] = useAtom(DefaultStylesDataAtom)
 
     const [bgData] = useAtom(EditedBackgroundsDataAtom)
+    const [styleData] = useAtom(EditedStylesDataAtom)
     const [lngData] = useAtom(EditedLanguageDataAtom)
     const [ogLngData] = useAtom(DefaultLanguageDataAtom)
-    const [stylesData] = useAtom(EditedStylesDataAtom)
-    const [ogStylesData] = useAtom(DefaultStylesDataAtom)
 
     const currBg = (name?: string): string => {
         try {
@@ -60,16 +60,20 @@ export const Previewer = (): React.JSX.Element => {
     }
 
     const currStyle = (parentKey: StylesParentKeys, name: string): string => {
-        try {
-            const style = stylesData?.[parentKey]?.[name] || ogStylesData?.[parentKey]?.[name]
-            if (name === 'borderRadius')
-                return style + (stylesData?.[parentKey]?.[name] ? 'px' : '')
-
-            return style
-        } catch (error) {
-            console.error(error)
-            return ''
+        if (name === 'border') {
+            const _b = styleData?.[parentKey]?.['border'] ?? OgStyleData?.[parentKey]?.['border']
+            return _b
         }
+
+        if (name === 'borderRadius') {
+            const customBR = styleData?.[parentKey]?.['borderRadius']
+            const _br =
+                customBR != null ? customBR + 'px' : OgStyleData?.[parentKey]?.['borderRadius']
+            return _br
+        }
+
+        const _c = styleData?.[parentKey]?.[name] || OgStyleData?.[parentKey]?.[name]
+        return _c
     }
 
     const SCREENS = [
