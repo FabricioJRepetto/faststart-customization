@@ -89,6 +89,7 @@ export interface AssetData extends AssetDataBase {
     mimeType: string
     customBase64: string
     customMimeType: string
+    blobUrl?: string
 }
 export interface AssetList {
     icon: AssetData[]
@@ -111,6 +112,7 @@ export interface FinalAssetData {
     name: string
     path: string
     fileType: string
+    blobUrl?: string
 }
 
 export enum StylesParentKeys {
@@ -254,6 +256,16 @@ export interface CustomConfig {
 }
 
 export type CustomConfigKey = keyof CustomConfig
+interface ThmeBackground {
+    base64: string
+    mime: string
+    blobUrl?: string
+}
+interface ThemeLogo {
+    name: string
+    base64: string
+    mime: string
+}
 
 export interface ThemeConfig {
     themeName: string
@@ -265,14 +277,8 @@ export interface ThemeConfig {
         secondaryColor: string
         errorMessageColor: string
     }
-    background: {
-        base64: string
-        mime: string
-    }
-    logo: {
-        base64: string
-        mime: string
-    }
+    background: ThmeBackground
+    logo: ThemeLogo
 }
 
 export interface ThirdScreenConfig {

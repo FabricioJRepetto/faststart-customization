@@ -60,7 +60,7 @@ class MediaService {
     private simplifyTheme(e: CustomConfig): ThemeConfig {
         try {
             const bgPath = e.background.find((e) => e.name === 'background_Idle')!.path
-            const logoPath = e.icon.find((b) => b.name === 'icon_logo')!.path
+            const logo = e.icon.find((b) => b.name === 'icon_logo')!
             return {
                 themeName: e.themeName,
                 color: e.styles.general,
@@ -69,8 +69,9 @@ class MediaService {
                     mime: getMime(bgPath)
                 },
                 logo: {
-                    base64: logoPath,
-                    mime: getMime(logoPath)
+                    name: logo.name,
+                    base64: logo.path,
+                    mime: getMime(logo.path)
                 },
                 customEnabled: e.customEnabled,
                 isActive: e.isActive,
@@ -90,6 +91,7 @@ class MediaService {
                     mime: ''
                 },
                 logo: {
+                    name: '',
                     base64: '',
                     mime: ''
                 },

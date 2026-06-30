@@ -11,10 +11,13 @@ import {
 import { DistributionMethod, StylesParentKeys } from '@shared/types'
 import { useAtom, useAtomValue } from 'jotai'
 import ThemeSvg from '../assets/theme.svg?react'
-import Idle from './previewr-screens/Idle'
-import Menu from './previewr-screens/Menu'
-import Input from './previewr-screens/Input'
+import Idle from './previewer-screens/Idle'
+import Menu from './previewer-screens/Menu'
+import Input from './previewer-screens/Input'
 import { currentIcon } from '@renderer/utils/currentIcon'
+import Success from './previewer-screens/Success'
+import Error from './previewer-screens/Error'
+import Info from './previewer-screens/Info'
 
 export interface PreviewScreenProps {
     currBg: (name?: string) => string
@@ -38,7 +41,7 @@ export const Previewer = (): React.JSX.Element => {
     const currBg = (name?: string): string => {
         try {
             const bg = bgData?.find((e) => e?.name === (name ?? 'background_Idle'))
-            return bg?.customBase64 || (isRemote ? bg!.filePath : bg!.base64)
+            return bg?.customBase64 || (isRemote ? bg!.blobUrl! : bg!.base64)
         } catch (error) {
             console.error(error)
             return ''
@@ -93,6 +96,27 @@ export const Previewer = (): React.JSX.Element => {
         />,
         <Input
             key={'Input'}
+            currBg={currBg}
+            currIcon={currIcon}
+            currLang={currLang}
+            currStyle={currStyle}
+        />,
+        <Success
+            key={'Success'}
+            currBg={currBg}
+            currIcon={currIcon}
+            currLang={currLang}
+            currStyle={currStyle}
+        />,
+        <Error
+            key={'Error'}
+            currBg={currBg}
+            currIcon={currIcon}
+            currLang={currLang}
+            currStyle={currStyle}
+        />,
+        <Info
+            key={'Info'}
             currBg={currBg}
             currIcon={currIcon}
             currLang={currLang}

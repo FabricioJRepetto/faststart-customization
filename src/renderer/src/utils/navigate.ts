@@ -14,4 +14,14 @@ export enum SECT {
 export const navigate = (screen: Screens, section?: SECT): void => {
     console.log(`Going to: ${screen}${section ? ', section:' + section : ''}`)
     store.set(CurrentScreenAtom, screen)
+    if (section) {
+        setTimeout(() => {
+            const el = document.getElementById(section)
+            if (el) el.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+                inline: 'nearest'
+            })
+        }, 300);
+    }
 }

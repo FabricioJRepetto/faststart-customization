@@ -36,6 +36,7 @@ import {
 import { langDataShell } from './LangStructureBuilder'
 import mediaServiceController from './controllers/mediaServer/mediaServiceController'
 import { getMime } from './assetsUtils'
+import { preloadThemeMedia } from './AssetsPreLoader'
 
 /** Consulta y guarda los assets encontrados en las apps Cliente y Tercera pantalla */
 export const loadLocalAssets = async (
@@ -65,7 +66,6 @@ export const loadLocalAssets = async (
             store.set(EditedAudiosDataAtom, [...data.audio] as AssetData[])
             store.set(EditedThirdScreenAssetsDataAtom, [...data.thirdscreen] as AssetData[])
         } else {
-            // console.error('- Error al cargar assets: ' + resAssets.error)
             throw resAssets.error
         }
     } catch (error) {
@@ -257,14 +257,10 @@ export const loadRemoteThemesCollection = async (): Promise<void> => {
         if (res.length) {
             console.log(`- Themes Collection Library. data OK\n`, '- Saving data')
             console.log(`Collection found (${res.length} themes):`)
-            res.map((t) => {
-                console.log(' --- ', t.themeName)
-                console.log('  · isActive ' + t.isActive)
-                console.log('  · isDefaultTheme ' + t.isDefaultTheme)
-                console.log('  · customEnabled ' + t.customEnabled)
-            })
+            
+            const cachedThemes = await Promise.all(res.map((t) => preloadThemeMedia(t)))
 
-            store.set(ThemesLibraryDataAtom, res)
+            store.set(ThemesLibraryDataAtom, cachedThemes)
         } else {
             console.warn(`- Libreria de temas vacía\n`)
         }
@@ -305,7 +301,8 @@ const parseConfigToAssetList = (config: CustomConfig): AssetList => {
                 mimeType: getMime(e.path),
                 customPath: '',
                 customBase64: '',
-                customMimeType: ''
+                customMimeType: '',
+                blobUrl: e.blobUrl
             }))
         }
         const aux: AssetList = {

@@ -80,7 +80,7 @@ export const ThirdCard = ({ data, deleteValue }: NewProps): React.JSX.Element =>
             <div className="custom-thirscreen-container">
                 {data.mimeType.match('video') ? (
                     <video
-                        src={isRemote ? data.filePath : data.base64}
+                        src={isRemote ? data.blobUrl : data.base64}
                         width={350}
                         muted
                         autoPlay

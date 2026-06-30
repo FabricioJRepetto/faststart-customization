@@ -28,6 +28,7 @@ import {
 } from '@renderer/utils/bootSequence'
 import RemoteSvg from '../assets/wifi.svg?react'
 import LocalSvg from '../assets/box.svg?react'
+import { preloadAssets } from '@renderer/utils/AssetsPreLoader'
 
 // TODO Checkear que los directorios seleccionados tienen la estructura correcta antes de avanzar
 
@@ -72,9 +73,13 @@ const Landing = (): React.JSX.Element => {
             })
                 .then(() => setStatus(true))
                 .catch(() => {
-                    if (retries === 5) return
+                    if (retries === 5) {
+                        setStatus(false)
+                        return
+                    }
                     retries++
                     setStatus(false)
+                    clearTimeout(_to)
                     _to = setTimeout(() => {
                         ping()
                     }, 5000)
@@ -89,6 +94,7 @@ const Landing = (): React.JSX.Element => {
     //_-_-_-_-_-_-_-_-_-_- LOCAL _-_-_-_-_-_-_-_-_-_-_-
 
     const continueHandler = async (): Promise<void> => {
+        const start = performance.now()
         try {
             setLoading(true)
             let _clientVer = ''
@@ -141,6 +147,9 @@ const Landing = (): React.JSX.Element => {
             alert('Error al cargar archivos: ' + error)
         } finally {
             setLoading(false)
+            console.log(
+                `# Local Start Sequence finished in ${Math.floor(performance.now() - start)}ms`
+            )
         }
     }
 
@@ -217,8 +226,6 @@ const Landing = (): React.JSX.Element => {
 
                 console.log('found versions', { modalList, readyVersions })
 
-                // if (!aux.length) continueHandler()
-                // else setModal(aux)
                 return { modalList, readyVersions }
             }
         } catch (error) {
@@ -262,12 +269,15 @@ const Landing = (): React.JSX.Element => {
     //_-_-_-_-_-_-_-_-_-_- REMOTE _-_-_-_-_-_-_-_-_-_-_-
 
     const remoteStartUp = async (): Promise<void> => {
+        setLoading(true)
+        const start = performance.now()
         try {
-            setLoading(true)
-
+            // await new Promise(r => setTimeout(r, 7000))
             //* LOAD : customConfig.json
             await loadRemoteCustomConfig()
             validateFiles()
+            //* PRE-LOAD : Assets
+            await preloadAssets('blobUrl')
             //* LOAD : Assets
             parseRemoteAssets()
             //* Libreria de temas
@@ -279,13 +289,16 @@ const Landing = (): React.JSX.Element => {
             console.error(error)
         } finally {
             setLoading(false)
+            console.log(
+                `# Remote Start Sequence finished in ${Math.floor(performance.now() - start)}ms`
+            )
         }
     }
 
     return (
         <div className="landing-screen">
-            <NATL className="logo" />
-            <div className="creator">Versión demo</div>
+            <NATL className={`logo ${loading ? 'logo-loading' : ''}`} />
+            <div className="creator">Versión de escritorio</div>
             <div className="text">
                 Administración Rápida de Customizaciones
                 <div className="text">

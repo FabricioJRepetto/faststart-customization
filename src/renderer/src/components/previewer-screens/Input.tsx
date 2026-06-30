@@ -1,5 +1,6 @@
-import { StylesParentKeys } from '@shared/types'
+import { Screens, StylesParentKeys } from '@shared/types'
 import { PreviewScreenProps } from '../Previewer'
+import { navigate, SECT } from '@renderer/utils/navigate'
 
 const Input = ({
     currBg,
@@ -19,7 +20,7 @@ const Input = ({
             <img className="preview-bg" src={currBg('background_UserAction')} />
             <div
                 className="preview-logo"
-                style={{ color: currStyle(StylesParentKeys.logo, 'dark') }}
+                style={{ color: currStyle(StylesParentKeys.logo, 'light') }}
             >
                 {currIcon('icon_logo')}
             </div>
@@ -66,7 +67,7 @@ const Input = ({
                     </p>
                 </div>
 
-                <div className="preview-input-numpad-container">
+                <div className="preview-input-numpad-container preview-hilight-area" onClick={() => navigate(Screens.styles, SECT.input_button_style_edit)}>
                     <div>
                         <button style={buttonStyle}>1</button>
                         <button style={buttonStyle}>2</button>

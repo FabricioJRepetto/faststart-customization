@@ -23,7 +23,7 @@ const AudioCard = ({ audio, setValue, resetValue }: Props): React.JSX.Element =>
             </div>
 
             {!audio.customBase64 ? (
-                <audio src={isRemote ? audio.filePath : audio.base64} controls />
+                <audio src={isRemote ? audio.blobUrl : audio.base64} controls />
             ) : (
                 <audio src={audio.customBase64} controls />
             )}

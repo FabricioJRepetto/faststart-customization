@@ -73,10 +73,19 @@ const ThemeCard = ({
                 </div>
             </span>
             <div className="theme-card" style={{ color: COLOR }}>
-                <img src={theme.background.base64} className="theme-card-background" />
+                <img
+                    src={isRemote ? theme.background.blobUrl : theme.background.base64}
+                    className="theme-card-background"
+                />
                 <div className="theme-card-logo">
                     {theme.logo.mime.match('svg') ? (
-                        <DynamicSvg path={theme.logo.base64} />
+                        <DynamicSvg
+                            config={
+                                isRemote
+                                    ? { assetName: `${theme.themeName}_${theme.logo.name}` }
+                                    : { path: theme.logo.base64 }
+                            }
+                        />
                     ) : (
                         <img src={theme.logo.base64} />
                     )}

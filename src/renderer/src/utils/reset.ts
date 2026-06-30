@@ -19,12 +19,14 @@ import {
     ServerStatusAtom,
     store,
     SupervisorAppVersionDirAtom,
+    svgCache,
     ThemesLibraryDataAtom,
     ThirdAppVersionDirAtom,
     UploadProgressAtom,
     UploadSetAsDefaultThemeAtom,
     UploadStageAtom
 } from './context/context'
+import { clearMediaCache } from './AssetsPreLoader'
 
 /** Resetea todos los valores del contexto */
 export const reset = (): void => {
@@ -32,6 +34,8 @@ export const reset = (): void => {
     store.set(FirstLoadAtom, false)
     store.set(DistributionMethodAtom, undefined)
     store.set(PreviewScreenIndexAtom, 0)
+    store.set(svgCache, {})
+    clearMediaCache()
 
     //_ Data
     store.set(DefaultConfigAtom, undefined)
@@ -66,8 +70,10 @@ export const reset = (): void => {
     store.set(CurrentScreenAtom, Screens.landing)
 }
 
-/** Resetea Data: DefaultConfig, Language (Og+Edit), Styles (Og+Edit),Backgrounds, Icons, Audios, Third (Config+Assets) */
+/** Limpia media cache y Resetea Data: DefaultConfig, Language (Og+Edit), Styles (Og+Edit), Backgrounds, Icons, Audios, Third (Config+Assets) */
 export const softReset = (): void => {
+    clearMediaCache()
+
     store.set(DefaultConfigAtom, undefined)
 
     store.set(DefaultLanguageDataAtom, {})

@@ -20,6 +20,7 @@ import { DEFAULT_THEME } from '@shared/CONSTANTS'
 import { DefaultConfigAtom } from '@renderer/utils/context/context'
 import { useSetAtom } from 'jotai'
 import { softReset } from '@renderer/utils/reset'
+import { preloadAssets } from '@renderer/utils/AssetsPreLoader'
 
 interface Props {
     themeData: ThemeConfig
@@ -91,9 +92,14 @@ const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
             if (!config) {
                 throw new Error('Configuración no encontrada')
             }
-            setDefaultConfig(config)
 
+            //* LOAD : Config
+            setDefaultConfig(config)
+            //* LOAD : Styles & Languages
             validateFiles()
+            //* PRE-LOAD : Assets
+            await preloadAssets()
+            //* LOAD : Assets
             parseRemoteAssets()
 
             setInfoModal(true)
@@ -136,7 +142,7 @@ const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
                 style={{ color: themeData.color.primaryColor }}
             >
                 {themeData.logo.mime.match('svg') ? (
-                    <DynamicSvg path={themeData.logo.base64} />
+                    <DynamicSvg config={{ path: themeData.logo.base64 }} />
                 ) : (
                     <img src={themeData.logo.base64} />
                 )}

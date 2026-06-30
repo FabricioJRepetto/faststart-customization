@@ -82,20 +82,91 @@ input[type='number'] {
     margin-bottom: 80px;
 }
 
+@property --shadow-angle {
+    syntax: '<angle>';
+    initial-value: 45deg;
+    inherits: false;
+}
+@property --shadow-color {
+    syntax: '<color>';
+    initial-value: #bb5d1e00;
+    inherits: false;
+}
+
 .logo {
+    --shadow-angle: 45deg;
+    --shadow-color: #bb3d1e00;
     color: var(--ev-c-text-1);
     margin-bottom: 20px;
     -webkit-user-drag: none;
     height: 128px;
     width: 128px;
-    filter: drop-shadow(0px 0px 25px #115247);
-    animation: 8s glow ease-in-out alternate infinite;
+    filter: drop-shadow(
+            calc(cos(var(--shadow-angle)) * 2px) calc(sin(var(--shadow-angle)) * 2px) 15px #00ff62f5
+        )
+        drop-shadow(
+            calc(cos(var(--shadow-angle)) * -2px) calc(sin(var(--shadow-angle)) * -2px) 10px
+                var(--shadow-color)
+        )
+        drop-shadow(
+            calc(cos(var(--shadow-angle)) * 18px) calc(sin(var(--shadow-angle)) * 18px) 30px #1e6fbb
+        );
+    transition:
+        --shadow-color ease 1s,
+        --shadow-angle ease 1s;
+    animation: 10s glow cubic-bezier(0.56, 0.15, 0.42, 0.83) alternate infinite;
 }
-
+.logo-loading {
+    --shadow-angle: 45deg;
+    --shadow-color: #bb3d1e;
+    filter: drop-shadow(
+            calc(cos(var(--shadow-angle)) * 6px) calc(sin(var(--shadow-angle)) * 6px) 15px #00ff62f5
+        )
+        drop-shadow(
+            calc(cos(var(--shadow-angle)) * -4px) calc(sin(var(--shadow-angle)) * -4px) 10px
+                var(--shadow-color)
+        )
+        drop-shadow(
+            calc(cos(var(--shadow-angle)) * 18px) calc(sin(var(--shadow-angle)) * 18px) 30px #1e6fbb
+        );
+    transition: --shadow-color ease 1s;
+    animation: rotate-shadow 1.75s cubic-bezier(0.56, 0.15, 0.42, 0.83) infinite;
+}
 @keyframes glow {
+    33% {
+        filter: drop-shadow(
+                calc(cos(var(--shadow-angle)) * 16px) calc(sin(var(--shadow-angle)) * 16px) 15px
+                    #00ff62f5
+            )
+            drop-shadow(
+                calc(cos(var(--shadow-angle)) * 24px) calc(sin(var(--shadow-angle)) * 24px) 30px
+                    #1e6fbb
+            );
+    }
+    66% {
+        filter: drop-shadow(
+                calc(cos(var(--shadow-angle)) * -16px) calc(sin(var(--shadow-angle)) * 16px) 15px
+                    #00ff62f5
+            )
+            drop-shadow(
+                calc(cos(var(--shadow-angle)) * -24px) calc(sin(var(--shadow-angle)) * 24px) 30px
+                    #1e6fbb
+            );
+    }
     100% {
-        /* filter: drop-shadow(0px 0px 50px #006e5c) drop-shadow(0px 0px 3px #00ffd05b); */
-        filter: drop-shadow(0px 0px 40px #115247) drop-shadow(0px 0px 3px #00ffd091);
+        filter: drop-shadow(
+                calc(cos(var(--shadow-angle)) * -10px) calc(sin(var(--shadow-angle)) * -6px) 12px
+                    #00ff62f5
+            )
+            drop-shadow(
+                calc(cos(var(--shadow-angle)) * -24px) calc(sin(var(--shadow-angle)) * -14px) 40px
+                    #1e6fbb
+            );
+    }
+}
+@keyframes rotate-shadow {
+    to {
+        --shadow-angle: 405deg;
     }
 }
 
@@ -422,12 +493,20 @@ input[type='number'] {
     width: 200px;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     padding: 20px;
     gap: 20px;
     background-color: var(--ev-c-black);
     transition: width 0.3s ease-in-out;
     opacity: 0;
     animation: fadeIn 0.15s ease-in-out 0.3s forwards;
+
+    div {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 20px;
+    }
 
     border-right: 1px solid transparent;
     border-image-source: linear-gradient(
@@ -439,6 +518,7 @@ input[type='number'] {
     border-image-slice: 1;
 
     a {
+        cursor: pointer;
         display: flex;
         align-items: center;
         gap: 12px;
@@ -450,6 +530,10 @@ input[type='number'] {
             width: 36px;
             height: 36px;
             min-width: 36px;
+        }
+
+        &:hover {
+            filter: brightness(1.5);
         }
     }
 
@@ -1171,13 +1255,16 @@ input[type='number'] {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    border-radius: 30px;
+    opacity: 0;
+    animation: fadeIn 0.13s ease-in forwards;
 
     h1 {
         z-index: 100;
         text-align: center;
         margin: 6px 0 0;
         width: 80%;
-        font-size: 36px;
+        font-size: 52px;
         font-weight: 500;
         line-height: 1.1;
         text-transform: uppercase;
@@ -1365,7 +1452,31 @@ input[type='number'] {
             }
         }
     }
+
+    .preview-info-image {
+        margin-top: 30px;
+        svg {
+            height: 180px;
+            width: 180px;
+        }
+    }
 }
+
+.preview-hilight-area {
+    margin: -15px;
+    border: 15px solid transparent;
+    border-radius: 20px;
+    transition: border 0.1s ease-in;
+
+    * {
+        cursor: pointer;
+    }
+
+    &:hover {
+        border: 15px solid lime;
+    }
+}
+
 .preview-control {
     display: flex;
     gap: 25px;

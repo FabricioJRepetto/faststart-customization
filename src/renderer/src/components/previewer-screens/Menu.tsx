@@ -7,7 +7,7 @@ const Menu = ({ currBg, currIcon, currStyle, currLang }: PreviewScreenProps): Re
             <img className="preview-bg" src={currBg('background_UserAction')} />
             <div
                 className="preview-logo"
-                style={{ color: currStyle(StylesParentKeys.logo, 'dark') }}
+                style={{ color: currStyle(StylesParentKeys.logo, 'light') }}
             >
                 {currIcon('icon_logo')}
             </div>

@@ -20,109 +20,113 @@ const SidebarMenu = (): React.JSX.Element => {
 
     return renderSidebar ? (
         <div className={`sidebar closed`}>
-            <Tooltip text="Main">
-                <a
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={() => setScreen(Screens.main)}
-                    className={screen === Screens.main ? 'selected' : ''}
-                >
-                    <MainSvg />
-                </a>
-            </Tooltip>
+            <div>
+                <Tooltip text="Main">
+                    <a
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={() => setScreen(Screens.main)}
+                        className={screen === Screens.main ? 'selected' : ''}
+                    >
+                        <MainSvg />
+                    </a>
+                </Tooltip>
 
-            <div className="sidebard-divider"></div>
+                <div className="sidebard-divider"></div>
 
-            <Tooltip text="Iconos">
-                <a
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={() => setScreen(Screens.icons)}
-                    className={screen === Screens.icons ? 'selected' : ''}
-                >
-                    <IconsSvg />
-                </a>
-            </Tooltip>
-            <Tooltip text="Fondos de pantalla">
-                <a
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={() => setScreen(Screens.backgrounds)}
-                    className={screen === Screens.backgrounds ? 'selected' : ''}
-                >
-                    <BackgroundsSvg />
-                </a>
-            </Tooltip>
-            <Tooltip text="Tercer pantalla">
-                <a
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={() => setScreen(Screens.thirdScreen)}
-                    className={screen === Screens.thirdScreen ? 'selected' : ''}
-                >
-                    <ScreenSvg />
-                </a>
-            </Tooltip>
-            <Tooltip text="Audios">
-                <a
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={() => setScreen(Screens.audio)}
-                    className={screen === Screens.audio ? 'selected' : ''}
-                >
-                    <AudioSvg />
-                </a>
-            </Tooltip>
+                <Tooltip text="Iconos">
+                    <a
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={() => setScreen(Screens.icons)}
+                        className={screen === Screens.icons ? 'selected' : ''}
+                    >
+                        <IconsSvg />
+                    </a>
+                </Tooltip>
+                <Tooltip text="Fondos de pantalla">
+                    <a
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={() => setScreen(Screens.backgrounds)}
+                        className={screen === Screens.backgrounds ? 'selected' : ''}
+                    >
+                        <BackgroundsSvg />
+                    </a>
+                </Tooltip>
+                <Tooltip text="Tercer pantalla">
+                    <a
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={() => setScreen(Screens.thirdScreen)}
+                        className={screen === Screens.thirdScreen ? 'selected' : ''}
+                    >
+                        <ScreenSvg />
+                    </a>
+                </Tooltip>
+                <Tooltip text="Audios">
+                    <a
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={() => setScreen(Screens.audio)}
+                        className={screen === Screens.audio ? 'selected' : ''}
+                    >
+                        <AudioSvg />
+                    </a>
+                </Tooltip>
 
-            <Tooltip text="Estilos">
-                <a
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={() => setScreen(Screens.styles)}
-                    className={screen === Screens.styles ? 'selected' : ''}
-                >
-                    <ColorsSvg />
-                </a>
-            </Tooltip>
-            <Tooltip text="Diccionario">
-                <a
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={() => setScreen(Screens.languages)}
-                    className={screen === Screens.languages ? 'selected' : ''}
-                >
-                    <LanguageSvg />
-                </a>
-            </Tooltip>
+                <Tooltip text="Estilos">
+                    <a
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={() => setScreen(Screens.styles)}
+                        className={screen === Screens.styles ? 'selected' : ''}
+                    >
+                        <ColorsSvg />
+                    </a>
+                </Tooltip>
+                <Tooltip text="Diccionario">
+                    <a
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={() => setScreen(Screens.languages)}
+                        className={screen === Screens.languages ? 'selected' : ''}
+                    >
+                        <LanguageSvg />
+                    </a>
+                </Tooltip>
+            </div>
 
-            <Tooltip text="Colecciones">
-                <a
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={() => setScreen(Screens.collections)}
-                    className={screen === Screens.collections ? 'selected' : ''}
-                >
-                    <CollectionSvg />
-                </a>
-            </Tooltip>
-            <Tooltip text="the_Pit">
-                <a
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={() => setScreen(Screens.thePit)}
-                    className={screen === Screens.thePit ? 'selected' : ''}
-                >
-                    <ThePittSvg />
-                </a>
-            </Tooltip>
+            <div>
+                <Tooltip text="Colecciones">
+                    <a
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={() => setScreen(Screens.collections)}
+                        className={screen === Screens.collections ? 'selected' : ''}
+                    >
+                        <CollectionSvg />
+                    </a>
+                </Tooltip>
+                <Tooltip text="the_Pit">
+                    <a
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={() => setScreen(Screens.thePit)}
+                        className={screen === Screens.thePit ? 'selected' : ''}
+                    >
+                        <ThePittSvg />
+                    </a>
+                </Tooltip>
 
-            <div className="sidebard-divider"></div>
+                <div className="sidebard-divider"></div>
 
-            <Tooltip text="Salir">
-                <a target="_blank" rel="noreferrer" onClick={reset}>
-                    <ExitSvg />
-                </a>
-            </Tooltip>
+                <Tooltip text="Salir">
+                    <a target="_blank" rel="noreferrer" onClick={reset}>
+                        <ExitSvg />
+                    </a>
+                </Tooltip>
+            </div>
         </div>
     ) : (
         <></>
