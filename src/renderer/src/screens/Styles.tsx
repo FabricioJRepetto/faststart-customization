@@ -81,7 +81,7 @@ const Styles = (): React.JSX.Element => {
                     <h3>Logo</h3>
                     <p>
                         Colores del logo. La aplicación calcula el contraste entre el color de los
-                        fondos y el logo, para que siempre sea disitngible de los fondos de
+                        fondos y el logo, para que siempre sea distinguible de los fondos de
                         pantalla.
                     </p>
                 </div>

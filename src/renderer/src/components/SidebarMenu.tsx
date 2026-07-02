@@ -1,6 +1,7 @@
 import { CurrentScreenAtom } from '@renderer/utils/context/context'
 import { useAtom } from 'jotai'
-import MainSvg from '../assets/preview.svg?react'
+import HomeSvg from '../assets/home.svg?react'
+import PreviewSvg from '../assets/preview.svg?react'
 import IconsSvg from '../assets/sticker.svg?react'
 import ColorsSvg from '../assets/palette.svg?react'
 import BackgroundsSvg from '../assets/image.svg?react'
@@ -8,7 +9,6 @@ import LanguageSvg from '../assets/dictionary.svg?react'
 import ScreenSvg from '../assets/screen.svg?react'
 import AudioSvg from '../assets/audio.svg?react'
 import CollectionSvg from '../assets/storage.svg?react'
-import ThePittSvg from '../assets/black-hole.svg?react'
 import ExitSvg from '../assets/logout.svg?react'
 import { Screens } from '@shared/types'
 import { reset } from '@renderer/utils/reset'
@@ -28,7 +28,20 @@ const SidebarMenu = (): React.JSX.Element => {
                         onClick={() => setScreen(Screens.main)}
                         className={screen === Screens.main ? 'selected' : ''}
                     >
-                        <MainSvg />
+                        <HomeSvg />
+                    </a>
+                </Tooltip>
+
+                <div className="sidebard-divider"></div>
+
+                <Tooltip text="Main">
+                    <a
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={() => setScreen(Screens.preview)}
+                        className={screen === Screens.preview ? 'selected' : ''}
+                    >
+                        <PreviewSvg />
                     </a>
                 </Tooltip>
 
@@ -108,7 +121,7 @@ const SidebarMenu = (): React.JSX.Element => {
                         <CollectionSvg />
                     </a>
                 </Tooltip>
-                <Tooltip text="the_Pit">
+                {/* <Tooltip text="the_Pit">
                     <a
                         target="_blank"
                         rel="noreferrer"
@@ -117,7 +130,7 @@ const SidebarMenu = (): React.JSX.Element => {
                     >
                         <ThePittSvg />
                     </a>
-                </Tooltip>
+                </Tooltip> */}
 
                 <div className="sidebard-divider"></div>
 

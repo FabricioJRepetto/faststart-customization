@@ -24,7 +24,7 @@ import UploadDialog from '@renderer/components/ModalBodies/UploadDialog'
 import { test, unicName } from '@renderer/utils/themesUtils'
 import mediaServiceController from '@renderer/utils/controllers/mediaServer/mediaServiceController'
 
-export const MainScreen = (): React.JSX.Element => {
+export const Preview = (): React.JSX.Element => {
     const isRemote = useAtomValue(DistributionMethodAtom) === DistributionMethod.REMOTE
 
     const clientDir = useAtomValue(ClientAppVersionDirAtom)
@@ -284,4 +284,4 @@ export const MainScreen = (): React.JSX.Element => {
         </div>
     )
 }
-export default MainScreen
+export default Preview

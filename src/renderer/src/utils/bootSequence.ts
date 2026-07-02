@@ -258,6 +258,7 @@ export const loadRemoteThemesCollection = async (): Promise<void> => {
             console.log(`- Themes Collection Library. data OK\n`, '- Saving data')
             console.log(`Collection found (${res.length} themes):`)
             
+            console.log(`Caching themes Assets...`)
             const cachedThemes = await Promise.all(res.map((t) => preloadThemeMedia(t)))
 
             store.set(ThemesLibraryDataAtom, cachedThemes)

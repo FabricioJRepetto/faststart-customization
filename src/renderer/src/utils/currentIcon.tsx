@@ -7,10 +7,11 @@ export const defaultIcon = (name: string): React.JSX.Element => {
         const iconData = store.get(EditedIconsDataAtom)
         const isRemote = store.get(DistributionMethodAtom) === DistributionMethod.REMOTE
         const ico = iconData?.find((e) => e?.name === name)
+        
         const isSVG = (isRemote ? ico!.mimeType : ico!.mimeType).match('svg')
-        const path = isRemote ? ico!.name : ico!.base64
+        const path = isRemote ? ico!.blobUrl! : ico!.base64
 
-        const config = isRemote ? { assetName: path } : { path: path }
+        const config = isRemote ? { assetName: ico!.name } : { path: path }
 
         return isSVG ? <DynamicSvg config={config} /> : <img src={path} />
     } catch (error) {

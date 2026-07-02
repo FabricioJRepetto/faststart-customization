@@ -31,7 +31,6 @@ const ThemeCard = ({
     const isRemote = useAtomValue(DistributionMethodAtom) === DistributionMethod.REMOTE
 
     useEffect(() => {
-        console.log(theme)
         ;(async () => {
             const themeSchema = await calculateContrast(
                 theme.color.primaryColor,

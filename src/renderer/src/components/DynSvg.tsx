@@ -10,13 +10,13 @@ type config =
           assetName: string
           path?: never
       }
-type Props = { config: config }
+type Props = { config: config, color?: string }
 
-const DynamicSvg = ({ config: { path, assetName } }: Props): React.JSX.Element | null => {
+const DynamicSvg = ({ config: { path, assetName }, color }: Props): React.JSX.Element | null => {
     const [svgContent, setSvgContent] = useState<string | null>(null)
 
     useEffect(() => {
-        const getSvg = async (): Promise<void> => {            
+        const getSvg = async (): Promise<void> => {
             let text: string = ''
             if (path) {
                 text = await fetch(path).then((res) => res.text())
@@ -35,7 +35,9 @@ const DynamicSvg = ({ config: { path, assetName } }: Props): React.JSX.Element |
 
     if (!svgContent) return null
 
-    return <div dangerouslySetInnerHTML={{ __html: svgContent }}></div>
+    return (
+        <div dangerouslySetInnerHTML={{ __html: svgContent }} style={color ? { color } : {}}></div>
+    )
 }
 
 export default DynamicSvg

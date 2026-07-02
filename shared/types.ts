@@ -26,6 +26,7 @@ export enum DistributionMethod {
 export enum Screens {
     landing = 'landing',
     main = 'main',
+    preview = 'preview',
     styles = 'styles',
     icons = 'icons',
     backgrounds = 'backgrounds',
@@ -37,16 +38,6 @@ export enum Screens {
 }
 
 export type LanguageData = Record<string, Record<string, string>>
-
-// export interface CustomConfigData {
-//     primaryColor: string
-//     secondaryColor: string
-//     errorMessageColor: string
-//     buttonBorder: string
-//     buttonBorderRadius: string
-//     buttonColor: string
-//     buttonBackground: string
-// }
 
 export interface AppSettingsData {
     Modules: {

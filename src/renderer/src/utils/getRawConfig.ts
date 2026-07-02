@@ -67,7 +67,8 @@ export const getUploadList = async (): Promise<FileForUpload[]> => {
         console.log(thirdList.length, 'third screen assets converted')
 
         const aux: FileForUpload[] = [...iconsList, ...bgsList, ...audiosList, ...thirdList]
-        console.log(aux.length, 'files ready for upload')
+        if (!aux.length) console.log('No need to upload new files')
+        else console.log(aux.length, 'files ready for upload')
 
         return aux
     } catch (error) {

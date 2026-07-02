@@ -12,6 +12,7 @@ export enum SECT {
 }
 
 export const navigate = (screen: Screens, section?: SECT): void => {
+    //TODO agregar section > language key, icons
     console.log(`Going to: ${screen}${section ? ', section:' + section : ''}`)
     store.set(CurrentScreenAtom, screen)
     if (section) {

@@ -1,30 +1,26 @@
-import { StylesParentKeys } from '@shared/types'
+import { Screens, StylesParentKeys } from '@shared/types'
 import { PreviewScreenProps } from '../Previewer'
+import { navigate } from '@renderer/utils/navigate'
+import Logo from './components/Logo'
+import LangButton from './components/LangButton'
 
-const Success = ({ currBg, currIcon, currStyle, currLang }: PreviewScreenProps): React.JSX.Element => {
+const Success = ({
+    currBg,
+    currIcon,
+    currStyle,
+    currLang
+}: PreviewScreenProps): React.JSX.Element => {
     return (
         <div className="preview-content">
             <img className="preview-bg" src={currBg('background_success')} />
-            <div
-                className="preview-logo"
-                style={{ color: currStyle(StylesParentKeys.logo, 'dark') }}
-            >
-                {currIcon('icon_logo')}
-            </div>
-            <div
-                className="preview-lang-btn"
-                style={{
-                    color: currStyle(StylesParentKeys.secondaryButton, 'color'),
-                    backgroundColor: currStyle(StylesParentKeys.secondaryButton, 'background'),
-                    border: `3px solid ${currStyle(StylesParentKeys.secondaryButton, 'color')}`,
-                    borderRadius: currStyle(StylesParentKeys.secondaryButton, 'borderRadius')
-                }}
-            >
-                <div className="preview-lang-icon">{currIcon('icon_world')}</div>
-                es
-            </div>
+            <Logo currIcon={currIcon} currStyle={currStyle} />
+            <LangButton currIcon={currIcon} currStyle={currStyle} />
 
-            <h1 style={{ color: currStyle(StylesParentKeys.successScreen, 'primaryColor') }}>
+            <h1
+                className="preview-hilight-area"
+                onClick={() => navigate(Screens.languages)}
+                style={{ color: currStyle(StylesParentKeys.successScreen, 'primaryColor') }}
+            >
                 {currLang('es', 'thankYou')}
             </h1>
 
@@ -32,7 +28,12 @@ const Success = ({ currBg, currIcon, currStyle, currLang }: PreviewScreenProps):
                 className="preview-menu-container"
                 style={{ color: currStyle(StylesParentKeys.successScreen, 'primaryColor') }}
             >
-                <div className="preview-info-image">{currIcon('icon_thankyou')}</div>
+                <div
+                    className="preview-info-image preview-hilight-area"
+                    onClick={() => navigate(Screens.icons)}
+                >
+                    {currIcon('icon_thankyou')}
+                </div>
             </div>
         </div>
     )

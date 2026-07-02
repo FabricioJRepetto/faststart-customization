@@ -1,6 +1,9 @@
 import { Screens, StylesParentKeys } from '@shared/types'
 import { PreviewScreenProps } from '../Previewer'
 import { navigate, SECT } from '@renderer/utils/navigate'
+import Logo from './components/Logo'
+import LangButton from './components/LangButton'
+import NavBar from './components/NavBar'
 
 const Input = ({
     currBg,
@@ -18,28 +21,15 @@ const Input = ({
     return (
         <div className="preview-content">
             <img className="preview-bg" src={currBg('background_UserAction')} />
-            <div
-                className="preview-logo"
-                style={{ color: currStyle(StylesParentKeys.logo, 'light') }}
-            >
-                {currIcon('icon_logo')}
-            </div>
+            <Logo currIcon={currIcon} currStyle={currStyle} theme="light" />
+            <LangButton currIcon={currIcon} currStyle={currStyle} />
 
-            <div
-                className="preview-lang-btn"
-                style={{
-                    color: currStyle(StylesParentKeys.secondaryButton, 'color'),
-                    backgroundColor: currStyle(StylesParentKeys.secondaryButton, 'background'),
-                    border: `3px solid ${currStyle(StylesParentKeys.secondaryButton, 'color')}`,
-                    borderRadius: currStyle(StylesParentKeys.secondaryButton, 'borderRadius')
-                }}
+            <h1
+                className="preview-hilight-area"
+                onClick={() => navigate(Screens.languages)}
+                style={{ color: currStyle(StylesParentKeys.general, 'secondaryColor') }}
             >
-                <div className="preview-lang-icon">{currIcon('icon_world')}</div>
-                es
-            </div>
-
-            <h1 style={{ color: currStyle(StylesParentKeys.general, 'secondaryColor') }}>
-                {currLang('es', 'menuTitle')}
+                {currLang('es', 'enterAmount')}
             </h1>
 
             <div className="preview-input-container">
@@ -47,8 +37,8 @@ const Input = ({
                     style={{
                         display: 'flex',
                         flexDirection: 'column',
-                        // justifyContent: 'space-between',
-                        padding: '10px'
+                        padding: '10px',
+                        color: 'black'
                     }}
                 >
                     <div className="preview-input-input-container">
@@ -57,6 +47,8 @@ const Input = ({
                         {currIcon('icon_return')}
                     </div>
                     <p
+                        className="preview-hilight-area"
+                        onClick={() => navigate(Screens.styles, SECT.general_style_edit)}
                         style={{
                             color: currStyle(StylesParentKeys.general, 'errorMessageColor'),
                             fontSize: '24px',
@@ -67,7 +59,10 @@ const Input = ({
                     </p>
                 </div>
 
-                <div className="preview-input-numpad-container preview-hilight-area" onClick={() => navigate(Screens.styles, SECT.input_button_style_edit)}>
+                <div
+                    className="preview-input-numpad-container preview-hilight-area"
+                    onClick={() => navigate(Screens.styles, SECT.input_button_style_edit)}
+                >
                     <div>
                         <button style={buttonStyle}>1</button>
                         <button style={buttonStyle}>2</button>
@@ -86,30 +81,7 @@ const Input = ({
                 </div>
             </div>
 
-            <div className="preview-nav-container">
-                <button
-                    style={{
-                        color: currStyle(StylesParentKeys.button, 'color'),
-                        backgroundColor: currStyle(StylesParentKeys.button, 'background'),
-                        border: `3px solid ${currStyle(StylesParentKeys.button, 'border') === 'true' ? currStyle(StylesParentKeys.button, 'color') : 'transparent'}`,
-                        borderRadius: currStyle(StylesParentKeys.button, 'borderRadius')
-                    }}
-                >
-                    {currIcon('icon_button_exit')}
-                    {currLang('es', 'button_exit')}
-                </button>
-                <button
-                    style={{
-                        color: currStyle(StylesParentKeys.button, 'color'),
-                        backgroundColor: currStyle(StylesParentKeys.button, 'background'),
-                        border: `3px solid ${currStyle(StylesParentKeys.button, 'border') === 'true' ? currStyle(StylesParentKeys.button, 'color') : 'transparent'}`,
-                        borderRadius: currStyle(StylesParentKeys.button, 'borderRadius')
-                    }}
-                >
-                    {currLang('es', 'button_confirm')}
-                    {currIcon('icon_button_continue')}
-                </button>
-            </div>
+            <NavBar currIcon={currIcon} currStyle={currStyle} currLang={currLang}/>
         </div>
     )
 }

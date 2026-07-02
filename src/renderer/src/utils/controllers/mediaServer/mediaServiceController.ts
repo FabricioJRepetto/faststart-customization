@@ -178,8 +178,6 @@ class MediaService {
     }
 
     public async uploadThemeAssets(themeName: string): Promise<UploadedFile[]> {
-        console.log(themeName)
-
         this.resetUploadProgress()
         const start = performance.now()
 

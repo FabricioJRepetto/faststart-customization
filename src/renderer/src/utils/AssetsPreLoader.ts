@@ -41,6 +41,8 @@ const preloadSvg = async (url: string, name: string): Promise<{ name: string; va
 }
 
 const preloadMedia = async (element: FinalAssetData): Promise<FinalAssetData> => {
+    if (element.fileType === 'svg') return element
+
     const res = await fetch(element.path)
     const blob = await res.blob()
     const blobUrl = URL.createObjectURL(blob)
@@ -56,8 +58,6 @@ export const preloadThemeMedia = async (theme: ThemeConfig): Promise<ThemeConfig
 
     const svg = await preloadSvg(logo.base64, logo.name)
     const prevCache = store.get(svgCache)
-    console.warn(`${theme.themeName}`, theme)
-    console.warn(`${theme.themeName}_${svg.name}`)
     store.set(svgCache, { ...prevCache, [`${theme.themeName}_${svg.name}`]: svg.value })
 
     return { ...theme, background: { ...theme.background, blobUrl } }
@@ -77,8 +77,7 @@ export const preloadAssets = async (
     method: 'httpCache' | 'blobUrl' = 'httpCache'
 ): Promise<void> => {
     try {
-        console.log('Caching Assets...')
-        console.log('Method:', method)
+        console.log('Caching Assets with method:', method)
         const start = performance.now()
         const config = store.get(DefaultConfigAtom)
 
@@ -90,6 +89,7 @@ export const preloadAssets = async (
         let assetsQuantity = 0
 
         if (method === 'httpCache') {
+            //: HTTP CACHE
             const aux = [
                 ...config.icon,
                 ...config.background,
@@ -107,23 +107,30 @@ export const preloadAssets = async (
             assetsQuantity += assets.length
 
             await Promise.all(assets.map(({ type, url }) => loaders[type as AssetType](url)))
+
         } else {
-            console.log('Generating blobs for backgrounds')
+            //: BLOB URL CACHE
+            console.log(' - Generating blobs for icons')
+            const loadedIcons = await Promise.all(config.icon.map((e) => preloadMedia(e)))
+            assetsQuantity += loadedIcons.length
+
+            console.log(' - Generating blobs for backgrounds')
             const loadedBgs = await Promise.all(config.background.map((e) => preloadMedia(e)))
             assetsQuantity += loadedBgs.length
 
-            console.log('Generating blobs for third screen assets')
+            console.log(' - Generating blobs for third screen assets')
             const loadedThirds = await Promise.all(
                 config.thirdscreen.assets.map((e) => preloadMedia(e))
             )
             assetsQuantity += loadedThirds.length
 
-            console.log('Generating blobs for audios')
+            console.log(' - Generating blobs for audios')
             const loadedAudios = await Promise.all(config.audio.map((e) => preloadMedia(e)))
             assetsQuantity += loadedAudios.length
 
             const _config: CustomConfig = {
                 ...config,
+                icon: loadedIcons,
                 background: loadedBgs,
                 thirdscreen: { config: config.thirdscreen.config, assets: loadedThirds },
                 audio: loadedAudios
@@ -131,7 +138,7 @@ export const preloadAssets = async (
             store.set(DefaultConfigAtom, _config)
         }
 
-        console.log('Generating svg files cache...')
+        console.log(' - Generating svg files cache...')
         const svgAssets: { url: string; type: AllAssetType; name: string }[] = [...config.icon]
             .filter((e) => e.fileType === 'svg')
             .map((e) => ({

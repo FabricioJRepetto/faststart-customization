@@ -1,4 +1,4 @@
-import { ThemeConfig } from '@shared/types'
+import { DistributionMethod, ThemeConfig } from '@shared/types'
 import DynamicSvg from '../DynSvg'
 import DownloadSvg from '../../assets/download.svg?react'
 import DeleteSvg from '../../assets/trash.svg?react'
@@ -17,8 +17,8 @@ import {
 } from '@renderer/utils/bootSequence'
 import Tooltip from '../Tooltip'
 import { DEFAULT_THEME } from '@shared/CONSTANTS'
-import { DefaultConfigAtom } from '@renderer/utils/context/context'
-import { useSetAtom } from 'jotai'
+import { DefaultConfigAtom, DistributionMethodAtom } from '@renderer/utils/context/context'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { softReset } from '@renderer/utils/reset'
 import { preloadAssets } from '@renderer/utils/AssetsPreLoader'
 
@@ -28,6 +28,7 @@ interface Props {
 }
 
 const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
+    const isRemote = useAtomValue(DistributionMethodAtom) === DistributionMethod.REMOTE
     const originalTheme = themeData.themeName === DEFAULT_THEME
 
     const setDefaultConfig = useSetAtom(DefaultConfigAtom)
@@ -98,9 +99,11 @@ const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
             //* LOAD : Styles & Languages
             validateFiles()
             //* PRE-LOAD : Assets
-            await preloadAssets()
+            await preloadAssets('blobUrl')
             //* LOAD : Assets
             parseRemoteAssets()
+            //* LOAD : Themes
+            await loadRemoteThemesCollection()
 
             setInfoModal(true)
         } catch (error) {
@@ -142,7 +145,13 @@ const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
                 style={{ color: themeData.color.primaryColor }}
             >
                 {themeData.logo.mime.match('svg') ? (
-                    <DynamicSvg config={{ path: themeData.logo.base64 }} />
+                    <DynamicSvg
+                        config={
+                            isRemote
+                                ? { assetName: `${themeData.themeName}_${themeData.logo.name}` }
+                                : { path: themeData.logo.base64 }
+                        }
+                    />
                 ) : (
                     <img src={themeData.logo.base64} />
                 )}
@@ -251,7 +260,7 @@ const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
             )}
 
             {infoModal && (
-                <Modal confirm={() => setInfoModal(false)} close={() => setInfoModal(false)}>
+                <Modal confirm={() => !loading && setInfoModal(false)} close={() => !loading && setInfoModal(false)}>
                     <div className="mini-modal">
                         <h2>Configuración de tema cargada</h2>
                         <p>Todo listo para aplicar modificaciones</p>

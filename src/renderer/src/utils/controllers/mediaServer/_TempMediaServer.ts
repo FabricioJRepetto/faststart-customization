@@ -75,7 +75,6 @@ export default class _TempMediaServer implements MediaServiceBase {
 
     async getThemesList(): Promise<CustomConfig[] | null> {
         try {
-            console.log('[Getting]')
             const res = await this.getFilesList()
 
             if (res?.files) {
@@ -101,7 +100,6 @@ export default class _TempMediaServer implements MediaServiceBase {
 
     async getDefaultConfig(): Promise<CustomConfig | null> {
         try {
-            console.log('[Getting]')
             const res = await this.getFile<CustomConfig>(
                 `${BACKEND_DEFAULT_CONFIG_PATH}/${DEFAULT_CONFIG_FILENAME}`
             )

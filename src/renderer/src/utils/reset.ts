@@ -1,4 +1,10 @@
-import { DefaultStylesData, DefaultThirdConfigData, Screens, UPLOAD_STAGE } from '@shared/types'
+import {
+    DefaultStylesData,
+    DefaultThirdConfigData,
+    DistributionMethod,
+    Screens,
+    UPLOAD_STAGE
+} from '@shared/types'
 import {
     ClientAppVersionDirAtom,
     CurrentScreenAtom,
@@ -35,7 +41,9 @@ export const reset = (): void => {
     store.set(DistributionMethodAtom, undefined)
     store.set(PreviewScreenIndexAtom, 0)
     store.set(svgCache, {})
-    clearMediaCache()
+
+    const isRemote = store.get(DistributionMethodAtom) === DistributionMethod.REMOTE
+    if (isRemote) clearMediaCache()
 
     //_ Data
     store.set(DefaultConfigAtom, undefined)
@@ -72,7 +80,8 @@ export const reset = (): void => {
 
 /** Limpia media cache y Resetea Data: DefaultConfig, Language (Og+Edit), Styles (Og+Edit), Backgrounds, Icons, Audios, Third (Config+Assets) */
 export const softReset = (): void => {
-    clearMediaCache()
+    const isRemote = store.get(DistributionMethodAtom) === DistributionMethod.REMOTE
+    if (isRemote) clearMediaCache()
 
     store.set(DefaultConfigAtom, undefined)
 
