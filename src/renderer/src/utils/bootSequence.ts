@@ -5,6 +5,7 @@ import {
     DEFAULT_CONFIG_FILENAME,
     DEFAULT_LANGUAGE_DATA_DIR,
     DEFAULT_STYLES_DATA_DIR,
+    TEMPLATE_CONFIG_FILENAME,
     THEMES_LIBRARY_DIR
 } from '@shared/CONSTANTS'
 import {
@@ -31,6 +32,7 @@ import {
     EditedThirdScreenAssetsDataAtom,
     EditedThirdScreenConfigDataAtom,
     store,
+    TemplateConfigAtom,
     ThemesLibraryDataAtom
 } from './context/context'
 import { langDataShell } from './LangStructureBuilder'
@@ -223,6 +225,24 @@ export const loadLocalThemesLibrary = async (): Promise<void> => {
 
 //_-_-_-_-_-_-_-_-_-_- REMOTE _-_-_-_-_-_-_-_-_-_-_-
 
+export const loadRemoteTemplate = async (): Promise<void> => {
+    try {
+        console.log('-----------------------------\n', `- fetching ${TEMPLATE_CONFIG_FILENAME}...\n`)
+        const res = await mediaServiceController.getTemplateConfigFile()
+
+        if (res) {
+            console.log(`- fetching ${TEMPLATE_CONFIG_FILENAME}. data OK\n`, '- Saving data')
+            console.log(res)
+            store.set(TemplateConfigAtom, res)
+        } else {
+            throw new Error(`Error al cargar archivo ${TEMPLATE_CONFIG_FILENAME}`)
+        }
+    } catch (error) {
+        console.error(error)
+        throw error
+    }
+}
+
 export const loadRemoteCustomConfig = async (): Promise<void> => {
     try {
         console.log('-----------------------------\n', `- fetching ${DEFAULT_CONFIG_FILENAME}...\n`)
@@ -308,6 +328,7 @@ const parseConfigToAssetList = (config: CustomConfig): AssetList => {
         }
         const aux: AssetList = {
             icon: parse(config.icon, 'icon'),
+            image: parse(config.image, 'image'),
             background: parse(config.background, 'background'),
             audio: parse(config.audio, 'audio'),
             thirdscreen: parse(config.thirdscreen.assets, 'thirdscreen'),

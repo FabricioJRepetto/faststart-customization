@@ -37,7 +37,64 @@ export enum Screens {
     thePit = 'thePit'
 }
 
-export type LanguageData = Record<string, Record<string, string>>
+export interface BaseLangueage {
+    general: {
+        button_exit: string
+        button_confirm: string
+        executingTransaction: string
+        clear: string
+        printTitle: string
+        printSubtitle: string
+        menuTitle: string
+    }
+    idle: { button_start: string }
+    info: {
+        oos: string
+        wait: string
+        thankYou: string
+        errorTitle: string
+        moneyRetracted: string
+        contactSupport: string
+        welcomeUser: string
+    }
+    dispense: {
+        takeMoney: string
+        enterAmount: string
+        scanQR: string
+        withdrawalOf: string
+        notEnoughBillsErrorMessage: string
+        amountNotPossibleErrorMessage: string
+        recommendedAmount: string
+        withdrawOption: string
+        withdrawARS: string
+        withdrawUSD: string
+    }
+    exchange: {
+        takeMoney: string
+        enterAmount: string
+        insertMoney: string
+        executingTransaction: string
+        scanQR: string
+        notEnoughBillsErrorMessage: string
+        amountNotPossibleErrorMessage: string
+        recommendedAmount: string
+        PreviewTitle: string
+        PreviewSubtitle: string
+        Option: string
+        noChange: string
+        Currency: string
+        ConfirmDeposit: string
+        AmountTooLowTitle: string
+        AmountTooLowSubtitle: string
+        InsertMoreBills: string
+        USDtoARS: string
+        ARStoUSD: string
+        PreviewRate: string
+        PreviewDepositAmount: string
+        PreviewDispenseAmount: string
+    }
+}
+export type LanguageData = Record<string, BaseLangueage>
 
 export interface AppSettingsData {
     Modules: {
@@ -70,7 +127,7 @@ export interface AssetDataBase {
     customPath: string
 }
 
-export type AssetType = 'icon' | 'background' | 'audio' | 'thirdscreen' | 'other'
+export type AssetType = 'icon' | 'image' | 'background' | 'audio' | 'thirdscreen' | 'other'
 export interface AssetData extends AssetDataBase {
     name: string
     assetType: AssetType
@@ -84,6 +141,7 @@ export interface AssetData extends AssetDataBase {
 }
 export interface AssetList {
     icon: AssetData[]
+    image: AssetData[]
     background: AssetData[]
     audio: AssetData[]
     thirdscreen: AssetData[]
@@ -108,7 +166,9 @@ export interface FinalAssetData {
 
 export enum StylesParentKeys {
     logo = 'logo',
-    general = 'general',
+    idle = 'idle',
+    userAction = 'userAction',
+    infoScreen = 'infoScreen',
     successScreen = 'successScreen',
     errorScreen = 'errorScreen',
     button = 'button',
@@ -120,10 +180,18 @@ export const DefaultStylesData = {
         dark: undefined,
         light: undefined
     },
-    general: {
+    idle: {
+        primaryColor: undefined,
+        secondaryColor: undefined
+    },
+    userAction: {
         primaryColor: undefined,
         secondaryColor: undefined,
         errorMessageColor: undefined
+    },
+    infoScreen: {
+        primaryColor: undefined,
+        secondaryColor: undefined
     },
     successScreen: {
         primaryColor: undefined,
@@ -157,10 +225,18 @@ export interface FinalStylesData {
         dark: string
         light: string
     }
-    general: {
+    idle: {
+        primaryColor: string
+        secondaryColor: string
+    }
+    userAction: {
         primaryColor: string
         secondaryColor: string
         errorMessageColor: string
+    }
+    infoScreen: {
+        primaryColor: string
+        secondaryColor: string
     }
     successScreen: {
         primaryColor: string
@@ -194,10 +270,18 @@ export interface StylesData {
         dark: string | undefined
         light: string | undefined
     }
-    general: {
+    idle: {
+        primaryColor: string | undefined
+        secondaryColor: string | undefined
+    } 
+    userAction: {
         primaryColor: string | undefined
         secondaryColor: string | undefined
         errorMessageColor: string | undefined
+    }
+    infoScreen: {
+        primaryColor: string | undefined
+        secondaryColor: string | undefined
     }
     successScreen: {
         primaryColor: string | undefined
@@ -231,6 +315,16 @@ export interface ThirdScreendata {
     config: ThirdScreenConfig
     assets: FinalAssetData[]
 }
+export interface TemplateConfig {
+    icon: { name: string }[]
+    image: { name: string }[]
+    background: { name: string }[]
+    thirdscreen: { name: string }[]
+    audio: { name: string }[]
+    styles: FinalStylesData
+    language: LanguageData
+}
+
 export interface CustomConfig {
     version: string
     ID: string
@@ -239,6 +333,7 @@ export interface CustomConfig {
     isDefaultTheme: boolean
     isActive: boolean
     icon: FinalAssetData[]
+    image: FinalAssetData[]
     background: FinalAssetData[]
     thirdscreen: ThirdScreendata
     audio: FinalAssetData[]
@@ -282,6 +377,7 @@ export const DefaultThirdConfigData: ThirdScreenConfig = {
 
 export interface MediaServiceBase {
     getThemesList: () => Promise<CustomConfig[] | null>
+    getTemplateConfig: () => Promise<TemplateConfig | null>
     getDefaultConfig: () => Promise<CustomConfig | null>
     uploadFile: (file: File | Blob, themeName: string, fileName?: string) => Promise<DBFile | null>
     delete: (path: string) => Promise<boolean>

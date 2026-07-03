@@ -12,7 +12,8 @@ import { useAtom, useAtomValue } from 'jotai'
 import { useEffect, useState } from 'react'
 import SpinnerSvg from '../assets/spinner.svg?react'
 import NewSvg from '../assets/theme.svg?react'
-import FilesSvg from '../assets/books.svg?react'
+import FilesSvg from '../assets/folder_management.svg?react'
+import GearSvg from '../assets/gear.svg?react'
 import FastUploadSvg from '../assets/rocket.svg?react'
 import ExitSvg from '../assets/logout.svg?react'
 import PowerSvg from '../assets/powerb.svg?react'
@@ -154,10 +155,14 @@ const NewMain = (): React.JSX.Element => {
                     </div>
 
                     <div style={{ opacity: '.75', pointerEvents: 'none' }}>
-                        <FilesSvg />
-                        Gestión de Archivos del servidor
+                        <GearSvg />
+                        Actualizar template base
                     </div>
-                    <span></span>
+
+                    <div style={{ opacity: '.75', pointerEvents: 'none' }}>
+                        <FilesSvg />
+                        Gestión de Archivos
+                    </div>
                     <div onClick={reset}>
                         Salir
                         <ExitSvg />

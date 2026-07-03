@@ -60,7 +60,7 @@ export const ColorStyleCard = ({
                     </Tooltip>
                 )}
             </div>
-            <p className="tag">Inicinal</p>
+            <p className="tag">Inicial</p>
             <div className="original-color-sample">
                 <p>{value || 'Sin indicar'}</p>
                 <div className="color-sample" style={{ backgroundColor: value }}></div>
@@ -128,7 +128,7 @@ export const BorderStyleCard = ({
                 )}
             </div>
             <p className="tag">
-                Mostrar borde (inicinal: {value?.border === 'true' ? 'si' : 'no'})
+                Mostrar borde (Inicial: {value?.border === 'true' ? 'si' : 'no'})
             </p>
             <div
                 className="original-color-sample input-wrapper"
@@ -146,7 +146,7 @@ export const BorderStyleCard = ({
                 </button>
             </div>
 
-            <p className="tag">Suavizado (inicinal: {value?.borderRadius ?? '0px'})</p>
+            <p className="tag">Suavizado (Inicial: {value?.borderRadius ?? '0px'})</p>
             <div className="input-wrapper">
                 <input
                     type="number"

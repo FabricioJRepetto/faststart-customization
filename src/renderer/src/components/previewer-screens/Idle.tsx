@@ -14,7 +14,8 @@ const Idle = ({ currBg, currIcon, currStyle, currLang }: PreviewScreenProps): Re
             <LangButton currIcon={currIcon} currStyle={currStyle} />
 
             <div
-                className="preview-qr-container"
+                className="preview-qr-container preview-hilight-area"
+                onClick={() => navigate(Screens.styles, SECT.general_style_edit)}
                 style={{
                     backgroundColor: currStyle(StylesParentKeys.general, 'secondaryColor'),
                     color: currStyle(StylesParentKeys.general, 'primaryColor'),

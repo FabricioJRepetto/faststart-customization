@@ -12,7 +12,8 @@ import {
     ThirdScreenConfig,
     DefaultThirdConfigData,
     DistributionMethod,
-    UPLOAD_STAGE
+    UPLOAD_STAGE,
+    TemplateConfig
 } from '@shared/types'
 
 export const store = createStore()
@@ -37,6 +38,8 @@ export const CustomEnabledAtom = atom<boolean>(true)
 
 /** Lista de Assets actuales en la versión indicada */
 export const AssetsDataAtom = atom<AssetList>()
+/** Archivo template. Contiene una lista de assets utilizados por la app cliente */
+export const TemplateConfigAtom = atom<TemplateConfig>()
 /** Archivo de configuración por defecto encontrado en el directorio de la aplicación cliente */
 export const DefaultConfigAtom = atom<CustomConfig>()
 

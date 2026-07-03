@@ -41,6 +41,7 @@ const NavBar = ({ currStyle, currIcon, currLang }: Props): React.JSX.Element => 
                     borderRadius: currStyle(StylesParentKeys.button, 'borderRadius')
                 }}
             >
+                {currLang('es', 'button_confirm')}
                 <label
                     className="preview-hilight-area"
                     onClick={(e) => {
@@ -50,7 +51,6 @@ const NavBar = ({ currStyle, currIcon, currLang }: Props): React.JSX.Element => 
                 >
                     {currIcon('icon_button_continue')}
                 </label>
-                {currLang('es', 'button_confirm')}
             </button>
         </div>
     )

@@ -1,17 +1,20 @@
 import {
+    BACKEND_BASE_TEMPLATE_PATH,
     BACKEND_DEFAULT_CONFIG_PATH,
     BACKEND_DELETE,
     BACKEND_GET_FILE,
     BACKEND_GET_FILELIST,
     BACKEND_POST_UPLOAD,
-    DEFAULT_CONFIG_FILENAME
+    DEFAULT_CONFIG_FILENAME,
+    TEMPLATE_CONFIG_FILENAME
 } from '@shared/CONSTANTS'
 import {
     CustomConfig,
     DBFile,
     MediaServiceBase,
     RawDBFilesListRes,
-    RawDBUploadFileRes
+    RawDBUploadFileRes,
+    TemplateConfig
 } from '@shared/types'
 
 export default class _TempMediaServer implements MediaServiceBase {
@@ -92,6 +95,18 @@ export default class _TempMediaServer implements MediaServiceBase {
             } else {
                 return null
             }
+        } catch (error) {
+            console.error(error)
+            return null
+        }
+    }
+
+    async getTemplateConfig(): Promise<TemplateConfig | null> {
+        try {
+            const res = await this.getFile<TemplateConfig>(
+                `${BACKEND_BASE_TEMPLATE_PATH}/${TEMPLATE_CONFIG_FILENAME}`
+            )
+            return res
         } catch (error) {
             console.error(error)
             return null

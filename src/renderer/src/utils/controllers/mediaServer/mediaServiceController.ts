@@ -12,6 +12,7 @@ import {
     CustomConfig,
     DBFile,
     MediaServiceBase,
+    TemplateConfig,
     ThemeConfig,
     UPLOAD_STAGE,
     UploadedFile
@@ -63,7 +64,7 @@ class MediaService {
             const logo = e.icon.find((b) => b.name === 'icon_logo')!
             return {
                 themeName: e.themeName,
-                color: e.styles.general,
+                color: e.styles.userAction,
                 background: {
                     base64: bgPath,
                     mime: getMime(bgPath)
@@ -163,6 +164,17 @@ class MediaService {
         } catch (error) {
             console.error(error)
             return undefined
+        }
+    }
+
+    public async getTemplateConfigFile(): Promise<TemplateConfig | null> {
+        try {
+            const res = await this.service.getTemplateConfig()
+            if (!res) return null
+            return res
+        } catch (error) {
+            console.error(error)
+            return null
         }
     }
 

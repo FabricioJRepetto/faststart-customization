@@ -22,6 +22,7 @@ import {
     loadLocalStylesFile,
     loadLocalThemesLibrary,
     loadRemoteCustomConfig,
+    loadRemoteTemplate,
     loadRemoteThemesCollection,
     parseRemoteAssets,
     validateFiles
@@ -273,6 +274,8 @@ const Landing = (): React.JSX.Element => {
         const start = performance.now()
         try {
             // await new Promise(r => setTimeout(r, 7000))
+            //* LOAD : template_assets.json
+            await loadRemoteTemplate()
             //* LOAD : customConfig.json
             await loadRemoteCustomConfig()
             validateFiles()
