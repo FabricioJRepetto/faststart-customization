@@ -61,6 +61,7 @@ export const parseCustomConfig = async (
             styles: rawConfig.styles,
             language: rawConfig.language,
             icon: [],
+            image: [],
             background: [],
             thirdscreen: { config: rawConfig.thirdscreen.config, assets: [] },
             audio: []

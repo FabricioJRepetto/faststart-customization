@@ -17,7 +17,7 @@ import {
     EditedThirdScreenConfigDataAtom,
     store
 } from './context/context'
-import { langDataFullStructure } from './LangStructureBuilder'
+import { objectFullStructure } from './LangStructureBuilder'
 
 /** Retorna el nombre del archivo */
 export const assetName = (fileName: string): string => {
@@ -132,10 +132,18 @@ export const stylesDataParser = (): FinalStylesData => {
             dark: '',
             light: ''
         },
-        general: {
+        idle: {
+            primaryColor: '',
+            secondaryColor: ''
+        },
+        userAction: {
             primaryColor: '',
             secondaryColor: '',
             errorMessageColor: ''
+        },
+        infoScreen: {
+            primaryColor: '',
+            secondaryColor: ''
         },
         successScreen: {
             primaryColor: '',
@@ -189,7 +197,7 @@ export const languageParser = (): LanguageData => {
     const ogLang = store.get(DefaultLanguageDataAtom)
     const newLang = store.get(EditedLanguageDataAtom)
 
-    const aux = langDataFullStructure(ogLang)
+    const aux = objectFullStructure(ogLang)
     Object.keys(ogLang).map((lang) => {
         Object.keys(ogLang[lang]).map((key) => {
             aux[lang][key] = newLang[lang][key] ?? ogLang[lang][key]
@@ -200,7 +208,7 @@ export const languageParser = (): LanguageData => {
 
 export const getMime = (path: string): string => {
     try {
-        const ext = path.split('/').pop()!.split('.').pop()!.toLowerCase()
+        const ext = path?.split('/')?.pop()?.split('.')?.pop()?.toLowerCase() ?? ''
         const mimeTypes: Record<string, string> = {
             png: 'image/png',
             jpg: 'image/jpeg',
@@ -213,9 +221,9 @@ export const getMime = (path: string): string => {
             mp3: 'audio/mpeg',
             wav: 'audio/wav'
         }
-        return mimeTypes[ext] ?? 'application/octet-stream'
+        return mimeTypes[ext] ?? ''
     } catch (error) {
         console.error(error)
-        return 'application/octet-stream'
+        return ''
     }
 }

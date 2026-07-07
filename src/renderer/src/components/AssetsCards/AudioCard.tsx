@@ -1,5 +1,4 @@
-import { DistributionMethodAtom, store } from '@renderer/utils/context/context'
-import { AssetData, DistributionMethod } from '@shared/types'
+import { AssetData } from '@shared/types'
 import ResetSvg from '../../assets/undo.svg?react'
 import UploadSvg from '../../assets/upload.svg?react'
 import Tooltip from '../Tooltip'
@@ -11,19 +10,21 @@ interface Props {
 }
 
 const AudioCard = ({ audio, setValue, resetValue }: Props): React.JSX.Element => {
-    const isRemote = store.get(DistributionMethodAtom) === DistributionMethod.REMOTE
-
     return (
         <div
             key={audio.name}
             className={`assets-container audio-asset-container ${audio.customBase64 ? 'asset-card-has-custom' : 'asset-card-initial'}`}
         >
             <div className="asset-card-header">
-                <p>{audio.name}</p>
+                <p>{audio.name.split('_')[1]}</p>
             </div>
 
             {!audio.customBase64 ? (
-                <audio src={isRemote ? audio.blobUrl : audio.base64} controls />
+                audio?.blobUrl ? (
+                    <audio src={audio.blobUrl} controls />
+                ) : (
+                    <div className='audio-placeholder'>Sin definir</div>
+                )
             ) : (
                 <audio src={audio.customBase64} controls />
             )}

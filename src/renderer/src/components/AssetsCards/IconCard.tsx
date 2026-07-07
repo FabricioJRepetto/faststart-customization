@@ -23,7 +23,7 @@ export const IconCard = ({ icon, setValue, resetValue }: Props): React.JSX.Eleme
         >
             <div className="asset-card-header">
                 <p>{assetName(icon.name)}</p>
-                {icon.customBase64 && (
+                {icon.customBase64 && icon.mimeType && (
                     <Tooltip text="Ver icono original">
                         <div
                             className="button asset-card-show-buton"

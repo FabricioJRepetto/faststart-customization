@@ -26,6 +26,7 @@ export enum DistributionMethod {
 export enum Screens {
     landing = 'landing',
     main = 'main',
+    template = 'template',
     preview = 'preview',
     styles = 'styles',
     icons = 'icons',
@@ -33,8 +34,7 @@ export enum Screens {
     languages = 'languages',
     thirdScreen = 'thirdScreen',
     audio = 'audio',
-    collections = 'collections',
-    thePit = 'thePit'
+    collections = 'collections'
 }
 
 export interface BaseLangueage {
@@ -145,7 +145,7 @@ export interface AssetList {
     background: AssetData[]
     audio: AssetData[]
     thirdscreen: AssetData[]
-    other: AssetData[]
+    other?: AssetData[]
 }
 
 export enum filterType {
@@ -315,12 +315,21 @@ export interface ThirdScreendata {
     config: ThirdScreenConfig
     assets: FinalAssetData[]
 }
-export interface TemplateConfig {
+export interface TemplateRawConfig {
     icon: { name: string }[]
     image: { name: string }[]
     background: { name: string }[]
     thirdscreen: { name: string }[]
     audio: { name: string }[]
+    styles: FinalStylesData
+    language: LanguageData
+}
+export interface TemplateConfig {
+    icon: AssetData[]
+    image: AssetData[]
+    background: AssetData[]
+    thirdscreen: AssetData[]
+    audio: AssetData[]
     styles: FinalStylesData
     language: LanguageData
 }

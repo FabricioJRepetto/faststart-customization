@@ -94,6 +94,10 @@ input[type='number'] {
 }
 
 .logo {
+    position: absolute;
+    top: 16.75%;
+    left: calc(50% - 64px);
+
     --shadow-angle: 45deg;
     --shadow-color: #bb3d1e00;
     color: var(--ev-c-text-1);
@@ -112,6 +116,7 @@ input[type='number'] {
             calc(cos(var(--shadow-angle)) * 18px) calc(sin(var(--shadow-angle)) * 18px) 30px #1e6fbb
         );
     transition:
+        top ease 0.5s,
         --shadow-color ease 1s,
         --shadow-angle ease 1s;
     animation: 10s glow cubic-bezier(0.56, 0.15, 0.42, 0.83) alternate infinite;
@@ -129,8 +134,18 @@ input[type='number'] {
         drop-shadow(
             calc(cos(var(--shadow-angle)) * 18px) calc(sin(var(--shadow-angle)) * 18px) 30px #1e6fbb
         );
-    transition: --shadow-color ease 1s;
+    transition:
+        top ease 2s,
+        --shadow-color ease 1s,
+        --shadow-angle ease 1s;
     animation: rotate-shadow 1.75s cubic-bezier(0.56, 0.15, 0.42, 0.83) infinite;
+}
+.logo-loading-position {
+    top: 40%;
+    transition:
+        top ease 2s,
+        --shadow-color ease 1s,
+        --shadow-angle ease 1s;
 }
 @keyframes glow {
     33% {
@@ -488,7 +503,7 @@ input[type='number'] {
         border-radius: 22px;
         background-color: #202127;
         backdrop-filter: blur(24px);
-        
+
         span {
             margin-left: 10px;
             display: block;
@@ -519,8 +534,6 @@ input[type='number'] {
     gap: 20px;
     background-color: var(--ev-c-black);
     transition: width 0.3s ease-in-out;
-    opacity: 0;
-    animation: fadeIn 0.15s ease-in-out 0.3s forwards;
 
     div {
         display: flex;
@@ -584,6 +597,16 @@ input[type='number'] {
         opacity: 1;
     }
 }
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+    }
+}
+@keyframes shrink {
+    to {
+        height: 0px;
+    }
+}
 
 @keyframes spinner {
     to {
@@ -611,7 +634,7 @@ input[type='number'] {
         &:first-child {
             position: sticky;
             top: 0;
-            background-color: var(--ev-c-green-3);
+            background-color: var(--ev-c-green-2);
         }
 
         p {
@@ -629,6 +652,13 @@ input[type='number'] {
     }
     .lang-key-column {
         color: var(--ev-c-green-1);
+        padding-left: 20px !important;
+    }
+    .section-row {
+        background-color: var(--ev-c-green-3);
+        color: var(--ev-c-text-1);
+        padding: 6px 12px;
+        text-transform: capitalize;
     }
 }
 
@@ -1058,6 +1088,7 @@ input[type='number'] {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        text-transform: capitalize;
     }
 }
 
@@ -1133,12 +1164,25 @@ input[type='number'] {
 }
 
 .audio-asset-container {
+    width: 330px;
+    
     p {
         margin: 0 20px 10px 10px;
     }
 
     audio {
         background-color: transparent;
+    }
+    .audio-placeholder {
+        width: 300px;
+        height: 54px;
+        margin-bottom: 15px;
+        border-radius: 50px;
+        outline: 1px solid #bebebe1a;
+        color: var(--ev-c-text-3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .actions {
@@ -1260,7 +1304,15 @@ input[type='number'] {
 
 .fade-in {
     opacity: 0;
-    animation: fadeIn 0.15s ease 0.5s forwards;
+    animation: fadeIn 0.25s ease forwards;
+}
+.fade-out {
+    opacity: 1;
+    animation: fadeOut 0.25s ease forwards;
+}
+.fade-out {
+    opacity: 1;
+    animation: fadeOut 0.25s ease forwards;
 }
 
 .toggler {

@@ -93,7 +93,7 @@ export const ColorStyleCard = ({
 interface BorderProps {
     description?: string
     parentName: string
-    value: { border: string | undefined; borderRadius: string | undefined }
+    value: { border: boolean | undefined; borderRadius: string | undefined }
     reset: (key: string, parent: string) => void
     update: (key: string, parent: string, value: string) => void
 }
@@ -128,7 +128,7 @@ export const BorderStyleCard = ({
                 )}
             </div>
             <p className="tag">
-                Mostrar borde (Inicial: {value?.border === 'true' ? 'si' : 'no'})
+                Mostrar borde (Inicial: {value?.border ? 'si' : 'no'})
             </p>
             <div
                 className="original-color-sample input-wrapper"

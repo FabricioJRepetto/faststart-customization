@@ -13,7 +13,7 @@ import mediaServiceController from '@renderer/utils/controllers/mediaServer/medi
 import { getThemeConfig } from '@renderer/utils/getRawConfig'
 import { Screens, UPLOAD_STAGE } from '@shared/types'
 import { navigate } from '@renderer/utils/navigate'
-import { loadRemoteThemesCollection } from '@renderer/utils/bootSequence'
+import { loadThemesCollection } from '@renderer/utils/bootSequence'
 
 interface Props {
     closeModal: () => void
@@ -106,7 +106,7 @@ const UploadDialog = ({ closeModal }: Props): React.JSX.Element => {
             if (!configRes?.path) throw new Error('Error al subir *_themeConfig.json')
 
             //* Actualizar Collection
-            await loadRemoteThemesCollection()
+            await loadThemesCollection()
 
             setStage(UPLOAD_STAGE.DONE)
         } catch (error) {

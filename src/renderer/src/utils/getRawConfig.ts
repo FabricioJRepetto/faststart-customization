@@ -1,7 +1,6 @@
 import { CustomConfig, FileForUpload, UploadedFile } from '@shared/types'
 import {
     AssetsDataAtom,
-    CustomEnabledAtom,
     EditedAudiosDataAtom,
     EditedBackgroundsDataAtom,
     EditedIconsDataAtom,
@@ -18,32 +17,6 @@ import {
     thirdAssetsToFiles
 } from './assetsUtils'
 import { CUSTOM_FILE_VERSION } from '@shared/CONSTANTS'
-
-/** Genera un CustomConfig combinando los assets originales y los modificados */
-export const getRawConfig = (themeName?: string): CustomConfig => {
-    const customEnabled = store.get(CustomEnabledAtom)
-
-    const ogData = store.get(AssetsDataAtom)!
-
-    const newIcons = store.get(EditedIconsDataAtom)
-    const newBgs = store.get(EditedBackgroundsDataAtom)
-    const newAudios = store.get(EditedAudiosDataAtom)
-
-    return {
-        version: CUSTOM_FILE_VERSION,
-        themeName: themeName ?? '',
-        ID: new Date().getTime().toString(),
-        customEnabled: customEnabled,
-        isActive: true,
-        isDefaultTheme: false,
-        styles: stylesDataParser(),
-        language: languageParser(),
-        icon: dataParser(ogData.icon, newIcons!),
-        background: dataParser(ogData.background, newBgs!),
-        audio: dataParser(ogData.audio, newAudios!),
-        thirdscreen: thirdDataParser()
-    }
-}
 
 /** Genera una lista FileForUpload combinando los assets originales y los modificados */
 export const getUploadList = async (): Promise<FileForUpload[]> => {
@@ -92,6 +65,7 @@ export const getThemeConfig = (files: UploadedFile[], themeName: string): Custom
             language: languageParser(),
             styles: stylesDataParser(),
             icon: dataParser(ogData.icon, files),
+            image: dataParser(ogData.image, files),
             background: dataParser(ogData.background, files),
             thirdscreen: thirdDataParser(files),
             audio: dataParser(ogData.audio, files)

@@ -1,10 +1,11 @@
 import {
+    BACKEND_BASE_TEMPLATE_PATH,
     BACKEND_BASE_URL,
     BACKEND_DEFAULT_CONFIG_PATH,
     BACKEND_THEMES_ASSETS_PATH,
     BACKEND_THEMES_CONFIGS_PATH,
     DEFAULT_CONFIG_FILENAME,
-    SERVICES_APPSETTINGS_DIR,
+    TEMPLATE_CONFIG_FILENAME,
     THEME_CONFIG_FILENAME
 } from '@shared/CONSTANTS'
 import _TempMediaServer from './_TempMediaServer'
@@ -12,7 +13,7 @@ import {
     CustomConfig,
     DBFile,
     MediaServiceBase,
-    TemplateConfig,
+    TemplateRawConfig,
     ThemeConfig,
     UPLOAD_STAGE,
     UploadedFile
@@ -167,7 +168,7 @@ class MediaService {
         }
     }
 
-    public async getTemplateConfigFile(): Promise<TemplateConfig | null> {
+    public async getTemplateConfigFile(): Promise<TemplateRawConfig | null> {
         try {
             const res = await this.service.getTemplateConfig()
             if (!res) return null
@@ -300,9 +301,24 @@ class MediaService {
         }
     }
 
+    public async uploadTemplateConfig(config: File): Promise<DBFile | null> {
+        try {
+            const res = await this.service.uploadFile(
+                config,
+                BACKEND_BASE_TEMPLATE_PATH,
+                TEMPLATE_CONFIG_FILENAME
+            )
+
+            if (!res) return null
+            return res
+        } catch (error) {
+            console.error(error)
+            return null
+        }
+    }
+
     public async uploadDefaultConfig(config: CustomConfig): Promise<DBFile | null> {
         try {
-            await SERVICES_APPSETTINGS_DIR
             const jsonFile = this.objectToJsonFile(config, DEFAULT_CONFIG_FILENAME)
             const res = await this.service.uploadFile(
                 jsonFile,

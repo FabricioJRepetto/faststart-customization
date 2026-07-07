@@ -27,7 +27,7 @@ const Input = ({
             <h1
                 className="preview-hilight-area"
                 onClick={() => navigate(Screens.languages)}
-                style={{ color: currStyle(StylesParentKeys.general, 'secondaryColor') }}
+                style={{ color: currStyle(StylesParentKeys.idle, 'secondaryColor') }}
             >
                 {currLang('es', 'enterAmount')}
             </h1>
@@ -48,9 +48,9 @@ const Input = ({
                     </div>
                     <p
                         className="preview-hilight-area"
-                        onClick={() => navigate(Screens.styles, SECT.general_style_edit)}
+                        onClick={() => navigate(Screens.styles, SECT.user_action_style_edit)}
                         style={{
-                            color: currStyle(StylesParentKeys.general, 'errorMessageColor'),
+                            color: currStyle(StylesParentKeys.userAction, 'errorMessageColor'),
                             fontSize: '24px',
                             margin: '0 auto'
                         }}

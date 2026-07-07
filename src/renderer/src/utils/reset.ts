@@ -37,7 +37,7 @@ import { clearMediaCache } from './AssetsPreLoader'
 /** Resetea todos los valores del contexto */
 export const reset = (): void => {
     //_ App
-    store.set(FirstLoadAtom, false)
+    store.set(FirstLoadAtom, true)
     store.set(DistributionMethodAtom, undefined)
     store.set(PreviewScreenIndexAtom, 0)
     store.set(svgCache, {})

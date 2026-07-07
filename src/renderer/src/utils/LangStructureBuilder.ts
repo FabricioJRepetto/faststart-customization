@@ -1,39 +1,36 @@
 import { LanguageData } from '@shared/types'
 
-/** Retorna la estructura completa del archivo language con todas las keys vacias ("") */
-export const langDataFullStructure = (langData: LanguageData): LanguageData => {
+/** Retorna un objeto con las keys de idioma del objeto languages vacias */
+export const langDataShell = (langData: LanguageData): LanguageData => {
     try {
-        const langKeys = Object.keys(langData)
-        const textKeys = Object.keys(langData[langKeys[0]])
-
-        const auxKeys = {}
-        textKeys.forEach((key) => {
-            auxKeys[key] = ''
-        })
-        const aux: Record<string, Record<string, string>> = {}
-        langKeys.forEach((key) => {
-            aux[key] = { ...auxKeys }
-        })
-
-        return aux
+        const unIdioma = Object.keys(langData)[0]
+        return objectFullStructure<LanguageData>(langData[unIdioma])
     } catch (error) {
-        console.error('Error building full language data structure:', error)
+        console.error('Error building language data structure:', error)
         return {}
     }
 }
 
-/** Retorna un objeto con las keys de idioma del objeto languages vacias */
-export const langDataShell = (langData: LanguageData): LanguageData => {
+/** Retorna la estructura completa de un objeto con todas las keys vacias (""). */
+export function objectFullStructure<T>(langData: object): T {
     try {
-        const langKeys = Object.keys(langData)
-        const aux: Record<string, Record<string, string>> = {}
-        langKeys.forEach((lang) => {
-            aux[lang] = {}
-        })
+        // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+        const deep = (v) => {
+            if (typeof v !== 'object') {
+                return ''
+            } else {
+                const aux = {}
+                const keys = Object.keys(v)
+                keys.forEach((k) => {
+                    aux[k] = deep(v[k])
+                })
+                return aux
+            }
+        }
 
-        return aux
+        return deep(langData) as T
     } catch (error) {
-        console.error('Error building language data structure:', error)
-        return {}
+        console.error('Error building full language data structure:', error)
+        return {} as T
     }
 }

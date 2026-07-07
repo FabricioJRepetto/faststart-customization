@@ -1,5 +1,6 @@
 import {
     ClientAppVersionDirAtom,
+    CurrentScreenAtom,
     CustomEnabledAtom,
     DistributionMethodAtom,
     FirstLoadAtom,
@@ -8,7 +9,7 @@ import {
     ThemesLibraryDataAtom,
     ThirdAppVersionDirAtom
 } from '@renderer/utils/context/context'
-import { useAtom, useAtomValue } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import SpinnerSvg from '../assets/spinner.svg?react'
 import NewSvg from '../assets/theme.svg?react'
@@ -18,13 +19,14 @@ import FastUploadSvg from '../assets/rocket.svg?react'
 import ExitSvg from '../assets/logout.svg?react'
 import PowerSvg from '../assets/powerb.svg?react'
 import mediaServiceController from '@renderer/utils/controllers/mediaServer/mediaServiceController'
-import { DistributionMethod } from '@shared/types'
+import { DistributionMethod, Screens } from '@shared/types'
 import DynamicSvg from '@renderer/components/DynSvg'
 import { reset } from '@renderer/utils/reset'
 
 const NewMain = (): React.JSX.Element => {
     const status = useAtomValue(ServerStatusAtom)
     const isRemote = useAtomValue(DistributionMethodAtom) === DistributionMethod.REMOTE
+    const setScreen = useSetAtom(CurrentScreenAtom)
 
     const clientDir = useAtomValue(ClientAppVersionDirAtom)
     const thirdDir = useAtomValue(ThirdAppVersionDirAtom)
@@ -36,9 +38,9 @@ const NewMain = (): React.JSX.Element => {
     const [loadingApply, setLoadingApply] = useState<boolean>(false)
     const [firstLoad, setFirstLoad] = useAtom(FirstLoadAtom)
 
-    useEffect(() => {
+    useEffect(() => {        
         // Para la animación fade in de esta pantalla
-        setTimeout(() => setFirstLoad(false), 450) // el delay es la duración de la animación
+        setTimeout(() => setFirstLoad(false), 1500) // el delay es la duración de la animación
     }, [setFirstLoad])
 
     const toggleCustomEnabled = async (): Promise<void> => {
@@ -118,7 +120,7 @@ const NewMain = (): React.JSX.Element => {
                                 <div className="logo-container">
                                     {e.logo.mime.match('svg') ? (
                                         <DynamicSvg
-                                            color={e.color.primaryColor}
+                                            color={e?.color?.primaryColor}
                                             config={
                                                 isRemote
                                                     ? { assetName: `${e.themeName}_${e.logo.name}` }
@@ -154,7 +156,7 @@ const NewMain = (): React.JSX.Element => {
                         Carga Rápida
                     </div>
 
-                    <div style={{ opacity: '.75', pointerEvents: 'none' }}>
+                    <div onClick={() => setScreen(Screens.template)}>
                         <GearSvg />
                         Actualizar template base
                     </div>

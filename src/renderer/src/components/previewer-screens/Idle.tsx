@@ -15,10 +15,10 @@ const Idle = ({ currBg, currIcon, currStyle, currLang }: PreviewScreenProps): Re
 
             <div
                 className="preview-qr-container preview-hilight-area"
-                onClick={() => navigate(Screens.styles, SECT.general_style_edit)}
+                onClick={() => navigate(Screens.styles, SECT.idle_style_edit)}
                 style={{
-                    backgroundColor: currStyle(StylesParentKeys.general, 'secondaryColor'),
-                    color: currStyle(StylesParentKeys.general, 'primaryColor'),
+                    backgroundColor: currStyle(StylesParentKeys.idle, 'secondaryColor'),
+                    color: currStyle(StylesParentKeys.idle, 'primaryColor'),
                     borderRadius: currStyle(StylesParentKeys.secondaryButton, 'borderRadius')
                 }}
             >
@@ -35,7 +35,7 @@ const Idle = ({ currBg, currIcon, currStyle, currLang }: PreviewScreenProps): Re
                     borderRadius: currStyle(StylesParentKeys.secondaryButton, 'borderRadius')
                 }}
             >
-                {currLang('es', 'button_start')}
+                {currLang('es', 'idle', 'button_start')}
             </button>
         </div>
     )

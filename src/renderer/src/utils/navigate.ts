@@ -3,7 +3,9 @@ import { CurrentScreenAtom, store } from './context/context'
 
 export enum SECT {
     logo_style_edit = 'styles-editor-logo-section',
-    general_style_edit = 'styles-editor-general-section',
+    idle_style_edit = 'styles-editor-idle-section',
+    user_action_style_edit = 'styles-editor-user_action-section',
+    info_style_edit = 'styles-editor-info-section',
     success_style_edit = 'styles-editor-success-section',
     error_style_edit = 'styles-editor-error-section',
     button_style_edit = 'styles-editor-primary-button-section',

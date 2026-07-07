@@ -11,13 +11,13 @@ const Info = ({ currBg, currIcon, currStyle, currLang }: PreviewScreenProps): Re
             <Logo currIcon={currIcon} currStyle={currStyle} />
             <LangButton currIcon={currIcon} currStyle={currStyle} />
 
-            <h1 style={{ color: currStyle(StylesParentKeys.general, 'primaryColor') }}>
+            <h1 style={{ color: currStyle(StylesParentKeys.infoScreen, 'primaryColor') }}>
                 {currLang('es', 'wait')}
             </h1>
 
             <div
                 className="preview-menu-container"
-                style={{ color: currStyle(StylesParentKeys.general, 'primaryColor') }}
+                style={{ color: currStyle(StylesParentKeys.infoScreen, 'primaryColor') }}
             >
                 <div
                     className="preview-info-image preview-hilight-area"

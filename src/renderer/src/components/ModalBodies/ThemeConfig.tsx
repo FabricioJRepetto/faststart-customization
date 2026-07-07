@@ -11,8 +11,8 @@ import mediaServiceController from '@renderer/utils/controllers/mediaServer/medi
 import Modal from '../Modal'
 import { useState } from 'react'
 import {
-    loadRemoteThemesCollection,
-    parseRemoteAssets,
+    loadThemesCollection,
+    parseAssets,
     validateFiles
 } from '@renderer/utils/bootSequence'
 import Tooltip from '../Tooltip'
@@ -52,7 +52,7 @@ const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
                 throw new Error('Error al definir tema como predefinido')
             }
 
-            await loadRemoteThemesCollection()
+            await loadThemesCollection()
         } catch (error) {
             console.error(error)
         } finally {
@@ -75,7 +75,7 @@ const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
         if (res) {
             const res = await mediaServiceController.deleteTheme(themeData.themeName)
             if (res) {
-                await loadRemoteThemesCollection()
+                await loadThemesCollection()
                 setLoading(false)
 
                 exit()
@@ -101,9 +101,9 @@ const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
             //* PRE-LOAD : Assets
             await preloadAssets('blobUrl')
             //* LOAD : Assets
-            parseRemoteAssets()
+            parseAssets()
             //* LOAD : Themes
-            await loadRemoteThemesCollection()
+            await loadThemesCollection()
 
             setInfoModal(true)
         } catch (error) {
@@ -127,7 +127,7 @@ const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
                 throw new Error('Error al actualizar datos del tema')
             }
 
-            await loadRemoteThemesCollection()
+            await loadThemesCollection()
         } catch (error) {
             console.error(error)
         } finally {

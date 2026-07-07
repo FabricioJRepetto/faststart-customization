@@ -22,7 +22,7 @@ import Info from './previewer-screens/Info'
 export interface PreviewScreenProps {
     currBg: (name?: string) => string
     currIcon: (name: string) => React.JSX.Element
-    currLang: (lang: string, name: string) => string
+    currLang: (lang: string, sect: string, name: string) => string
     currStyle: (parentKey: StylesParentKeys, name: string) => string
 }
 
@@ -52,9 +52,9 @@ export const Previewer = (): React.JSX.Element => {
         return currentIcon(name)
     }
 
-    const currLang = (lang: string, name: string): string => {
+    const currLang = (lang: string, sect: string, name: string): string => {
         try {
-            const word = lngData?.[lang][name] || ogLngData?.[lang][name] || ''
+            const word = lngData?.[lang][sect][name] || ogLngData?.[lang][sect][name] || ''
             return word
         } catch (error) {
             console.error(error)

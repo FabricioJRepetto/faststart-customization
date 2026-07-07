@@ -10,9 +10,9 @@ import { Screens } from '@shared/types'
 import ScreenWrapper from '@renderer/components/ScreenWrapper'
 import Styles from '@renderer/screens/Styles'
 import Collections from '@renderer/screens/Collection'
-import ThePit from '@renderer/screens/ThePit'
 import NewMain from '@renderer/screens/NewMain'
 import Preview from '@renderer/screens/Preview'
+import Template from '@renderer/screens/Template'
 
 
 /** Hook para manejar la pantalla actual que se muestra en la aplicación.
@@ -23,9 +23,9 @@ const useCurrentScreen = (): React.JSX.Element => {
     const allScreens: Record<Screens, React.JSX.Element> = {
         [Screens.landing]: <Landing />,
         [Screens.main]: <NewMain />,
+        [Screens.template]: <Template />,
         [Screens.preview]: <Preview />,
         [Screens.collections]: <Collections />,
-        [Screens.thePit]: <ThePit />,
         [Screens.styles]: <Styles />,
         [Screens.languages]: <Languages />,
         [Screens.icons]: <Icons />,

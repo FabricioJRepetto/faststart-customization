@@ -56,6 +56,9 @@ export const EditedAppSettingsAtom = atom<AppSettingsData>()
 /** Nuevos Iconos indicados por el usuario */
 export const EditedIconsDataAtom = atom<AssetData[]>()
 
+/** Nuevas Imagenes indicados por el usuario */
+export const EditedImagesDataAtom = atom<AssetData[]>()
+
 /** Datos del archivo styles por default */
 export const DefaultStylesDataAtom = atom<StylesData>()
 /** Nuevos Estilos indicados por el usuario */

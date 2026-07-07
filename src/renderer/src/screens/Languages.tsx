@@ -1,26 +1,26 @@
-import { DefaultLanguageDataAtom, EditedLanguageDataAtom } from '@renderer/utils/context/context'
-import { useAtom } from 'jotai'
+import { EditedLanguageDataAtom, TemplateConfigAtom } from '@renderer/utils/context/context'
+import { useAtom, useAtomValue } from 'jotai'
 import { useEffect, useState } from 'react'
 import SearchSvg from '../assets/search.svg?react'
 import CancelSvg from '../assets/cancel.svg?react'
 import ClearSvg from '../assets/clear.svg?react'
-import { langDataShell } from '@renderer/utils/LangStructureBuilder'
+import { objectFullStructure } from '@renderer/utils/LangStructureBuilder'
 
 // TODO Considerar que ya exista un archivo modificado previamente y cargarlo para seguir editando desde ahi en lugar de cargar siempre el default
-// TODO Scroll touch
 //: Guardar un backup de las modificaciones en localstorage (no me acuerdo por que)
 
 const Languages = (): React.JSX.Element => {
     //* Original
-    const [OGLangData] = useAtom(DefaultLanguageDataAtom) || {}
+    const OGLangData = useAtomValue(TemplateConfigAtom)?.language || {}
     //* Nuevo
     const [newLangData, setNewLangData] = useAtom(EditedLanguageDataAtom)
 
-    const [modal, setModal] = useState<{ key: string; lang: string } | null>(null)
+    const [modal, setModal] = useState<{ key: string; sect: string; lang: string } | null>(null)
     const [modalValue, setModalValue] = useState<string>('')
 
     const langKeys = Object.keys(OGLangData)
-    const textKeys = Object.keys(OGLangData[langKeys[0]])
+    const sectionKeys = Object.keys(OGLangData[langKeys[0]])
+    const textKeys = sectionKeys.map((sect) => Object.keys(OGLangData[langKeys[0]][sect])).flat()
     const [keysList, setKeysList] = useState({ langK: langKeys, textK: textKeys })
     const [filterValue, setFilterValue] = useState<string>('')
 
@@ -35,9 +35,9 @@ const Languages = (): React.JSX.Element => {
     }
 
     const resetValue = (): void => {
-        const { key, lang } = modal!
+        const { key, sect, lang } = modal!
         setNewLangData((prev) => {
-            delete prev[lang][key]
+            delete prev[lang][sect][key]
             return prev
         })
 
@@ -46,13 +46,13 @@ const Languages = (): React.JSX.Element => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const saveValue = (): void => {
-        const { key, lang } = modal!
+        const { key, sect, lang } = modal!
         const newValue = modalValue
 
         // actualiza nuevo
         setNewLangData((prev) => ({
             ...prev,
-            [lang]: { ...prev[lang], [key]: newValue }
+            [lang]: { ...prev[lang], [sect]: { ...prev[lang][sect], [key]: newValue } }
         }))
 
         closeModal()
@@ -63,19 +63,19 @@ const Languages = (): React.JSX.Element => {
         setModalValue('')
     }
 
-    const openModal = (key: string, lang: string): void => {
-        if (newLangData[lang][key]) setModalValue(newLangData[lang][key])
-        setModal({ key, lang })
+    const openModal = (key: string, sect: string, lang: string): void => {
+        if (newLangData[lang][sect][key]) setModalValue(newLangData[lang][sect][key])
+        setModal({ key, sect, lang })
     }
 
     const resetAllValues = (): void => {
-        setNewLangData(langDataShell(OGLangData))
+        setNewLangData(objectFullStructure(OGLangData))
     }
 
     /** Define un estilo a la casilla dependiendo si existe en el original o si se editó */
-    const valueStyle = (key: string, lang: string): string => {
-        if (newLangData[lang][key]) return 'edited'
-        if (!OGLangData[lang][key]) return 'missing'
+    const valueStyle = (key: string, section: string, lang: string): string => {
+        if (newLangData?.[lang]?.[section]?.[key]) return 'edited'
+        if (!OGLangData?.[lang]?.[section]?.[key]) return 'missing'
         return ''
     }
 
@@ -100,7 +100,7 @@ const Languages = (): React.JSX.Element => {
         }
 
         return () => removeEventListener('keydown', keysListener)
-    }, [modal, saveValue, OGLangData, newLangData])
+    }, [modal, saveValue, newLangData])
 
     return (
         <div className="screen-content">
@@ -140,19 +140,31 @@ const Languages = (): React.JSX.Element => {
                         <p key={lang}>{lang.toUpperCase()}</p>
                     ))}
                 </div>
-                {keysList.textK.map((key) => (
-                    <div key={key} className="lang-row">
-                        <p className="lang-key-column">{key}</p>
-                        {keysList.langK.map((lang) => (
-                            <p
-                                key={lang}
-                                onClick={() => openModal(key, lang)}
-                                className={valueStyle(key, lang)}
-                            >
-                                {newLangData[lang][key] || OGLangData[lang][key] || '-'}
-                            </p>
+                {sectionKeys.map((section) => (
+                    <>
+                        <div key={section} className="section-row">
+                            <p className="">{section}</p>
+                            {keysList.langK.map((lang) => (
+                                <p key={lang}></p>
+                            ))}
+                        </div>
+                        {Object.keys(OGLangData[langKeys[0]][section]).map((key) => (
+                            <div key={key} className="lang-row">
+                                <p className="lang-key-column">{key}</p>
+                                {keysList.langK.map((lang) => (
+                                    <p
+                                        key={lang}
+                                        onClick={() => openModal(key, section, lang)}
+                                        className={valueStyle(key, section, lang)}
+                                    >
+                                        {newLangData[lang][section][key] ||
+                                            OGLangData[lang][section][key] ||
+                                            '-'}
+                                    </p>
+                                ))}
+                            </div>
                         ))}
-                    </div>
+                    </>
                 ))}
             </div>
 
@@ -164,7 +176,7 @@ const Languages = (): React.JSX.Element => {
                             Editando entrada <code className="gradient-text">{modal.key}</code> del
                             idioma <code className="gradient-text">{modal.lang.toUpperCase()}</code>
                         </h2>
-                        <p>Valor actual: {OGLangData[modal.lang][modal.key]}</p>
+                        <p>Valor actual: {OGLangData[modal.lang][modal.sect][modal.key]}</p>
                         <textarea
                             autoFocus
                             value={modalValue}

@@ -1,4 +1,4 @@
-import { AssetsDataAtom, EditedAudiosDataAtom } from '@renderer/utils/context/context'
+import { EditedAudiosDataAtom, TemplateConfigAtom } from '@renderer/utils/context/context'
 import { useAtom, useAtomValue } from 'jotai'
 import ClearSvg from '../assets/clear.svg?react'
 import { filterType } from '@shared/types'
@@ -8,7 +8,7 @@ import AudioCard from '@renderer/components/AssetsCards/AudioCard'
 import { fileToBase64 } from '@renderer/utils/filesManager'
 
 const Audio = (): React.JSX.Element => {
-    const OgAssets = useAtomValue(AssetsDataAtom)
+    const OgAssets = useAtomValue(TemplateConfigAtom)
     const [audios, setAudios] = useAtom(EditedAudiosDataAtom)
 
     const resetAllValues = (): void => {
@@ -22,14 +22,9 @@ const Audio = (): React.JSX.Element => {
     }
 
     const setValue = async (key: string): Promise<void> => {
-        console.log(key)
         const res = await window.electronAPI.selectFile(filterType.Audio)
-        console.log(res)
-
         if (res.success) {
             const { filePath, base64 } = res.data
-            console.log(filePath)
-
             setAudios((prev) =>
                 prev!.map((e) =>
                     e.name === key ? { ...e, customPath: filePath, customBase64: base64 } : e
@@ -67,21 +62,17 @@ const Audio = (): React.JSX.Element => {
                 </div>
             </div>
 
-            {audios?.length ? (
-                <div className="assets-grid grid-audio scrolleable">
-                    {audios.map((audio) => (
-                        <DropZone
-                            key={audio.name}
-                            fileHandler={(f: File) => setDropedValue(f, audio.name)}
-                            configuration={{ allowedExtensions }}
-                        >
-                            <AudioCard audio={audio} setValue={setValue} resetValue={resetValue} />
-                        </DropZone>
-                    ))}
-                </div>
-            ) : (
-                <h2>No audios</h2>
-            )}
+            <div className="assets-grid grid-audio scrolleable">
+                {audios?.map((audio) => (
+                    <DropZone
+                        key={audio.name}
+                        fileHandler={(f: File) => setDropedValue(f, audio.name)}
+                        configuration={{ allowedExtensions }}
+                    >
+                        <AudioCard audio={audio} setValue={setValue} resetValue={resetValue} />
+                    </DropZone>
+                ))}
+            </div>
         </div>
     )
 }

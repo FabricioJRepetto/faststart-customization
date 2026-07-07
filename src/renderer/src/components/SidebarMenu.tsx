@@ -1,5 +1,5 @@
-import { CurrentScreenAtom } from '@renderer/utils/context/context'
-import { useAtom } from 'jotai'
+import { CurrentScreenAtom, FirstLoadAtom } from '@renderer/utils/context/context'
+import { useAtom, useAtomValue } from 'jotai'
 import HomeSvg from '../assets/home.svg?react'
 import PreviewSvg from '../assets/preview.svg?react'
 import IconsSvg from '../assets/sticker.svg?react'
@@ -17,9 +17,10 @@ import Tooltip from './Tooltip'
 const SidebarMenu = (): React.JSX.Element => {
     const [screen, setScreen] = useAtom(CurrentScreenAtom)
     const renderSidebar = screen !== Screens.landing
+    const firstLoad = useAtomValue(FirstLoadAtom)
 
     return renderSidebar ? (
-        <div className={`sidebar closed`}>
+        <div className={`sidebar closed ${firstLoad ? 'fade-in' : ''}`}>
             <div>
                 <Tooltip text="Main">
                     <a

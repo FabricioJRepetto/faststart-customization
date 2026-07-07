@@ -1,6 +1,6 @@
 import ClearSvg from '../assets/clear.svg?react'
 import { useSetAtom } from 'jotai'
-import { DefaultStylesDataAtom, EditedStylesDataAtom, store } from '@renderer/utils/context/context'
+import { EditedStylesDataAtom, store, TemplateConfigAtom } from '@renderer/utils/context/context'
 import {
     ColorStyleCard,
     BorderStyleCard,
@@ -11,20 +11,14 @@ import Tooltip from '@renderer/components/Tooltip'
 import { SECT } from '@renderer/utils/navigate'
 
 const Styles = (): React.JSX.Element => {
-    const ogStyles = store.get(DefaultStylesDataAtom)
+    const ogStyles = store.get(TemplateConfigAtom)?.styles
     const setCustomStyles = useSetAtom(EditedStylesDataAtom)
-
-    if (!ogStyles?.general)
-        return (
-            <>
-                <h1>No hay estilos</h1>
-            </>
-        )
 
     const updateCustom = (key: string, parent: string, value: string): void => {
         if (parent === 'button' || parent === 'secondaryButton' || parent === 'inputButton') {
             if (key === 'border') {
-                const new_v = value === ogStyles[parent][key] ? undefined : value
+                const _v = value === 'true'
+                const new_v = _v === ogStyles![parent].border ? undefined : value
 
                 setCustomStyles((prev) => ({
                     ...prev,
@@ -83,6 +77,12 @@ const Styles = (): React.JSX.Element => {
                         Colores del logo. La aplicación calcula el contraste entre el color de los
                         fondos y el logo, para que siempre sea distinguible de los fondos de
                         pantalla.
+                        <p>
+                            <i>
+                                Importante utilizar un logo <span className="gradient-text">svg</span> para que esta feature
+                                funcione.
+                            </i>
+                        </p>
                     </p>
                 </div>
                 <ColorStyleCard
@@ -101,34 +101,76 @@ const Styles = (): React.JSX.Element => {
                     reset={resetValue}
                     update={updateCustom}
                 />
-                <div className="grid-divider" id={SECT.general_style_edit}>
-                    <h3>General</h3>
+
+                <div className="grid-divider" id={SECT.idle_style_edit}>
+                    <h3>Pantalla Inicio</h3>
+                    <p>Estilos de la pantalla de inicio.</p>
+                </div>
+                <ColorStyleCard
+                    parentName={'idle'}
+                    keyName={'primaryColor'}
+                    description={'Color de texto e iconos en las pantallas de éxito'}
+                    value={ogStyles?.idle?.primaryColor}
+                    reset={resetValue}
+                    update={updateCustom}
+                />
+                <ColorStyleCard
+                    parentName={'idle'}
+                    keyName={'secondaryColor'}
+                    value={ogStyles?.idle?.secondaryColor}
+                    reset={resetValue}
+                    update={updateCustom}
+                />
+
+                <div className="grid-divider" id={SECT.user_action_style_edit}>
+                    <h3>UserAction</h3>
                     <p>Colores de la mayoría de los flujos.</p>
                 </div>
                 <ColorStyleCard
-                    parentName={'general'}
+                    parentName={'userAction'}
                     keyName={'primaryColor'}
                     description={'Color de texto e iconos en la mayoría de las pantallas'}
-                    value={ogStyles?.general?.primaryColor}
+                    value={ogStyles?.userAction?.primaryColor}
                     reset={resetValue}
                     update={updateCustom}
                 />
                 <ColorStyleCard
-                    parentName={'general'}
+                    parentName={'userAction'}
                     keyName={'secondaryColor'}
                     description={'Color de texto en cajas de texto'}
-                    value={ogStyles?.general?.secondaryColor}
+                    value={ogStyles?.userAction?.secondaryColor}
                     reset={resetValue}
                     update={updateCustom}
                 />
                 <ColorStyleCard
-                    parentName={'general'}
+                    parentName={'userAction'}
                     keyName={'errorMessageColor'}
                     description={'Color de texto en mensajes de error'}
-                    value={ogStyles?.general?.errorMessageColor}
+                    value={ogStyles?.userAction?.errorMessageColor}
                     reset={resetValue}
                     update={updateCustom}
                 />
+
+                <div className="grid-divider" id={SECT.info_style_edit}>
+                    <h3>Pantallas de Info</h3>
+                    <p>Estilos de pantalla de exito, etc.</p>
+                </div>
+                <ColorStyleCard
+                    parentName={'infoScreen'}
+                    keyName={'primaryColor'}
+                    description={'Color de texto e iconos en las pantallas de éxito'}
+                    value={ogStyles?.infoScreen?.primaryColor}
+                    reset={resetValue}
+                    update={updateCustom}
+                />
+                <ColorStyleCard
+                    parentName={'infoScreen'}
+                    keyName={'secondaryColor'}
+                    value={ogStyles?.infoScreen?.secondaryColor}
+                    reset={resetValue}
+                    update={updateCustom}
+                />
+
                 <div className="grid-divider" id={SECT.success_style_edit}>
                     <h3>Pantallas de éxito</h3>
                     <p>Estilos de pantalla de exito, etc.</p>
@@ -148,6 +190,7 @@ const Styles = (): React.JSX.Element => {
                     reset={resetValue}
                     update={updateCustom}
                 />
+
                 <div className="grid-divider" id={SECT.error_style_edit}>
                     <h3>Pantallas de error</h3>
                     <p>Estilos de pantalla de error.</p>
@@ -167,6 +210,7 @@ const Styles = (): React.JSX.Element => {
                     reset={resetValue}
                     update={updateCustom}
                 />
+
                 <div className="grid-divider" id={SECT.button_style_edit}>
                     <h3>Botones</h3>
                     <p>Estilo de los botones en los flujos de la aplicación.</p>
@@ -227,7 +271,7 @@ const Styles = (): React.JSX.Element => {
 
                 <div className="grid-divider" id={SECT.input_button_style_edit}>
                     <h3>Input</h3>
-                    <p>Estilo de botones en la pantalla de ingreso de monto.</p>
+                    <p>Estilo de botones en las pantallas de ingreso de monto.</p>
                 </div>
                 <ColorStyleCard
                     parentName={'inputButton'}
