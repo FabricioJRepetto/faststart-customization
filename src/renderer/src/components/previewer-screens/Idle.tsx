@@ -8,7 +8,7 @@ import LangButton from './components/LangButton'
 const Idle = ({ currBg, currIcon, currStyle, currLang }: PreviewScreenProps): React.JSX.Element => {
     return (
         <div className="preview-content">
-            <img className="preview-bg" src={currBg()} />
+            {currBg() && <img className="preview-bg" src={currBg()!} />}
             <Logo currIcon={currIcon} currStyle={currStyle} />
 
             <LangButton currIcon={currIcon} currStyle={currStyle} />

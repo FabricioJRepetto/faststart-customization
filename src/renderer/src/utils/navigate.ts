@@ -1,5 +1,6 @@
 import { Screens } from '@shared/types'
 import { CurrentScreenAtom, store } from './context/context'
+import { delay } from './delays'
 
 export enum SECT {
     logo_style_edit = 'styles-editor-logo-section',
@@ -12,19 +13,24 @@ export enum SECT {
     sec_button_style_edit = 'styles-editor-secondary-button-section',
     input_button_style_edit = 'styles-editor-input-button-section'
 }
-
+const scrollConfig: ScrollIntoViewOptions = {
+    behavior: 'smooth',
+    block: 'start',
+    inline: 'nearest'
+}
 export const navigate = (screen: Screens, section?: SECT): void => {
     //TODO agregar section > language key, icons
     console.log(`Going to: ${screen}${section ? ', section:' + section : ''}`)
     store.set(CurrentScreenAtom, screen)
-    if (section) {
-        setTimeout(() => {
-            const el = document.getElementById(section)
-            if (el) el.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start',
-                inline: 'nearest'
-            })
-        }, 300);
-    }
+    if (!section) return
+    ;(async () => {
+        await delay(300)
+        const el = document.getElementById(section)
+        if (!el) return
+        el.scrollIntoView(scrollConfig)
+        await delay(300)
+        el.classList.add('flash-highlight')
+        await delay(2000)
+        el.classList.remove('flash-highlight')
+    })()
 }

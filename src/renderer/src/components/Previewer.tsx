@@ -2,15 +2,16 @@ import {
     DefaultConfigAtom,
     DefaultLanguageDataAtom,
     DefaultStylesDataAtom,
-    DistributionMethodAtom,
     EditedBackgroundsDataAtom,
     EditedLanguageDataAtom,
     EditedStylesDataAtom,
+    EditingThemeAtom,
     PreviewScreenIndexAtom
 } from '@renderer/utils/context/context'
-import { DistributionMethod, StylesParentKeys } from '@shared/types'
+import { Screens, StylesParentKeys } from '@shared/types'
 import { useAtom, useAtomValue } from 'jotai'
 import ThemeSvg from '../assets/theme.svg?react'
+import NotDefinedSVG from '../assets/not_defined.svg?react'
 import Idle from './previewer-screens/Idle'
 import Menu from './previewer-screens/Menu'
 import Input from './previewer-screens/Input'
@@ -18,17 +19,18 @@ import { currentIcon } from '@renderer/utils/currentIcon'
 import Success from './previewer-screens/Success'
 import Error from './previewer-screens/Error'
 import Info from './previewer-screens/Info'
+import { navigate } from '@renderer/utils/navigate'
 
 export interface PreviewScreenProps {
-    currBg: (name?: string) => string
-    currIcon: (name: string) => React.JSX.Element
+    currBg: (name?: string) => string | null
+    currIcon: (name: string) => React.JSX.Element | null
     currLang: (lang: string, sect: string, name: string) => string
     currStyle: (parentKey: StylesParentKeys, name: string) => string
 }
 
 export const Previewer = (): React.JSX.Element => {
-    const isRemote = useAtomValue(DistributionMethodAtom) === DistributionMethod.REMOTE
     const [screen, setScreen] = useAtom(PreviewScreenIndexAtom)
+    const edinting = useAtomValue(EditingThemeAtom)
 
     const [ogData] = useAtom(DefaultConfigAtom)
     const [OgStyleData] = useAtom(DefaultStylesDataAtom)
@@ -38,27 +40,28 @@ export const Previewer = (): React.JSX.Element => {
     const [lngData] = useAtom(EditedLanguageDataAtom)
     const [ogLngData] = useAtom(DefaultLanguageDataAtom)
 
-    const currBg = (name?: string): string => {
+    const currBg = (name?: string): string | null => {
         try {
             const bg = bgData?.find((e) => e?.name === (name ?? 'background_Idle'))
-            return bg?.customBase64 || (isRemote ? bg!.blobUrl! : bg!.base64)
+            return bg?.customBase64 || bg?.blobUrl || null
         } catch (error) {
             console.error(error)
-            return ''
+            return null
         }
     }
 
-    const currIcon = (name: string): React.JSX.Element => {
-        return currentIcon(name)
+    const currIcon = (name: string): React.JSX.Element | null => {
+        return currentIcon(name) ?? <NotDefinedSVG />
     }
 
     const currLang = (lang: string, sect: string, name: string): string => {
         try {
-            const word = lngData?.[lang][sect][name] || ogLngData?.[lang][sect][name] || ''
+            const word =
+                lngData?.[lang][sect][name] || ogLngData?.[lang][sect][name] || '[Sin indicar]'
             return word
         } catch (error) {
             console.error(error)
-            return ''
+            return '[error]'
         }
     }
 
@@ -77,6 +80,39 @@ export const Previewer = (): React.JSX.Element => {
 
         const _c = styleData?.[parentKey]?.[name] || OgStyleData?.[parentKey]?.[name]
         return _c
+    }
+
+    const editBackground = (): void => {
+        const currScreen = SCREENS[screen].key
+
+        switch (currScreen) {
+            case 'Idle':
+                navigate(Screens.backgrounds)
+                break;
+
+            case 'Menu':
+                navigate(Screens.backgrounds)
+                break;
+                
+            case 'Input':
+                navigate(Screens.backgrounds)
+                break;
+                
+            case 'Success':
+                navigate(Screens.backgrounds)
+                break;
+                
+            case 'Error':
+                navigate(Screens.backgrounds)
+                break;
+                
+            case 'Info':
+                navigate(Screens.backgrounds)
+                break;
+                        
+            default:
+                break;
+        }
     }
 
     const SCREENS = [
@@ -128,13 +164,24 @@ export const Previewer = (): React.JSX.Element => {
         <div className="preview-wrapper">
             <div className="preview-container">
                 <span className="preview-theme-name">
-                    {ogData?.themeName && (
+                    {edinting && (
                         <div>
                             <ThemeSvg />
                             <p>{ogData?.themeName}</p>
                         </div>
                     )}
                     <p>{SCREENS[screen].key}</p>
+                    <div className="actions">
+                        <div className="action" onClick={editBackground}>
+                            <a>editar fondo</a>
+                        </div>
+                        <div className="action">
+                            <a>b</a>
+                        </div>
+                        <div className="action">
+                            <a>c</a>
+                        </div>
+                    </div>
                 </span>
 
                 {SCREENS[screen]}

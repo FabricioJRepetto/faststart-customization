@@ -23,41 +23,40 @@ const Landing = (): React.JSX.Element => {
 
     const [loading, setLoading] = useState(false)
 
-    let _to: NodeJS.Timeout
-    const ping = (r: number = 0): void => {
+    const ping = async (r: number = 0): Promise<boolean> => {
         const retries = r
         setStatus(undefined)
-        fetch(BACKEND_BASE_URL, {
-            method: 'HEAD',
-            mode: 'no-cors',
-            cache: 'no-cache'
-        })
-            .then(() => setStatus(true))
-            .catch(() => {
-                console.debug('retry =', retries)
-                if (retries === 0) {
-                    console.debug('stop pings')
-                    setLoading(false)
-                    setStatus(false)
-                    return
-                }
-                clearTimeout(_to)
-                _to = setTimeout(() => {
-                    ping(r - 1)
-                }, 5000)
-            })
+
+        const res = await fetch(BACKEND_BASE_URL, { method: 'HEAD', mode: 'no-cors', cache: 'no-cache' })
+            .then(() => true)
+            .catch(() => false)
+
+        if (res) {
+            setStatus(true)
+            setLoading(false)
+            return true
+        } else {
+            console.debug('retry =', retries)
+            if (retries === 0) {
+                console.debug('stop pings')
+                setLoading(false)
+                setStatus(false)
+                return false
+            }
+            await delay(5000)
+            return await ping(r - 1)
+        }
     }
 
     useEffect(() => {
         ping(5)
-        return () => clearTimeout(_to)
-    }, [setStatus])
+    }, [])
 
     const remoteStartUp = async (): Promise<void> => {
         setLoading(true)
 
         if (serverStatus === false) {
-            ping()
+            await ping()
             return
         }
 

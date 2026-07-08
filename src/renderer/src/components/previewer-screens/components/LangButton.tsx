@@ -3,7 +3,7 @@ import { Screens, StylesParentKeys } from '@shared/types'
 
 interface Props {
     currStyle: (parent: StylesParentKeys, key: string) => string
-    currIcon: (v: string) => React.JSX.Element
+    currIcon: (v: string) => React.JSX.Element | null
     theme?: 'dark' | 'light'
 }
 

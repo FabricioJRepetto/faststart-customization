@@ -92,7 +92,7 @@ const Icons = (): React.JSX.Element => {
         <div className="screen-content">
             <div className="screen-header">
                 <h1>
-                    Iconos
+                    Iconos e imágenes
                     <Tooltip
                         text={
                             'Iconos y algunas imagenes que se utilizan a lo largo de toda la aplicación. Pueden ser SVG o cualquier tipo de imágen.'

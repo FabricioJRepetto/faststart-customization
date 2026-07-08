@@ -8,7 +8,7 @@ import LangButton from './components/LangButton'
 const Menu = ({ currBg, currIcon, currStyle, currLang }: PreviewScreenProps): React.JSX.Element => {
     return (
         <div className="preview-content">
-            <img className="preview-bg" src={currBg('background_UserAction')} />
+            {currBg() && <img className="preview-bg" src={currBg('background_UserAction')!} />}
             <Logo currIcon={currIcon} currStyle={currStyle} theme="light" />
             <LangButton currIcon={currIcon} currStyle={currStyle} />
 
@@ -32,7 +32,7 @@ const Menu = ({ currBg, currIcon, currStyle, currLang }: PreviewScreenProps): Re
                     >
                         {currIcon('icon_bills')}
                     </label>
-                    {currLang('es', 'withdrawOption')}
+                    {currLang('es', 'dispense', 'withdrawOption')}
                 </button>
                 <button
                     className="preview-hilight-area"
@@ -53,7 +53,7 @@ const Menu = ({ currBg, currIcon, currStyle, currLang }: PreviewScreenProps): Re
                     >
                         {currIcon('icon_exchange')}
                     </label>
-                    {currLang('es', 'exchangeOption')}
+                    {currLang('es', 'exchange', 'exchangeOption')}
                 </button>
             </div>
 

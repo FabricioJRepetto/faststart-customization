@@ -318,6 +318,18 @@ input[type='number'] {
     background-color: var(--ev-button-tertiary-hover-bg);
 }
 
+.preview-actions {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+
+    a {
+        display: flex;
+        /* justify-content: space-between; */
+        /* gap: 10px; */
+    }
+}
+
 .versions {
     position: absolute;
     bottom: 30px;
@@ -993,6 +1005,9 @@ input[type='number'] {
             margin-top: 5px;
         }
     }
+    .asset-placeholder {
+        outline: none;
+    }
 }
 
 .icon-asset-container {
@@ -1024,6 +1039,14 @@ input[type='number'] {
         .button svg {
             margin-top: 5px;
         }
+    }
+
+    .asset-placeholder {
+        outline: none;
+        /* border-radius: 50%;
+        height: auto;
+        width: auto;
+        aspect-ratio: 1/1; */
     }
 }
 
@@ -1165,7 +1188,7 @@ input[type='number'] {
 
 .audio-asset-container {
     width: 330px;
-    
+
     p {
         margin: 0 20px 10px 10px;
     }
@@ -1173,16 +1196,11 @@ input[type='number'] {
     audio {
         background-color: transparent;
     }
-    .audio-placeholder {
+    .asset-placeholder {
         width: 300px;
         height: 54px;
         margin-bottom: 15px;
         border-radius: 50px;
-        outline: 1px solid #bebebe1a;
-        color: var(--ev-c-text-3);
-        display: flex;
-        align-items: center;
-        justify-content: center;
     }
 
     .actions {
@@ -1194,6 +1212,17 @@ input[type='number'] {
             margin-top: 5px;
         }
     }
+}
+
+.asset-placeholder {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    outline: 1px solid #bebebe1a;
+    color: var(--ev-c-text-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .color-asset-container {
@@ -1403,6 +1432,7 @@ input[type='number'] {
 
 /** PREVIEWER */
 .preview-wrapper {
+    width: fit-content;
     padding: 15px;
     border-radius: 25px;
     border: 1px solid #bebebe1a;
@@ -1427,31 +1457,32 @@ input[type='number'] {
 }
 
 .preview-theme-name {
-    position: absolute;
-    z-index: 100;
+    width: max-content;
     display: flex;
-    flex-direction: row;
-    top: -30px;
-    left: -30px;
-    background-color: var(--ev-c-red-1);
-    padding: 5px 10px 5px 5px;
-    border-radius: 10px 10px 0 10px;
+    flex-direction: column;
+    z-index: 100;
+    position: absolute;
+    top: 0px;
+    left: calc(100% + 35px);
+    padding: 20px;
     color: white;
-    filter: drop-shadow(5px 5px 5px #00000036) drop-shadow(6px 8px 9px #00000036);
+    border: 1px solid #bebebe1a;
+    background-color: #bebebe13;
+    border-radius: 10px;
 
-    svg {
-        height: 24px;
-        width: auto;
-    }
-
-    div {
+    .actions {
         display: flex;
-        border-right: 1px solid white;
-        padding-right: 15px;
-        margin-right: 15px;
+        flex-direction: column;
     }
 }
 .preview-content {
+    background: repeating-linear-gradient(
+        45deg,
+        var(--color-background-soft),
+        var(--color-background-soft) 10px,
+        var(--color-background-mute) 10px,
+        var(--color-background-mute) 20px
+    );
     zoom: var(--preview-container-zoom);
     position: relative;
     width: var(--preview-res-w-px);
@@ -1900,6 +1931,7 @@ input[type='number'] {
         top: 50%;
         left: 100%;
         z-index: 9999;
+        pointer-events: none;
 
         max-width: 250px;
         width: max-content;
@@ -2062,4 +2094,24 @@ input[type='number'] {
         /* height: 100vh; */
         /* width: 100vw; */
     }
+}
+
+@keyframes flash {
+    0% {
+        outline: 2px solid #00000000;
+        background-color: rgba(255, 235, 59, 1); /* Bright yellow */
+    }
+    100% {
+        outline: 2px solid #ffeb3b;
+        background-color: rgba(255, 235, 59, 0); /* Transparent */
+    }
+}
+
+.flash-highlight {
+    animation: flash 0.5s ease-out infinite;
+    outline: 2px solid #ffeb3b;
+}
+
+.target {
+  scroll-margin-top: 20px; /* Adjust this to match your header height */
 }

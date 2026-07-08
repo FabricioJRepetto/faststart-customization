@@ -20,7 +20,7 @@ const Input = ({
 
     return (
         <div className="preview-content">
-            <img className="preview-bg" src={currBg('background_UserAction')} />
+            {currBg() && <img className="preview-bg" src={currBg('background_UserAction')!} />}
             <Logo currIcon={currIcon} currStyle={currStyle} theme="light" />
             <LangButton currIcon={currIcon} currStyle={currStyle} />
 
@@ -29,7 +29,7 @@ const Input = ({
                 onClick={() => navigate(Screens.languages)}
                 style={{ color: currStyle(StylesParentKeys.idle, 'secondaryColor') }}
             >
-                {currLang('es', 'enterAmount')}
+                {currLang('es', 'dispense', 'enterAmount')}
             </h1>
 
             <div className="preview-input-container">
@@ -75,13 +75,13 @@ const Input = ({
                         <button style={buttonStyle}>9</button>
                         <button style={buttonStyle}>0</button>
                         <button style={{ ...buttonStyle, gridColumn: 'span 2' }}>
-                            {currLang('es', 'clear')}
+                            {currLang('es', 'general', 'clear')}
                         </button>
                     </div>
                 </div>
             </div>
 
-            <NavBar currIcon={currIcon} currStyle={currStyle} currLang={currLang}/>
+            <NavBar currIcon={currIcon} currStyle={currStyle} currLang={currLang} />
         </div>
     )
 }

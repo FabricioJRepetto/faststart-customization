@@ -1,12 +1,10 @@
 import { useState } from 'react'
 import { assetName } from '@renderer/utils/assetsUtils'
-import { AssetData, DistributionMethod } from '@shared/types'
+import { AssetData } from '@shared/types'
 import UploadSvg from '../../assets/upload.svg?react'
 import ResetSvg from '../../assets/undo.svg?react'
 import EyeSvg from '../../assets/eye.svg?react'
 import Tooltip from '../Tooltip'
-import { useAtomValue } from 'jotai'
-import { DistributionMethodAtom } from '@renderer/utils/context/context'
 
 interface Props {
     bg: AssetData
@@ -16,7 +14,6 @@ interface Props {
 
 export const BackgroundCard = ({ bg, setValue, resetValue }: Props): React.JSX.Element => {
     const [showOriginal, setShowOriginal] = useState(false)
-    const isRemote = useAtomValue(DistributionMethodAtom) === DistributionMethod.REMOTE
 
     return (
         <div
@@ -25,7 +22,7 @@ export const BackgroundCard = ({ bg, setValue, resetValue }: Props): React.JSX.E
         >
             <div className="asset-card-header">
                 <p>{assetName(bg.name)}</p>
-                {bg.customBase64 && (
+                {bg.customBase64 && bg.mimeType && (
                     <Tooltip text="Ver fondo original">
                         <div
                             className="button asset-card-show-buton"
@@ -40,7 +37,11 @@ export const BackgroundCard = ({ bg, setValue, resetValue }: Props): React.JSX.E
 
             <div className="bg-container asset-card-asset-trasition">
                 {!bg.customBase64 || showOriginal ? (
-                    <img src={isRemote ? bg.blobUrl : bg.base64} />
+                    bg.blobUrl ? (
+                        <img src={bg.blobUrl} />
+                    ) : (
+                        <div className="asset-placeholder">Sin definir</div>
+                    )
                 ) : (
                     <img src={bg.customBase64} />
                 )}

@@ -15,7 +15,7 @@ export const AddNewAsset = ({ addNew }: AddNewProps): React.JSX.Element => {
         <div className="assets-container thirdscreen-add-new-container">
             <div className="thirdscreen-add-new-button" onClick={addNew}>
                 <AddSvg />
-                Agregar nuevo
+                Agregar elemento
             </div>
         </div>
     )

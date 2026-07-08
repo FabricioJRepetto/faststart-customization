@@ -101,6 +101,8 @@ export const UploadStageAtom = atom<UPLOAD_STAGE>(UPLOAD_STAGE.NAME)
 
 /** Pantalla activa en la previsualización */
 export const PreviewScreenIndexAtom = atom<number>(0)
+/** Indica si se está llevando a cabo una edición */
+export const EditingThemeAtom = atom<boolean>(false)
 
 export type svgCacheElement = Record<string, string>
 /** Cache para archivos SVG */

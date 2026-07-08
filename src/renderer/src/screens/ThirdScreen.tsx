@@ -20,6 +20,8 @@ const ThirdScreen = (): React.JSX.Element => {
     const [asset, setAsset] = useAtom(EditedThirdScreenAssetsDataAtom)
     const [config, setConfig] = useAtom(EditedThirdScreenConfigDataAtom)
 
+    console.log(asset)
+
     const resetAllValues = (): void => {
         setAsset([...OgAssets!.thirdscreen])
     }
@@ -123,26 +125,27 @@ const ThirdScreen = (): React.JSX.Element => {
                 </div>
             </div>
 
-            {asset && asset.length > 1 && (
-                <div className="third-interval-section">
-                    <p>Intervalo de tiempo (en segundos) en el que se muestra cada imagen/video.</p>
-                    <input
-                        type="number"
-                        placeholder="5"
-                        onChange={(e) => setNewConfig('intervalSeconds', e.target.value)}
-                    ></input>
-                </div>
-            )}
+            <div className="third-interval-section">
+                <p>
+                    Intervalo de tiempo (en segundos) en el que se muestra cada imagen/video.
+                    Solo aplicable cuando hay mas de un elemento.
+                </p>
+                <input
+                    type="number"
+                    placeholder="5"
+                    onChange={(e) => setNewConfig('intervalSeconds', e.target.value)}
+                ></input>
+            </div>
 
             <div className="assets-grid grid-third scrolleable">
+                <div className='grid-divider'></div>
                 {asset?.length ? (
-                    asset!.map((_asset, i) =>
-                        _asset.filePath ? (
-                            <ThirdCard key={i} data={_asset} deleteValue={deleteValue} />
-                        ) : (
-                            <NewAssetCard key={i} data={_asset} deleteValue={deleteValue} />
-                        )
-                    )
+                    asset!.map((_asset, i) => {
+                        if (!_asset.mimeType && !_asset.customMimeType) return null
+                        if (_asset.mimeType && !_asset.customMimeType)
+                            return <ThirdCard key={i} data={_asset} deleteValue={deleteValue} />
+                        else return <NewAssetCard key={i} data={_asset} deleteValue={deleteValue} />
+                    })
                 ) : (
                     <h2>No assets</h2>
                 )}

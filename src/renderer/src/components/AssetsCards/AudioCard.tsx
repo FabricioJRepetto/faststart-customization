@@ -23,7 +23,7 @@ const AudioCard = ({ audio, setValue, resetValue }: Props): React.JSX.Element =>
                 audio?.blobUrl ? (
                     <audio src={audio.blobUrl} controls />
                 ) : (
-                    <div className='audio-placeholder'>Sin definir</div>
+                    <div className="asset-placeholder">Sin definir</div>
                 )
             ) : (
                 <audio src={audio.customBase64} controls />

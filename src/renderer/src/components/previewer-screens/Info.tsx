@@ -7,12 +7,12 @@ import LangButton from './components/LangButton'
 const Info = ({ currBg, currIcon, currStyle, currLang }: PreviewScreenProps): React.JSX.Element => {
     return (
         <div className="preview-content">
-            <img className="preview-bg" src={currBg('background_Info')} />
+            {currBg() && <img className="preview-bg" src={currBg('background_Info')!} />}
             <Logo currIcon={currIcon} currStyle={currStyle} />
             <LangButton currIcon={currIcon} currStyle={currStyle} />
 
             <h1 style={{ color: currStyle(StylesParentKeys.infoScreen, 'primaryColor') }}>
-                {currLang('es', 'wait')}
+                {currLang('es', 'info', 'wait')}
             </h1>
 
             <div

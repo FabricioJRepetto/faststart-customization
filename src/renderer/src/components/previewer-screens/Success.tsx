@@ -12,7 +12,7 @@ const Success = ({
 }: PreviewScreenProps): React.JSX.Element => {
     return (
         <div className="preview-content">
-            <img className="preview-bg" src={currBg('background_success')} />
+            {currBg() && <img className="preview-bg" src={currBg('background_success')!} />}
             <Logo currIcon={currIcon} currStyle={currStyle} />
             <LangButton currIcon={currIcon} currStyle={currStyle} />
 
@@ -21,7 +21,7 @@ const Success = ({
                 onClick={() => navigate(Screens.languages)}
                 style={{ color: currStyle(StylesParentKeys.successScreen, 'primaryColor') }}
             >
-                {currLang('es', 'thankYou')}
+                {currLang('es', 'info', 'thankYou')}
             </h1>
 
             <div

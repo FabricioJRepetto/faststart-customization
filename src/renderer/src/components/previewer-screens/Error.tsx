@@ -12,12 +12,12 @@ const Error = ({
 }: PreviewScreenProps): React.JSX.Element => {
     return (
         <div className="preview-content">
-            <img className="preview-bg" src={currBg('background_error')} />
+            {currBg() && <img className="preview-bg" src={currBg('background_error')!} />}
             <Logo currIcon={currIcon} currStyle={currStyle} />
             <LangButton currIcon={currIcon} currStyle={currStyle} />
 
             <h1 style={{ color: currStyle(StylesParentKeys.errorScreen, 'primaryColor') }}>
-                {currLang('es', 'contactSupport')}
+                {currLang('es', 'info', 'contactSupport')}
             </h1>
 
             <div

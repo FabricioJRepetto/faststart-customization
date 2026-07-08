@@ -20,22 +20,22 @@ export const defaultIcon = (name: string): React.JSX.Element => {
     }
 }
 
-export const currentIcon = (name: string): React.JSX.Element => {
+export const currentIcon = (name: string): React.JSX.Element | null => {
     try {
         const iconData = store.get(EditedIconsDataAtom) || []
         const imageData = store.get(EditedImagesDataAtom) || []
         const data = [...iconData, ...imageData]
         const asset = data?.find((e) => e?.name === name)
         const isSVG = (asset?.customMimeType || (asset?.mimeType ?? '')).match('svg')
-        const path = asset?.customBase64 || asset?.name
+        const path = asset?.customBase64 || (asset?.mimeType ? asset.name : null)
 
-        if (!path) return <></>
+        if (!path) return null
 
         const config = !asset?.customBase64 ? { assetName: path } : { path: path }
 
         return isSVG ? <DynamicSvg config={config} /> : <img src={path} />
     } catch (error) {
         console.error(error)
-        return <></>
+        return null
     }
 }

@@ -1,34 +1,22 @@
-import { useAtom } from 'jotai'
-import { CustomEnabledAtom } from '@renderer/utils/context/context'
 import { Previewer } from '@renderer/components/Previewer'
 import { useState } from 'react'
-import PowerSvg from '../assets/powerb.svg?react'
 import Modal from '@renderer/components/Modal'
-import SpinnerSvg from '../assets/spinner.svg?react'
 import UploadSvg from '../assets/upload.svg?react'
+import IconsSvg from '../assets/sticker.svg?react'
+import ColorsSvg from '../assets/colors.svg?react'
+import BackgroundsSvg from '../assets/image.svg?react'
+import LanguageSvg from '../assets/translate.svg?react'
+import ScreenSvg from '../assets/screen.svg?react'
+import AudioSvg from '../assets/audio.svg?react'
 import RemotePill from '@renderer/components/RemotePill'
 import UploadDialog from '@renderer/components/ModalBodies/UploadDialog'
-import mediaServiceController from '@renderer/utils/controllers/mediaServer/mediaServiceController'
+import { useAtomValue } from 'jotai'
+import { EditingThemeAtom } from '@renderer/utils/context/context'
 
 export const Preview = (): React.JSX.Element => {
-    const [customEnabled, setCustomEnabled] = useAtom(CustomEnabledAtom)
-    const [loadingApply, setLoadingApply] = useState<boolean>(false)
-
-    const toggleCustomEnabled = async (): Promise<void> => {
-        setLoadingApply(true)
-        setCustomEnabled(!customEnabled)
-
-        const res = await mediaServiceController.toggleCustomization()
-        if (res) console.log('Customization toggled')
-        else console.log('Error toggling customizations')
-
-        setLoadingApply(false)
-    }
-
-    //_-_-_-_-_-_-_-_-_-_- REMOTE _-_-_-_-_-_-_-_-_-_-
-
     const [loadingUpload, setLoadingUpload] = useState<boolean>(false)
     const [modalUpload, setModalUpload] = useState<boolean>(false)
+    const edinting = useAtomValue(EditingThemeAtom)
 
     const openUploadModal = (): void => {
         setModalUpload(true)
@@ -39,16 +27,19 @@ export const Preview = (): React.JSX.Element => {
         <div className={`screen-content main-screen-container`}>
             <>
                 <div className="screen-header">
-                    <h1>Previsualización</h1>
-                    <div className="toggler">
+                    <h1>{edinting ? 'Editando tema' : 'Creando nuevo tema'}</h1>
+
+                    <div className="header-group">
                         <div
-                            className="input-wrapper"
-                            onClick={() => !loadingApply && toggleCustomEnabled()}
+                            className="action primary"
+                            style={{
+                                pointerEvents: !loadingUpload ? 'all' : 'none'
+                            }}
                         >
-                            Customización
-                            <button className={customEnabled ? '' : 'power-off'}>
-                                {loadingApply ? <SpinnerSvg className="spinner" /> : <PowerSvg />}
-                            </button>
+                            <a onClick={openUploadModal}>
+                                Subir
+                                <UploadSvg />
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -56,16 +47,41 @@ export const Preview = (): React.JSX.Element => {
                 <div className="main-screen-content">
                     <Previewer />
 
-                    <div className="actions main-actions">
-                        <div
-                            className="action primary"
-                            style={{
-                                pointerEvents: !loadingApply ? 'all' : 'none'
-                            }}
-                        >
-                            <a onClick={openUploadModal}>
-                                Subir
-                                <UploadSvg />
+                    <div className="actions preview-actions">
+                        <div className="action">
+                            <a>
+                                <IconsSvg />
+                                Iconos
+                            </a>
+                        </div>
+                        <div className="action">
+                            <a>
+                                <BackgroundsSvg />
+                                Fondos
+                            </a>
+                        </div>
+                        <div className="action">
+                            <a>
+                                <AudioSvg />
+                                Audios
+                            </a>
+                        </div>
+                        <div className="action">
+                            <a>
+                                <ScreenSvg />
+                                Tercer pantalla
+                            </a>
+                        </div>
+                        <div className="action">
+                            <a>
+                                <ColorsSvg />
+                                Estilos
+                            </a>
+                        </div>
+                        <div className="action">
+                            <a>
+                                <LanguageSvg />
+                                Textos
                             </a>
                         </div>
                     </div>

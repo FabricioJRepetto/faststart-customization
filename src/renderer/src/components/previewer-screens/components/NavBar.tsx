@@ -1,10 +1,10 @@
-import { navigate, SECT } from "@renderer/utils/navigate"
-import { Screens, StylesParentKeys } from "@shared/types"
+import { navigate, SECT } from '@renderer/utils/navigate'
+import { Screens, StylesParentKeys } from '@shared/types'
 
 interface Props {
     currStyle: (parent: StylesParentKeys, key: string) => string
-    currIcon: (v: string) => React.JSX.Element
-    currLang: (lang: string, key: string) => string
+    currLang: (lang: string, parent: string, key: string) => string
+    currIcon: (v: string) => React.JSX.Element | null
 }
 
 const NavBar = ({ currStyle, currIcon, currLang }: Props): React.JSX.Element => {
@@ -30,7 +30,7 @@ const NavBar = ({ currStyle, currIcon, currLang }: Props): React.JSX.Element => 
                 >
                     {currIcon('icon_button_exit')}
                 </label>
-                {currLang('es', 'button_exit')}
+                {currLang('es', 'general', 'button_exit')}
             </button>
 
             <button
@@ -41,7 +41,7 @@ const NavBar = ({ currStyle, currIcon, currLang }: Props): React.JSX.Element => 
                     borderRadius: currStyle(StylesParentKeys.button, 'borderRadius')
                 }}
             >
-                {currLang('es', 'button_confirm')}
+                {currLang('es', 'general', 'button_confirm')}
                 <label
                     className="preview-hilight-area"
                     onClick={(e) => {

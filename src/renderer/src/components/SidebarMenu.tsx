@@ -3,9 +3,9 @@ import { useAtom, useAtomValue } from 'jotai'
 import HomeSvg from '../assets/home.svg?react'
 import PreviewSvg from '../assets/preview.svg?react'
 import IconsSvg from '../assets/sticker.svg?react'
-import ColorsSvg from '../assets/palette.svg?react'
+import ColorsSvg from '../assets/colors.svg?react'
 import BackgroundsSvg from '../assets/image.svg?react'
-import LanguageSvg from '../assets/dictionary.svg?react'
+import LanguageSvg from '../assets/translate.svg?react'
 import ScreenSvg from '../assets/screen.svg?react'
 import AudioSvg from '../assets/audio.svg?react'
 import CollectionSvg from '../assets/storage.svg?react'
@@ -48,7 +48,7 @@ const SidebarMenu = (): React.JSX.Element => {
 
                 <div className="sidebard-divider"></div>
 
-                <Tooltip text="Iconos">
+                <Tooltip text="Iconos e imágenes">
                     <a
                         target="_blank"
                         rel="noreferrer"

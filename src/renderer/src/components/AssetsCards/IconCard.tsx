@@ -37,9 +37,15 @@ export const IconCard = ({ icon, setValue, resetValue }: Props): React.JSX.Eleme
             </div>
 
             <div className="icons-container">
-                {!icon.customBase64 || showOriginal
-                    ? defaultIcon(icon.name)
-                    : currentIcon(icon.name)}
+                {!icon.customBase64 || showOriginal ? (
+                    icon.mimeType ? (
+                        defaultIcon(icon.name)
+                    ) : (
+                        <div className="asset-placeholder">Sin definir</div>
+                    )
+                ) : (
+                    currentIcon(icon.name)
+                )}
             </div>
 
             <div className="actions">
