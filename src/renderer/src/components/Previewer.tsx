@@ -19,11 +19,11 @@ import { currentIcon } from '@renderer/utils/currentIcon'
 import Success from './previewer-screens/Success'
 import Error from './previewer-screens/Error'
 import Info from './previewer-screens/Info'
-import { navigate } from '@renderer/utils/navigate'
+import { BACKGROUNDS, navigate } from '@renderer/utils/navigate'
 
 export interface PreviewScreenProps {
-    currBg: (name?: string) => string | null
-    currIcon: (name: string) => React.JSX.Element | null
+    currBg: (name?: string) => React.JSX.Element
+    currIcon: (name: string) => React.JSX.Element
     currLang: (lang: string, sect: string, name: string) => string
     currStyle: (parentKey: StylesParentKeys, name: string) => string
 }
@@ -40,17 +40,18 @@ export const Previewer = (): React.JSX.Element => {
     const [lngData] = useAtom(EditedLanguageDataAtom)
     const [ogLngData] = useAtom(DefaultLanguageDataAtom)
 
-    const currBg = (name?: string): string | null => {
+    const currBg = (name?: string): React.JSX.Element => {
         try {
             const bg = bgData?.find((e) => e?.name === (name ?? 'background_Idle'))
-            return bg?.customBase64 || bg?.blobUrl || null
+            if (!bg?.customBase64 && !bg?.blobUrl) return <></>
+            return <img className="preview-bg" src={bg?.customBase64 || bg?.blobUrl} />
         } catch (error) {
             console.error(error)
-            return null
+            return <></>
         }
     }
 
-    const currIcon = (name: string): React.JSX.Element | null => {
+    const currIcon = (name: string): React.JSX.Element => {
         return currentIcon(name) ?? <NotDefinedSVG />
     }
 
@@ -87,27 +88,27 @@ export const Previewer = (): React.JSX.Element => {
 
         switch (currScreen) {
             case 'Idle':
-                navigate(Screens.backgrounds)
+                navigate(Screens.backgrounds, BACKGROUNDS.idle)
                 break;
 
             case 'Menu':
-                navigate(Screens.backgrounds)
+                navigate(Screens.backgrounds, BACKGROUNDS.user_action)
                 break;
                 
             case 'Input':
-                navigate(Screens.backgrounds)
+                navigate(Screens.backgrounds, BACKGROUNDS.user_action)
                 break;
                 
             case 'Success':
-                navigate(Screens.backgrounds)
+                navigate(Screens.backgrounds, BACKGROUNDS.success)
                 break;
                 
             case 'Error':
-                navigate(Screens.backgrounds)
+                navigate(Screens.backgrounds, BACKGROUNDS.error)
                 break;
                 
             case 'Info':
-                navigate(Screens.backgrounds)
+                navigate(Screens.backgrounds, BACKGROUNDS.info)
                 break;
                         
             default:

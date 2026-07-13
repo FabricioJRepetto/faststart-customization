@@ -1,6 +1,6 @@
 import { Screens, StylesParentKeys } from '@shared/types'
 import { PreviewScreenProps } from '../Previewer'
-import { navigate, SECT } from '@renderer/utils/navigate'
+import { ICONS, navigate, STYLES, TEXT } from '@renderer/utils/navigate'
 import Logo from './components/Logo'
 import LangButton from './components/LangButton'
 import NavBar from './components/NavBar'
@@ -20,13 +20,13 @@ const Input = ({
 
     return (
         <div className="preview-content">
-            {currBg() && <img className="preview-bg" src={currBg('background_UserAction')!} />}
+            {currBg('background_UserAction')}
             <Logo currIcon={currIcon} currStyle={currStyle} theme="light" />
             <LangButton currIcon={currIcon} currStyle={currStyle} />
 
             <h1
-                className="preview-hilight-area"
-                onClick={() => navigate(Screens.languages)}
+                className="preview-highlight-area"
+                onClick={() => navigate(Screens.languages, TEXT.dispense.enterAmount)}
                 style={{ color: currStyle(StylesParentKeys.idle, 'secondaryColor') }}
             >
                 {currLang('es', 'dispense', 'enterAmount')}
@@ -44,26 +44,32 @@ const Input = ({
                     <div className="preview-input-input-container">
                         <span>$</span>
                         <input />
-                        {currIcon('icon_return')}
+
+                        <span
+                            className="preview-highlight-area"
+                            onClick={() => navigate(Screens.icons, ICONS.return)}
+                        >
+                            {currIcon('icon_return')}
+                        </span>
                     </div>
                     <p
-                        className="preview-hilight-area"
-                        onClick={() => navigate(Screens.styles, SECT.user_action_style_edit)}
+                        className="preview-highlight-area"
+                        onClick={() => navigate(Screens.styles, STYLES.user_action)}
                         style={{
                             color: currStyle(StylesParentKeys.userAction, 'errorMessageColor'),
                             fontSize: '24px',
                             margin: '0 auto'
                         }}
                     >
-                        error Message Test
+                        Ejemplo mensaje de error
                     </p>
                 </div>
 
                 <div
-                    className="preview-input-numpad-container preview-hilight-area"
-                    onClick={() => navigate(Screens.styles, SECT.input_button_style_edit)}
+                    className="preview-input-numpad-container"
+                    onClick={() => navigate(Screens.styles, STYLES.input_button)}
                 >
-                    <div>
+                    <div className="preview-highlight-area">
                         <button style={buttonStyle}>1</button>
                         <button style={buttonStyle}>2</button>
                         <button style={buttonStyle}>3</button>
@@ -75,7 +81,15 @@ const Input = ({
                         <button style={buttonStyle}>9</button>
                         <button style={buttonStyle}>0</button>
                         <button style={{ ...buttonStyle, gridColumn: 'span 2' }}>
-                            {currLang('es', 'general', 'clear')}
+                            <span
+                                className="preview-highlight-area"
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    navigate(Screens.languages, TEXT.general.clear)
+                                }}
+                            >
+                                {currLang('es', 'general', 'clear')}
+                            </span>
                         </button>
                     </div>
                 </div>

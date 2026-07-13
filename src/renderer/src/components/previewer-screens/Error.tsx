@@ -1,6 +1,6 @@
 import { Screens, StylesParentKeys } from '@shared/types'
 import { PreviewScreenProps } from '../Previewer'
-import { navigate } from '@renderer/utils/navigate'
+import { IMAGES, navigate, TEXT } from '@renderer/utils/navigate'
 import Logo from './components/Logo'
 import LangButton from './components/LangButton'
 
@@ -12,11 +12,15 @@ const Error = ({
 }: PreviewScreenProps): React.JSX.Element => {
     return (
         <div className="preview-content">
-            {currBg() && <img className="preview-bg" src={currBg('background_error')!} />}
+            {currBg('background_error')}
             <Logo currIcon={currIcon} currStyle={currStyle} />
             <LangButton currIcon={currIcon} currStyle={currStyle} />
 
-            <h1 style={{ color: currStyle(StylesParentKeys.errorScreen, 'primaryColor') }}>
+            <h1
+                style={{ color: currStyle(StylesParentKeys.errorScreen, 'primaryColor') }}
+                className="preview-highlight-area"
+                onClick={() => navigate(Screens.languages, TEXT.info.contactSupport)}
+            >
                 {currLang('es', 'info', 'contactSupport')}
             </h1>
 
@@ -25,10 +29,10 @@ const Error = ({
                 style={{ color: currStyle(StylesParentKeys.successScreen, 'primaryColor') }}
             >
                 <div
-                    className="preview-info-image preview-hilight-area"
-                    onClick={() => navigate(Screens.icons)}
+                    className="preview-info-image preview-highlight-area"
+                    onClick={() => navigate(Screens.icons, IMAGES.error)}
                 >
-                    {currIcon('icon_error')}
+                    {currIcon('image_error')}
                 </div>
             </div>
         </div>

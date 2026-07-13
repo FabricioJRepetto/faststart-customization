@@ -1,6 +1,6 @@
 import { Screens, StylesParentKeys } from '@shared/types'
 import { PreviewScreenProps } from '../Previewer'
-import { navigate, SECT } from '@renderer/utils/navigate'
+import { ICONS, navigate, STYLES, TEXT } from '@renderer/utils/navigate'
 import NavBar from './components/NavBar'
 import Logo from './components/Logo'
 import LangButton from './components/LangButton'
@@ -8,14 +8,14 @@ import LangButton from './components/LangButton'
 const Menu = ({ currBg, currIcon, currStyle, currLang }: PreviewScreenProps): React.JSX.Element => {
     return (
         <div className="preview-content">
-            {currBg() && <img className="preview-bg" src={currBg('background_UserAction')!} />}
+            {currBg('background_UserAction')}
             <Logo currIcon={currIcon} currStyle={currStyle} theme="light" />
             <LangButton currIcon={currIcon} currStyle={currStyle} />
 
             <div className="preview-menu-container">
                 <button
-                    className="preview-hilight-area"
-                    onClick={() => navigate(Screens.styles, SECT.button_style_edit)}
+                    className="preview-highlight-area"
+                    onClick={() => navigate(Screens.styles, STYLES.button)}
                     style={{
                         color: currStyle(StylesParentKeys.button, 'color'),
                         backgroundColor: currStyle(StylesParentKeys.button, 'background'),
@@ -24,19 +24,27 @@ const Menu = ({ currBg, currIcon, currStyle, currLang }: PreviewScreenProps): Re
                     }}
                 >
                     <label
-                        className="preview-hilight-area"
+                        className="preview-highlight-area"
                         onClick={(e) => {
                             e.stopPropagation()
-                            navigate(Screens.icons)
+                            navigate(Screens.icons, ICONS.bills)
                         }}
                     >
                         {currIcon('icon_bills')}
                     </label>
-                    {currLang('es', 'dispense', 'withdrawOption')}
+                    <label
+                        className="preview-highlight-area"
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            navigate(Screens.languages, TEXT.dispense.withdrawOption)
+                        }}
+                    >
+                        {currLang('es', 'dispense', 'withdrawOption')}
+                    </label>
                 </button>
                 <button
-                    className="preview-hilight-area"
-                    onClick={() => navigate(Screens.styles, SECT.button_style_edit)}
+                    className="preview-highlight-area"
+                    onClick={() => navigate(Screens.styles, STYLES.button)}
                     style={{
                         color: currStyle(StylesParentKeys.button, 'color'),
                         backgroundColor: currStyle(StylesParentKeys.button, 'background'),
@@ -45,15 +53,24 @@ const Menu = ({ currBg, currIcon, currStyle, currLang }: PreviewScreenProps): Re
                     }}
                 >
                     <label
-                        className="preview-hilight-area"
+                        className="preview-highlight-area"
                         onClick={(e) => {
                             e.stopPropagation()
-                            navigate(Screens.icons)
+                            navigate(Screens.icons, ICONS.exchange)
                         }}
                     >
                         {currIcon('icon_exchange')}
                     </label>
-                    {currLang('es', 'exchange', 'exchangeOption')}
+
+                    <label
+                        className="preview-highlight-area"
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            navigate(Screens.languages, TEXT.exchange.exchangeOption)
+                        }}
+                    >
+                        {currLang('es', 'exchange', 'exchangeOption')}
+                    </label>
                 </button>
             </div>
 

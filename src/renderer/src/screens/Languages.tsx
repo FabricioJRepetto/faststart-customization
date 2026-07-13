@@ -5,6 +5,8 @@ import SearchSvg from '../assets/search.svg?react'
 import CancelSvg from '../assets/cancel.svg?react'
 import ClearSvg from '../assets/clear.svg?react'
 import { objectFullStructure } from '@renderer/utils/LangStructureBuilder'
+import { scrollConfig } from '@renderer/utils/navigate'
+import { useActiveSection } from '@renderer/utils/hooks/useActiveSection'
 
 // TODO Considerar que ya exista un archivo modificado previamente y cargarlo para seguir editando desde ahi en lugar de cargar siempre el default
 //: Guardar un backup de las modificaciones en localstorage (no me acuerdo por que)
@@ -19,18 +21,54 @@ const Languages = (): React.JSX.Element => {
     const [modalValue, setModalValue] = useState<string>('')
 
     const langKeys = Object.keys(OGLangData)
-    const sectionKeys = Object.keys(OGLangData[langKeys[0]])
-    const textKeys = sectionKeys.map((sect) => Object.keys(OGLangData[langKeys[0]][sect])).flat()
-    const [keysList, setKeysList] = useState({ langK: langKeys, textK: textKeys })
+    const textKeys: string[] = []
+    const sectionKeys: { name: string; keys: string[] }[] = Object.keys(
+        OGLangData[langKeys[0]]
+    ).map((s) => {
+        const keys = Object.keys(OGLangData[langKeys[0]][s])
+        textKeys.push(...keys)
+        return { name: s, keys }
+    })
+
+    const [keysList, setKeysList] = useState({
+        langK: langKeys,
+        sectK: sectionKeys,
+        textK: textKeys
+    })
     const [filterValue, setFilterValue] = useState<string>('')
 
+    const activeSection = useActiveSection(
+        Object.keys(OGLangData[langKeys[0]]).map((s) => `language-section-${s}`)
+    )
+
     const applyFilter = (): void => {
-        const newKeys = textKeys.filter((k) => k.match(filterValue))
-        setKeysList((prev) => ({ langK: prev.langK, textK: newKeys }))
+        const textKeys: string[] = []
+        const newSects = Object.keys(OGLangData[langKeys[0]])
+            .map((s) => {
+                const keys = Object.keys(OGLangData[langKeys[0]][s]).filter((k) =>
+                    k.match(filterValue)
+                )
+                if (!keys.length) return null
+                textKeys.push(...keys)
+                return { name: s, keys }
+            })
+            .filter((s) => s !== null)
+
+        setKeysList((prev) => ({ langK: prev.langK, sectK: newSects, textK: textKeys }))
     }
 
     const clearFilter = (): void => {
-        setKeysList((prev) => ({ langK: prev.langK, textK: textKeys }))
+        const textKeys: string[] = []
+        const newSects = Object.keys(OGLangData[langKeys[0]]).map((s) => {
+            const keys = Object.keys(OGLangData[langKeys[0]][s])
+            textKeys.push(...keys)
+            return { name: s, keys }
+        })
+        setKeysList((prev) => ({
+            langK: prev.langK,
+            sectK: newSects,
+            textK: textKeys
+        }))
         setFilterValue('')
     }
 
@@ -77,6 +115,12 @@ const Languages = (): React.JSX.Element => {
         if (newLangData?.[lang]?.[section]?.[key]) return 'edited'
         if (!OGLangData?.[lang]?.[section]?.[key]) return 'missing'
         return ''
+    }
+
+    const scrollTo = (section: string): void => {
+        const el = document.getElementById(section)
+        if (!el) return
+        el.scrollIntoView(scrollConfig)
     }
 
     useEffect(() => {
@@ -133,39 +177,61 @@ const Languages = (): React.JSX.Element => {
                 </div>
             </div>
 
-            <div className="lang-keys-container">
-                <div className="lang-row">
-                    <p>Key</p>
-                    {keysList.langK.map((lang) => (
-                        <p key={lang}>{lang.toUpperCase()}</p>
+            <div className="language-content">
+                <div className="language-section-index">
+                    {keysList.sectK.map((s) => (
+                        <div
+                            key={'index_' + s.name}
+                            onClick={() => scrollTo(`language-section-${s.name}`)}
+                            className={`${activeSection === `language-section-${s.name}` ? 'index-active' : ''}`}
+                        >
+                            <span></span>
+                            {s.name}
+                        </div>
                     ))}
                 </div>
-                {sectionKeys.map((section) => (
-                    <>
-                        <div key={section} className="section-row">
-                            <p className="">{section}</p>
-                            {keysList.langK.map((lang) => (
-                                <p key={lang}></p>
-                            ))}
-                        </div>
-                        {Object.keys(OGLangData[langKeys[0]][section]).map((key) => (
-                            <div key={key} className="lang-row">
-                                <p className="lang-key-column">{key}</p>
+
+                <div className="lang-keys-container">
+                    <div className="lang-row">
+                        <p>Key</p>
+                        {keysList.langK.map((lang) => (
+                            <p key={lang}>{lang.toUpperCase()}</p>
+                        ))}
+                    </div>
+                    {keysList.sectK.map((section) => (
+                        <>
+                            <div key={section.name} className="section-row">
+                                <p id={`language-section-${section.name}`} className="text-target">
+                                    {section.name}
+                                </p>
                                 {keysList.langK.map((lang) => (
-                                    <p
-                                        key={lang}
-                                        onClick={() => openModal(key, section, lang)}
-                                        className={valueStyle(key, section, lang)}
-                                    >
-                                        {newLangData[lang][section][key] ||
-                                            OGLangData[lang][section][key] ||
-                                            '-'}
-                                    </p>
+                                    <p key={lang}></p>
                                 ))}
                             </div>
-                        ))}
-                    </>
-                ))}
+                            {section.keys.map((key) => (
+                                <div
+                                    key={key}
+                                    className="lang-row"
+                                    id={`language-editor-${section.name}-${key}`}
+                                >
+                                    <p className="lang-key-column">{key}</p>
+                                    {keysList.langK.map((lang) => (
+                                        <p
+                                            key={lang}
+                                            onClick={() => openModal(key, section.name, lang)}
+                                            className={valueStyle(key, section.name, lang)}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            {newLangData[lang][section.name][key] ||
+                                                OGLangData[lang][section.name][key] ||
+                                                '-'}
+                                        </p>
+                                    ))}
+                                </div>
+                            ))}
+                        </>
+                    ))}
+                </div>
             </div>
 
             {modal && (
@@ -173,8 +239,8 @@ const Languages = (): React.JSX.Element => {
                     <div className="modal-backdrop" onClick={closeModal}></div>
                     <div className="lang-editor-modal">
                         <h2>
-                            Editando entrada <code className="gradient-text">{modal.key}</code> del
-                            idioma <code className="gradient-text">{modal.lang.toUpperCase()}</code>
+                            Editando entrada <code className="gradient-text">{modal.key}</code>{' '}
+                            <code className="gradient-text">{modal.lang.toUpperCase()}</code>
                         </h2>
                         <p>Valor actual: {OGLangData[modal.lang][modal.sect][modal.key]}</p>
                         <textarea

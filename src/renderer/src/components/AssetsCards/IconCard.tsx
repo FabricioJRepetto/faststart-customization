@@ -11,14 +11,16 @@ interface Props {
     icon: AssetData
     setValue: (v: string) => void
     resetValue: (v: string) => void
+    id?: string
 }
 
-export const IconCard = ({ icon, setValue, resetValue }: Props): React.JSX.Element => {
+export const IconCard = ({ icon, setValue, resetValue, id }: Props): React.JSX.Element => {
     const [showOriginal, setShowOriginal] = useState(false)
 
     return (
         <div
             key={icon.name}
+            id={id}
             className={`assets-container icon-asset-container ${icon.customBase64 ? 'asset-card-has-custom' : 'asset-card-initial'}`}
         >
             <div className="asset-card-header">

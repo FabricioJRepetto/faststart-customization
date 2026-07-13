@@ -1,4 +1,4 @@
-import { navigate, SECT } from '@renderer/utils/navigate'
+import { ICONS, navigate, STYLES, TEXT } from '@renderer/utils/navigate'
 import { Screens, StylesParentKeys } from '@shared/types'
 
 interface Props {
@@ -10,8 +10,8 @@ interface Props {
 const NavBar = ({ currStyle, currIcon, currLang }: Props): React.JSX.Element => {
     return (
         <div
-            className="preview-nav-container preview-hilight-area"
-            onClick={() => navigate(Screens.styles, SECT.button_style_edit)}
+            className="preview-nav-container preview-highlight-area"
+            onClick={() => navigate(Screens.styles, STYLES.button)}
         >
             <button
                 style={{
@@ -22,15 +22,24 @@ const NavBar = ({ currStyle, currIcon, currLang }: Props): React.JSX.Element => 
                 }}
             >
                 <label
-                    className="preview-hilight-area"
+                    className="preview-highlight-area"
                     onClick={(e) => {
                         e.stopPropagation()
-                        navigate(Screens.icons)
+                        navigate(Screens.icons, ICONS.button_exit)
                     }}
                 >
                     {currIcon('icon_button_exit')}
                 </label>
-                {currLang('es', 'general', 'button_exit')}
+
+                <label
+                    className="preview-highlight-area"
+                    onClick={(e) => {
+                        e.stopPropagation()
+                        navigate(Screens.languages, TEXT.general.button_exit)
+                    }}
+                >
+                    {currLang('es', 'general', 'button_exit')}
+                </label>
             </button>
 
             <button
@@ -41,12 +50,20 @@ const NavBar = ({ currStyle, currIcon, currLang }: Props): React.JSX.Element => 
                     borderRadius: currStyle(StylesParentKeys.button, 'borderRadius')
                 }}
             >
-                {currLang('es', 'general', 'button_confirm')}
                 <label
-                    className="preview-hilight-area"
+                    className="preview-highlight-area"
                     onClick={(e) => {
                         e.stopPropagation()
-                        navigate(Screens.icons)
+                        navigate(Screens.languages, TEXT.general.button_confirm)
+                    }}
+                >
+                    {currLang('es', 'general', 'button_confirm')}
+                </label>
+                <label
+                    className="preview-highlight-area"
+                    onClick={(e) => {
+                        e.stopPropagation()
+                        navigate(Screens.icons, ICONS.button_continue)
                     }}
                 >
                     {currIcon('icon_button_continue')}

@@ -75,7 +75,7 @@ const Backgrounds = (): React.JSX.Element => {
                             configuration={{ allowedExtensions }}
                         >
                             <BackgroundCard
-                                key={bg.name}
+                                id={'backgrounds-editor-' + bg.name.toLowerCase()}
                                 bg={bg}
                                 setValue={setValue}
                                 resetValue={resetValue}

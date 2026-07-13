@@ -8,7 +8,7 @@ import {
 } from '@renderer/components/AssetsCards/StyleCard'
 import { DefaultStylesData, StylesParentKeys } from '@shared/types'
 import Tooltip from '@renderer/components/Tooltip'
-import { SECT } from '@renderer/utils/navigate'
+import { STYLES } from '@renderer/utils/navigate'
 
 const Styles = (): React.JSX.Element => {
     const ogStyles = store.get(TemplateConfigAtom)?.styles
@@ -71,7 +71,7 @@ const Styles = (): React.JSX.Element => {
             </div>
 
             <div className="assets-grid grid-styles scrolleable">
-                <div className="grid-divider target" id={SECT.logo_style_edit}>
+                <div className="grid-divider" id={STYLES.logo}>
                     <h3>Logo</h3>
                     <p>
                         Colores del logo. La aplicación calcula el contraste entre el color de los
@@ -102,7 +102,7 @@ const Styles = (): React.JSX.Element => {
                     update={updateCustom}
                 />
 
-                <div className="grid-divider target" id={SECT.idle_style_edit}>
+                <div className="grid-divider" id={STYLES.idle}>
                     <h3>Pantalla Inicio</h3>
                     <p>Estilos de la pantalla de inicio.</p>
                 </div>
@@ -122,7 +122,7 @@ const Styles = (): React.JSX.Element => {
                     update={updateCustom}
                 />
 
-                <div className="grid-divider target" id={SECT.user_action_style_edit}>
+                <div className="grid-divider" id={STYLES.user_action}>
                     <h3>UserAction</h3>
                     <p>Colores de la mayoría de los flujos.</p>
                 </div>
@@ -151,7 +151,7 @@ const Styles = (): React.JSX.Element => {
                     update={updateCustom}
                 />
 
-                <div className="grid-divider target" id={SECT.info_style_edit}>
+                <div className="grid-divider" id={STYLES.info}>
                     <h3>Pantallas de Información</h3>
                     <p>Estilos de pantalla de exito, etc.</p>
                 </div>
@@ -171,7 +171,7 @@ const Styles = (): React.JSX.Element => {
                     update={updateCustom}
                 />
 
-                <div className="grid-divider target" id={SECT.success_style_edit}>
+                <div className="grid-divider" id={STYLES.success}>
                     <h3>Pantallas de éxito</h3>
                     <p>Estilos de pantalla de exito, etc.</p>
                 </div>
@@ -191,7 +191,7 @@ const Styles = (): React.JSX.Element => {
                     update={updateCustom}
                 />
 
-                <div className="grid-divider target" id={SECT.error_style_edit}>
+                <div className="grid-divider" id={STYLES.error}>
                     <h3>Pantallas de error</h3>
                     <p>Estilos de pantalla de error.</p>
                 </div>
@@ -211,7 +211,7 @@ const Styles = (): React.JSX.Element => {
                     update={updateCustom}
                 />
 
-                <div className="grid-divider target" id={SECT.button_style_edit}>
+                <div className="grid-divider" id={STYLES.button}>
                     <h3>Botones</h3>
                     <p>Estilo de los botones en los flujos de la aplicación.</p>
                 </div>
@@ -240,7 +240,7 @@ const Styles = (): React.JSX.Element => {
                 />
                 <PreviewStyleCard parentName={StylesParentKeys.button} />
 
-                <div className="grid-divider target" id={SECT.sec_button_style_edit}>
+                <div className="grid-divider" id={STYLES.sec_button}>
                     <h3>Botones pantalla de Inicio</h3>
                     <p>Estilos de botones en la pantalla inicial. También aplica al códico QR.</p>
                 </div>
@@ -269,7 +269,7 @@ const Styles = (): React.JSX.Element => {
                 />
                 <PreviewStyleCard parentName={StylesParentKeys.secondaryButton} />
 
-                <div className="grid-divider target" id={SECT.input_button_style_edit}>
+                <div className="grid-divider" id={STYLES.input_button}>
                     <h3>Input</h3>
                     <p>Estilo de botones en las pantallas de ingreso de monto.</p>
                 </div>

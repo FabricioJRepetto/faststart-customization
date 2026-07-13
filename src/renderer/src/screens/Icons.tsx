@@ -123,6 +123,7 @@ const Icons = (): React.JSX.Element => {
                     >
                         <IconCard
                             key={image.name}
+                            id={'images-editor-' + image.name.toLowerCase()}
                             icon={image}
                             setValue={(k: string) => setValue(k, 'image')}
                             resetValue={(k: string) => resetValue(k, 'image')}
@@ -143,6 +144,7 @@ const Icons = (): React.JSX.Element => {
                     >
                         <IconCard
                             key={icon.name}
+                            id={'icons-editor-' + icon.name.toLowerCase()}
                             icon={icon}
                             setValue={(k: string) => setValue(k, 'icon')}
                             resetValue={(k: string) => resetValue(k, 'icon')}

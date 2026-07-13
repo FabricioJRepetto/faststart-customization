@@ -10,13 +10,15 @@ interface Props {
     bg: AssetData
     setValue: (v: string) => void
     resetValue: (v: string) => void
+    id?: string
 }
 
-export const BackgroundCard = ({ bg, setValue, resetValue }: Props): React.JSX.Element => {
+export const BackgroundCard = ({ bg, setValue, resetValue, id }: Props): React.JSX.Element => {
     const [showOriginal, setShowOriginal] = useState(false)
 
     return (
         <div
+            id={id}
             key={bg.name}
             className={`assets-container bg-asset-container ${bg.customBase64 ? 'asset-card-has-custom' : 'asset-card-initial'}`}
         >

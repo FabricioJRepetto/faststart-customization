@@ -1,4 +1,4 @@
-import { navigate, SECT } from '@renderer/utils/navigate'
+import { ICONS, navigate } from '@renderer/utils/navigate'
 import { Screens, StylesParentKeys } from '@shared/types'
 import React from 'react'
 
@@ -11,8 +11,9 @@ interface Props {
 const Logo = ({ currStyle, currIcon, theme = 'dark' }: Props): React.JSX.Element => {
     return (
         <div
-            className="preview-logo preview-hilight-area"
-            onClick={() => navigate(Screens.styles, SECT.logo_style_edit)}
+            className="preview-logo preview-highlight-area"
+            // onClick={() => navigate(Screens.styles, STYLES.logo)}
+            onClick={() => navigate(Screens.icons, ICONS.logo)}
             style={{ color: currStyle(StylesParentKeys.logo, theme) }}
         >
             {currIcon('icon_logo')}

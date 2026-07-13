@@ -1,6 +1,6 @@
 import { Screens, StylesParentKeys } from '@shared/types'
 import { PreviewScreenProps } from '../Previewer'
-import { navigate } from '@renderer/utils/navigate'
+import { IMAGES, navigate, TEXT } from '@renderer/utils/navigate'
 import Logo from './components/Logo'
 import LangButton from './components/LangButton'
 
@@ -12,13 +12,13 @@ const Success = ({
 }: PreviewScreenProps): React.JSX.Element => {
     return (
         <div className="preview-content">
-            {currBg() && <img className="preview-bg" src={currBg('background_success')!} />}
+            {currBg('background_success')}
             <Logo currIcon={currIcon} currStyle={currStyle} />
             <LangButton currIcon={currIcon} currStyle={currStyle} />
 
             <h1
-                className="preview-hilight-area"
-                onClick={() => navigate(Screens.languages)}
+                className="preview-highlight-area"
+                onClick={() => navigate(Screens.languages, TEXT.info.thankYou)}
                 style={{ color: currStyle(StylesParentKeys.successScreen, 'primaryColor') }}
             >
                 {currLang('es', 'info', 'thankYou')}
@@ -29,10 +29,10 @@ const Success = ({
                 style={{ color: currStyle(StylesParentKeys.successScreen, 'primaryColor') }}
             >
                 <div
-                    className="preview-info-image preview-hilight-area"
-                    onClick={() => navigate(Screens.icons)}
+                    className="preview-info-image preview-highlight-area"
+                    onClick={() => navigate(Screens.icons, IMAGES.thankyou)}
                 >
-                    {currIcon('icon_thankyou')}
+                    {currIcon('image_thankyou')}
                 </div>
             </div>
         </div>

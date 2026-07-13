@@ -1,17 +1,21 @@
 import { Screens, StylesParentKeys } from '@shared/types'
 import { PreviewScreenProps } from '../Previewer'
-import { navigate } from '@renderer/utils/navigate'
+import { IMAGES, navigate, TEXT } from '@renderer/utils/navigate'
 import Logo from './components/Logo'
 import LangButton from './components/LangButton'
 
 const Info = ({ currBg, currIcon, currStyle, currLang }: PreviewScreenProps): React.JSX.Element => {
     return (
         <div className="preview-content">
-            {currBg() && <img className="preview-bg" src={currBg('background_Info')!} />}
+            {currBg('background_Info')}
             <Logo currIcon={currIcon} currStyle={currStyle} />
             <LangButton currIcon={currIcon} currStyle={currStyle} />
 
-            <h1 style={{ color: currStyle(StylesParentKeys.infoScreen, 'primaryColor') }}>
+            <h1
+                style={{ color: currStyle(StylesParentKeys.infoScreen, 'primaryColor') }}
+                className="preview-highlight-area"
+                onClick={() => navigate(Screens.languages, TEXT.info.wait)}
+            >
                 {currLang('es', 'info', 'wait')}
             </h1>
 
@@ -20,10 +24,10 @@ const Info = ({ currBg, currIcon, currStyle, currLang }: PreviewScreenProps): Re
                 style={{ color: currStyle(StylesParentKeys.infoScreen, 'primaryColor') }}
             >
                 <div
-                    className="preview-info-image preview-hilight-area"
-                    onClick={() => navigate(Screens.icons)}
+                    className="preview-info-image preview-highlight-area"
+                    onClick={() => navigate(Screens.icons, IMAGES.wait)}
                 >
-                    {currIcon('icon_wait')}
+                    {currIcon('image_wait')}
                 </div>
             </div>
         </div>

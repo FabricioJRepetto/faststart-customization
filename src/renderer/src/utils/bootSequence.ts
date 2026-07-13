@@ -3,12 +3,7 @@ import {
     DEFAULT_CONFIG_FILENAME,
     TEMPLATE_CONFIG_FILENAME
 } from '@shared/CONSTANTS'
-import {
-    AssetData,
-    AssetType,
-    FinalAssetData,
-    TemplateConfig
-} from '@shared/types'
+import { AssetData, AssetType, FinalAssetData, TemplateConfig } from '@shared/types'
 import {
     AssetsDataAtom,
     CustomEnabledAtom,
@@ -52,7 +47,7 @@ export const loadTemplate = async (): Promise<void> => {
                 thirdscreen: [...parseToAssetData(res.thirdscreen, 'thirdscreen')],
                 audio: [...parseToAssetData(res.audio, 'audio')],
                 styles: objectFullStructure(res.styles),
-                language: objectFullStructure(res.language)
+                language: res.language
             }
             store.set(TemplateConfigAtom, aux)
         } else {
