@@ -27,7 +27,7 @@ const Input = ({
             <h1
                 className="preview-highlight-area"
                 onClick={() => navigate(Screens.languages, TEXT.dispense.enterAmount)}
-                style={{ color: currStyle(StylesParentKeys.idle, 'secondaryColor') }}
+                style={{ color: currStyle(StylesParentKeys.userAction, 'primaryColor') }}
             >
                 {currLang('es', 'dispense', 'enterAmount')}
             </h1>

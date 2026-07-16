@@ -18,23 +18,19 @@ const Backgrounds = (): React.JSX.Element => {
     }
 
     const resetValue = (key: string): void => {
-        setBackgrounds((prev) =>
-            prev!.map((e) => (e.name === key ? { ...e, customPath: '', customBase64: '' } : e))
-        )
+        setBackgrounds((prev) => prev!.map((e) => (e.assetName === key ? { ...e, custom: {} } : e)))
     }
 
     const setValue = async (key: string): Promise<void> => {
-        console.log(key)
         const res = await window.electronAPI.selectFile(filterType.Imagenes)
-        console.log(res)
 
         if (res.success) {
-            const { filePath, base64 } = res.data
-            console.log(filePath)
-
+            const { fileName, base64, customMimeType } = res.data
             setBackgrounds((prev) =>
                 prev!.map((e) =>
-                    e.name === key ? { ...e, customPath: filePath, customBase64: base64 } : e
+                    e.assetName === key
+                        ? { ...e, custom: { source: base64, mime: customMimeType, fileName } }
+                        : e
                 )
             )
         }
@@ -45,7 +41,9 @@ const Backgrounds = (): React.JSX.Element => {
     const setDropValue = async (f: File, key: string): Promise<void> => {
         const base64 = (await fileToBase64(f)) as string
         setBackgrounds((prev) =>
-            prev!.map((e) => (e.name === key ? { ...e, customPath: '', customBase64: base64 } : e))
+            prev!.map((e) =>
+                e.assetName === key ? { ...e, custom: { source: base64, mime: f.type, fileName: f.name } } : e
+            )
         )
     }
 
@@ -70,12 +68,12 @@ const Backgrounds = (): React.JSX.Element => {
                 <div className="assets-grid grid-bg scrolleable">
                     {backgrounds.map((bg) => (
                         <DropZone
-                            key={bg.name}
-                            fileHandler={(f: File) => setDropValue(f, bg.name)}
+                            key={bg.assetName}
+                            fileHandler={(f: File) => setDropValue(f, bg.assetName)}
                             configuration={{ allowedExtensions }}
                         >
                             <BackgroundCard
-                                id={'backgrounds-editor-' + bg.name.toLowerCase()}
+                                id={'backgrounds-editor-' + bg.assetName.toLowerCase()}
                                 bg={bg}
                                 setValue={setValue}
                                 resetValue={resetValue}

@@ -12,28 +12,28 @@ interface Props {
 const AudioCard = ({ audio, setValue, resetValue }: Props): React.JSX.Element => {
     return (
         <div
-            key={audio.name}
-            className={`assets-container audio-asset-container ${audio.customBase64 ? 'asset-card-has-custom' : 'asset-card-initial'}`}
+            key={audio.assetName}
+            className={`assets-container audio-asset-container ${audio.custom.source ? 'asset-card-has-custom' : 'asset-card-initial'}`}
         >
             <div className="asset-card-header">
-                <p>{audio.name.split('_')[1]}</p>
+                <p>{audio.assetName.split('_')[1]}</p>
             </div>
 
-            {!audio.customBase64 ? (
-                audio?.blobUrl ? (
-                    <audio src={audio.blobUrl} controls />
+            {!audio.custom.source ? (
+                audio?.original?.source ? (
+                    <audio src={audio.original.source} controls />
                 ) : (
                     <div className="asset-placeholder">Sin definir</div>
                 )
             ) : (
-                <audio src={audio.customBase64} controls />
+                <audio src={audio.custom.source} controls />
             )}
 
             <div className="actions">
-                {audio.customBase64 && (
+                {audio.custom.source && (
                     <Tooltip text="Volver al audio original">
                         <div className="button">
-                            <a onClick={() => resetValue(audio.name)}>
+                            <a onClick={() => resetValue(audio.assetName)}>
                                 <ResetSvg />
                             </a>
                         </div>
@@ -42,7 +42,7 @@ const AudioCard = ({ audio, setValue, resetValue }: Props): React.JSX.Element =>
 
                 <Tooltip text="Remplazar audio">
                     <div className="button">
-                        <a onClick={() => setValue(audio.name)}>
+                        <a onClick={() => setValue(audio.assetName)}>
                             <UploadSvg />
                         </a>
                     </div>

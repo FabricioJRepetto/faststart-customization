@@ -43,6 +43,8 @@ export const getUploadList = async (): Promise<FileForUpload[]> => {
         if (!aux.length) console.log('No need to upload new files')
         else console.log(aux.length, 'files ready for upload')
 
+        console.log(aux)
+
         return aux
     } catch (error) {
         console.error(error)

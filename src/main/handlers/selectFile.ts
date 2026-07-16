@@ -32,11 +32,12 @@ export const selectFile = async (_, filter?: string): Promise<IpcResponse<IpcRes
         if (result.canceled) return { success: false, error: 'Cancelado' }
 
         const filePath = result.filePaths[0]
-        const { base64, mime } = getBase64(filePath)
+        const { fileName, base64, mime } = getBase64(filePath)
 
         return {
             success: true,
             data: {
+                fileName,
                 filePath,
                 base64,
                 customMimeType: mime,

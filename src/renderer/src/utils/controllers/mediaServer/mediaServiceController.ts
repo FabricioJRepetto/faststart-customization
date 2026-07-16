@@ -142,6 +142,17 @@ class MediaService {
 
     //* PUBLICS
 
+    public async getFileList(): Promise<DBFile[]> {
+        try {
+            const res = await this.service.getFiles()
+            if (!res) return []
+            return res
+        } catch (error) {
+            console.error(error)
+            return []
+        }
+    }
+
     public async getThemes(): Promise<ThemeConfig[]> {
         try {
             store.set(UploadStageAtom, UPLOAD_STAGE.FINISHING)
@@ -221,12 +232,13 @@ class MediaService {
                     `${BACKEND_THEMES_ASSETS_PATH}/${themeName}`,
                     el.file.name
                 )
-                // const res = await this.simulateUplaod(themeName)
 
                 if (res) {
                     aux.push({
-                        customPath: `${BACKEND_BASE_URL}${res.url}`,
-                        name: el.assetName
+                        assetName: el.assetName,
+                        custom: {
+                            source: `${BACKEND_BASE_URL}${res.url}`
+                        }
                     })
                     this.addOk = 1
                 } else {
@@ -398,28 +410,6 @@ class MediaService {
             return null
         }
     }
-
-    // public async uploadLocalTheme(fileList: {file: File, assetName: string}[], themeName: string): Promise<void> {
-    //     try {
-    //           const uploadPromises = fileList.map(async ({ file, assetName }) => {
-    //               const category = getCategory(file.name)
-    //               const assetType = getAssetType(file.name)
-    //               const url = await this.service.uploadFile(file, themeName)
-
-    //               return {
-    //                   category,
-    //                   assetType,
-    //                   url,
-    //                   assetName
-    //               }
-    //           })
-
-    //           return Promise.all(uploadPromises)
-    //     } catch (error) {
-    //         console.error(error)
-    //         throw error
-    //     }
-    // }
 }
 
 export default new MediaService()

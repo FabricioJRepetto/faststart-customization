@@ -22,12 +22,13 @@ export const THEMES_LIBRARY_DIR = 'library'
 
 export const DEFAULT_THEME = 'FastStart'
 
-export const BACKEND_BASE_URL = 'https://153.81.238.232:4005'
+export const BACKEND_BASE_URL = 'https://localhost:4005' // 'https://153.81.238.232:4005'
+export const WS_BASE_URL = 'wss://localhost:4006' // 'wss://153.81.238.232:4006'
 export const BACKEND_GET_FILELIST = `${BACKEND_BASE_URL}/files-list`
 export const BACKEND_GET_FILE = `${BACKEND_BASE_URL}/files`
 export const BACKEND_POST_UPLOAD = `${BACKEND_BASE_URL}/upload`
 export const BACKEND_DELETE = `${BACKEND_BASE_URL}/files`
-export const BACKEND_THEMES_ASSETS_PATH = `themes/assets`
+export const BACKEND_THEMES_ASSETS_PATH = `themes`
 export const BACKEND_THEMES_CONFIGS_PATH = `themes/configurations`
 export const BACKEND_BASE_THEME_CONFIG_PATH = `base_theme/configuration`
 export const BACKEND_BASE_THEME_ASSETS_PATH = `base_theme/assets`

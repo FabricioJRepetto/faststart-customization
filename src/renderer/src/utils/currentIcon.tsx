@@ -6,14 +6,14 @@ export const defaultIcon = (name: string): React.JSX.Element => {
         const iconData = store.get(EditedIconsDataAtom) || []
         const imageData = store.get(EditedImagesDataAtom) || []
         const data = [...iconData, ...imageData]
-        const asset = data?.find((e) => e?.name === name)
+        const asset = data?.find((e) => e?.assetName === name)
 
-        const isSVG = (asset?.mimeType ?? '').match('svg')
-        const path = asset?.blobUrl
+        const isSVG = (asset?.original?.mime ?? '').match('svg')
+        const path = asset?.original.source
 
         if (!path) return <></>
 
-        return isSVG ? <DynamicSvg config={{ assetName: asset!.name }} /> : <img src={path} />
+        return isSVG ? <DynamicSvg config={{ assetName: asset!.assetName }} /> : <img src={path} />
     } catch (error) {
         console.error(error)
         return <></>
@@ -25,13 +25,13 @@ export const currentIcon = (name: string): React.JSX.Element | null => {
         const iconData = store.get(EditedIconsDataAtom) || []
         const imageData = store.get(EditedImagesDataAtom) || []
         const data = [...iconData, ...imageData]
-        const asset = data?.find((e) => e?.name === name)
-        const isSVG = (asset?.customMimeType || (asset?.mimeType ?? '')).match('svg')
-        const path = asset?.customBase64 || (asset?.mimeType ? asset.name : null)
+        const asset = data?.find((e) => e?.assetName === name)
+        const isSVG = (asset?.custom.mime || (asset?.original.mime ?? '')).match('svg')
+        const path = asset?.custom.source || (asset?.original.mime ? asset.assetName : null)
 
         if (!path) return null
 
-        const config = !asset?.customBase64 ? { assetName: path } : { path: path }
+        const config = !asset?.custom.source ? { assetName: path } : { path: path }
 
         return isSVG ? <DynamicSvg config={config} /> : <img src={path} />
     } catch (error) {

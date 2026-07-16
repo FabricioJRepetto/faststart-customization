@@ -16,18 +16,18 @@ const Audio = (): React.JSX.Element => {
     }
 
     const resetValue = (key: string): void => {
-        setAudios((prev) =>
-            prev!.map((e) => (e.name === key ? { ...e, customPath: '', customBase64: '' } : e))
-        )
+        setAudios((prev) => prev!.map((e) => (e.assetName === key ? { ...e, custom: {} } : e)))
     }
 
     const setValue = async (key: string): Promise<void> => {
         const res = await window.electronAPI.selectFile(filterType.Audio)
         if (res.success) {
-            const { filePath, base64 } = res.data
+            const { fileName, base64, customMimeType } = res.data
             setAudios((prev) =>
                 prev!.map((e) =>
-                    e.name === key ? { ...e, customPath: filePath, customBase64: base64 } : e
+                    e.assetName === key
+                        ? { ...e, custom: { source: base64, mime: customMimeType, fileName } }
+                        : e
                 )
             )
         }
@@ -39,7 +39,11 @@ const Audio = (): React.JSX.Element => {
         const base64 = (await fileToBase64(f)) as string
 
         setAudios((prev) =>
-            prev!.map((e) => (e.name === key ? { ...e, customPath: '', customBase64: base64 } : e))
+            prev!.map((e) =>
+                e.assetName === key
+                    ? { ...e, custom: { source: base64, mime: f.type, fileName: f.name } }
+                    : e
+            )
         )
     }
 
@@ -65,8 +69,8 @@ const Audio = (): React.JSX.Element => {
             <div className="assets-grid grid-audio scrolleable">
                 {audios?.map((audio) => (
                     <DropZone
-                        key={audio.name}
-                        fileHandler={(f: File) => setDropedValue(f, audio.name)}
+                        key={audio.assetName}
+                        fileHandler={(f: File) => setDropedValue(f, audio.assetName)}
                         configuration={{ allowedExtensions }}
                     >
                         <AudioCard audio={audio} setValue={setValue} resetValue={resetValue} />

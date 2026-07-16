@@ -19,7 +19,7 @@ import { currentIcon } from '@renderer/utils/currentIcon'
 import Success from './previewer-screens/Success'
 import Error from './previewer-screens/Error'
 import Info from './previewer-screens/Info'
-import { BACKGROUNDS, navigate } from '@renderer/utils/navigate'
+import { BACKGROUNDS, navigate, STYLES } from '@renderer/utils/navigate'
 
 export interface PreviewScreenProps {
     currBg: (name?: string) => React.JSX.Element
@@ -42,9 +42,9 @@ export const Previewer = (): React.JSX.Element => {
 
     const currBg = (name?: string): React.JSX.Element => {
         try {
-            const bg = bgData?.find((e) => e?.name === (name ?? 'background_Idle'))
-            if (!bg?.customBase64 && !bg?.blobUrl) return <></>
-            return <img className="preview-bg" src={bg?.customBase64 || bg?.blobUrl} />
+            const bg = bgData?.find((e) => e?.assetName === (name ?? 'background_Idle'))
+            if (!bg?.custom.source && !bg?.original.source) return <></>
+            return <img className="preview-bg" src={bg?.custom.source || bg?.original.source} />
         } catch (error) {
             console.error(error)
             return <></>
@@ -116,6 +116,39 @@ export const Previewer = (): React.JSX.Element => {
         }
     }
 
+    const editStyles = (): void => {
+        const currScreen = SCREENS[screen].key
+
+        switch (currScreen) {
+            case 'Idle':
+                navigate(Screens.styles, STYLES.idle)
+                break;
+
+            case 'Menu':
+                navigate(Screens.styles, STYLES.user_action)
+                break;
+                
+            case 'Input':
+                navigate(Screens.styles, STYLES.user_action)
+                break;
+                
+            case 'Success':
+                navigate(Screens.styles, STYLES.success)
+                break;
+                
+            case 'Error':
+                navigate(Screens.styles, STYLES.error)
+                break;
+                
+            case 'Info':
+                navigate(Screens.styles, STYLES.info)
+                break;
+                        
+            default:
+                break;
+        }
+    }
+
     const SCREENS = [
         <Idle
             key={'Idle'}
@@ -174,13 +207,10 @@ export const Previewer = (): React.JSX.Element => {
                     <p>{SCREENS[screen].key}</p>
                     <div className="actions">
                         <div className="action" onClick={editBackground}>
-                            <a>editar fondo</a>
+                            <a>Cambiar fondo</a>
                         </div>
-                        <div className="action">
-                            <a>b</a>
-                        </div>
-                        <div className="action">
-                            <a>c</a>
+                        <div className="action" onClick={editStyles}>
+                            <a>Estilos</a>
                         </div>
                     </div>
                 </span>

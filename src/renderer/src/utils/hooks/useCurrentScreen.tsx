@@ -13,6 +13,7 @@ import Collections from '@renderer/screens/Collection'
 import NewMain from '@renderer/screens/NewMain'
 import Preview from '@renderer/screens/Preview'
 import Template from '@renderer/screens/Template'
+import FileManager from '@renderer/screens/FileManager'
 
 
 /** Hook para manejar la pantalla actual que se muestra en la aplicación.
@@ -24,6 +25,7 @@ const useCurrentScreen = (): React.JSX.Element => {
         [Screens.landing]: <Landing />,
         [Screens.main]: <NewMain />,
         [Screens.template]: <Template />,
+        [Screens.fileManager]: <FileManager />,
         [Screens.preview]: <Preview />,
         [Screens.collections]: <Collections />,
         [Screens.styles]: <Styles />,

@@ -4,7 +4,7 @@ import CheckSvg from '../../assets/check.svg?react'
 import CancelSvg from '../../assets/cancel.svg?react'
 import UndoSvg from '../../assets/undo.svg?react'
 import Tooltip from '../Tooltip'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { StylesParentKeys } from '@shared/types'
 
 const DICT = {
@@ -40,6 +40,7 @@ export const ColorStyleCard = ({
 }: Props): React.JSX.Element => {
     const [customStyles] = useAtom(EditedStylesDataAtom)
     const hasCustom = customStyles?.[parentName]?.[keyName]
+    const colorRef = useRef<HTMLInputElement>(null)
 
     return (
         <div
@@ -81,8 +82,9 @@ export const ColorStyleCard = ({
                     <input
                         className="hidden-color-input"
                         type="color"
-                        value={customStyles?.[parentName]?.[keyName]}
-                        onChange={(e) => update(keyName, parentName, e.target.value)}
+                        ref={colorRef}
+                        onBlur={() => update(keyName, parentName, colorRef.current!.value)}
+                        onChange={() => null}
                     />
                 </label>
             </div>

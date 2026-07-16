@@ -8,12 +8,14 @@ import BackgroundsSvg from '../assets/image.svg?react'
 import LanguageSvg from '../assets/translate.svg?react'
 import ScreenSvg from '../assets/screen.svg?react'
 import AudioSvg from '../assets/audio.svg?react'
-import RemotePill from '@renderer/components/RemotePill'
 import UploadDialog from '@renderer/components/ModalBodies/UploadDialog'
-import { useAtomValue } from 'jotai'
-import { EditingThemeAtom } from '@renderer/utils/context/context'
+import { useAtomValue, useSetAtom } from 'jotai'
+import { CurrentScreenAtom, EditingThemeAtom } from '@renderer/utils/context/context'
+import { Screens } from '@shared/types'
 
 export const Preview = (): React.JSX.Element => {
+    const setScreen = useSetAtom(CurrentScreenAtom)
+
     const [loadingUpload, setLoadingUpload] = useState<boolean>(false)
     const [modalUpload, setModalUpload] = useState<boolean>(false)
     const edinting = useAtomValue(EditingThemeAtom)
@@ -49,44 +51,66 @@ export const Preview = (): React.JSX.Element => {
 
                     <div className="actions preview-actions">
                         <div className="action">
-                            <a>
+                            <a
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={() => setScreen(Screens.icons)}
+                            >
                                 <IconsSvg />
                                 Iconos
                             </a>
                         </div>
                         <div className="action">
-                            <a>
+                            <a
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={() => setScreen(Screens.backgrounds)}
+                            >
                                 <BackgroundsSvg />
                                 Fondos
                             </a>
                         </div>
                         <div className="action">
-                            <a>
+                            <a
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={() => setScreen(Screens.audio)}
+                            >
                                 <AudioSvg />
                                 Audios
                             </a>
                         </div>
                         <div className="action">
-                            <a>
+                            <a
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={() => setScreen(Screens.thirdScreen)}
+                            >
                                 <ScreenSvg />
                                 Tercer pantalla
                             </a>
                         </div>
                         <div className="action">
-                            <a>
+                            <a
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={() => setScreen(Screens.styles)}
+                            >
                                 <ColorsSvg />
                                 Estilos
                             </a>
                         </div>
                         <div className="action">
-                            <a>
+                            <a
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={() => setScreen(Screens.languages)}
+                            >
                                 <LanguageSvg />
                                 Textos
                             </a>
                         </div>
                     </div>
-
-                    <RemotePill />
 
                     {modalUpload && (
                         <Modal

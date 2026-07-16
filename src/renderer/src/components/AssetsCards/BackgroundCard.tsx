@@ -19,12 +19,12 @@ export const BackgroundCard = ({ bg, setValue, resetValue, id }: Props): React.J
     return (
         <div
             id={id}
-            key={bg.name}
-            className={`assets-container bg-asset-container ${bg.customBase64 ? 'asset-card-has-custom' : 'asset-card-initial'}`}
+            key={bg.assetName}
+            className={`assets-container bg-asset-container ${bg.custom.source ? 'asset-card-has-custom' : 'asset-card-initial'}`}
         >
             <div className="asset-card-header">
-                <p>{assetName(bg.name)}</p>
-                {bg.customBase64 && bg.mimeType && (
+                <p>{assetName(bg.assetName)}</p>
+                {bg.custom.source && bg.original.source && (
                     <Tooltip text="Ver fondo original">
                         <div
                             className="button asset-card-show-buton"
@@ -38,22 +38,22 @@ export const BackgroundCard = ({ bg, setValue, resetValue, id }: Props): React.J
             </div>
 
             <div className="bg-container asset-card-asset-trasition">
-                {!bg.customBase64 || showOriginal ? (
-                    bg.blobUrl ? (
-                        <img src={bg.blobUrl} />
+                {!bg.custom.source || showOriginal ? (
+                    bg.original.source ? (
+                        <img src={bg.original.source} />
                     ) : (
                         <div className="asset-placeholder">Sin definir</div>
                     )
                 ) : (
-                    <img src={bg.customBase64} />
+                    <img src={bg.custom.source} />
                 )}
             </div>
 
             <div className="actions">
-                {bg.customBase64 && (
+                {bg.custom.source && (
                     <Tooltip text="Volver al fondo original">
                         <div className="button">
-                            <a onClick={() => resetValue(bg.name)}>
+                            <a onClick={() => resetValue(bg.assetName)}>
                                 <ResetSvg />
                             </a>
                         </div>
@@ -62,7 +62,7 @@ export const BackgroundCard = ({ bg, setValue, resetValue, id }: Props): React.J
 
                 <Tooltip text="Remplazar fondo">
                     <div className="button">
-                        <a onClick={() => setValue(bg.name)}>
+                        <a onClick={() => setValue(bg.assetName)}>
                             <UploadSvg />
                         </a>
                     </div>

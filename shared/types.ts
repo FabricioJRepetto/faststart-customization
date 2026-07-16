@@ -13,6 +13,7 @@ export type IpcResponse<T> = Promise<
 
 export interface IpcResponseFileData {
     base64: string
+    fileName: string
     filePath: string
     mimeType: string
     customMimeType: string
@@ -27,6 +28,7 @@ export enum Screens {
     landing = 'landing',
     main = 'main',
     template = 'template',
+    fileManager = 'fileManager',
     preview = 'preview',
     styles = 'styles',
     icons = 'icons',
@@ -123,21 +125,30 @@ export interface AppSettingsConfigModule {
 }
 
 export interface AssetDataBase {
-    name: string
-    customPath: string
+    assetName: string
+    custom: {
+        /** Path, URL, Blob, Base64, etc. */
+        source?: string
+        /** Extensión del archivo */
+        extension?: string
+    }
 }
 
 export type AssetType = 'icon' | 'image' | 'background' | 'audio' | 'thirdscreen' | 'other'
 export interface AssetData extends AssetDataBase {
-    name: string
+    assetName: string
     assetType: AssetType
-    filePath: string
-    customPath: string
-    base64: string
-    mimeType: string
-    customBase64: string
-    customMimeType: string
-    blobUrl?: string
+    original: {
+        source?: string
+        mime?: string
+    }
+    custom: {
+        source?: string
+        file?: File
+        fileName?: string
+        extension?: string
+        mime?: string
+    }
 }
 export interface AssetList {
     icon: AssetData[]
@@ -316,11 +327,11 @@ export interface ThirdScreendata {
     assets: FinalAssetData[]
 }
 export interface TemplateRawConfig {
-    icon: { name: string }[]
-    image: { name: string }[]
-    background: { name: string }[]
-    thirdscreen: { name: string }[]
-    audio: { name: string }[]
+    icon: { assetName: string }[]
+    image: { assetName: string }[]
+    background: { assetName: string }[]
+    thirdscreen: { assetName: string }[]
+    audio: { assetName: string }[]
     styles: FinalStylesData
     language: LanguageData
 }
@@ -385,6 +396,7 @@ export const DefaultThirdConfigData: ThirdScreenConfig = {
 }
 
 export interface MediaServiceBase {
+    getFiles: () => Promise<DBFile[] | null>
     getThemesList: () => Promise<CustomConfig[] | null>
     getTemplateConfig: () => Promise<TemplateConfig | null>
     getDefaultConfig: () => Promise<CustomConfig | null>
@@ -397,8 +409,10 @@ export interface FileForUpload {
     assetName: string
 }
 export interface UploadedFile extends AssetDataBase {
-    name: string
-    customPath: string
+    assetName: string
+    custom: {
+        source: string
+    }
 }
 
 export enum UPLOAD_STAGE {
@@ -438,3 +452,14 @@ export interface RawDBUploadFileRes {
     ok: number
     file: DBFile
 }
+
+//_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_ WebSocket
+type WSClientType = 'terminal' | 'admin'
+export type WSClientsList = { id: string; name: string; type: WSClientType; ip: string }[]
+
+// TODO Sumar tipos de mensaje
+type WSMessageType = 'update_connections'
+// TODO Sumar tipos de data
+type WSMessageData = WSClientsList
+
+export type WSMessage = { type: WSMessageType; data: WSMessageData }

@@ -26,11 +26,14 @@ import {
     store,
     SupervisorAppVersionDirAtom,
     svgCache,
+    TemplateConfigAtom,
+    TerminalsStatusAtom,
     ThemesLibraryDataAtom,
     ThirdAppVersionDirAtom,
     UploadProgressAtom,
     UploadSetAsDefaultThemeAtom,
-    UploadStageAtom
+    UploadStageAtom,
+    WebSocketStatusAtom
 } from './context/context'
 import { clearMediaCache } from './AssetsPreLoader'
 
@@ -46,6 +49,7 @@ export const reset = (): void => {
     if (isRemote) clearMediaCache()
 
     //_ Data
+    store.set(TemplateConfigAtom, undefined)
     store.set(DefaultConfigAtom, undefined)
     store.set(ThemesLibraryDataAtom, undefined)
 
@@ -69,10 +73,13 @@ export const reset = (): void => {
     store.set(ThirdAppVersionDirAtom, '')
 
     //_ Remoto
+    //TODO Cerrar conexión al WS
+    store.set(WebSocketStatusAtom, undefined)
     store.set(UploadProgressAtom, { ok: 0, failed: 0, total: 0, currentFile: '' })
     store.set(UploadStageAtom, UPLOAD_STAGE.NAME)
     store.set(ServerStatusAtom, undefined)
     store.set(UploadSetAsDefaultThemeAtom, false)
+    store.set(TerminalsStatusAtom, [])
 
     //_ Finish >>
     store.set(CurrentScreenAtom, Screens.landing)
@@ -80,8 +87,7 @@ export const reset = (): void => {
 
 /** Limpia media cache y Resetea Data: DefaultConfig, Language (Og+Edit), Styles (Og+Edit), Backgrounds, Icons, Audios, Third (Config+Assets) */
 export const softReset = (): void => {
-    const isRemote = store.get(DistributionMethodAtom) === DistributionMethod.REMOTE
-    if (isRemote) clearMediaCache()
+    clearMediaCache()
 
     store.set(DefaultConfigAtom, undefined)
 
@@ -97,4 +103,6 @@ export const softReset = (): void => {
 
     store.set(EditedThirdScreenAssetsDataAtom, undefined)
     store.set(EditedThirdScreenConfigDataAtom, DefaultThirdConfigData)
+
+    store.set(TerminalsStatusAtom, [])
 }

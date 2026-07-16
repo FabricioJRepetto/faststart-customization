@@ -13,7 +13,8 @@ import {
     DefaultThirdConfigData,
     DistributionMethod,
     UPLOAD_STAGE,
-    TemplateConfig
+    TemplateConfig,
+    WSClientsList
 } from '@shared/types'
 
 export const store = createStore()
@@ -107,3 +108,8 @@ export const EditingThemeAtom = atom<boolean>(false)
 export type svgCacheElement = Record<string, string>
 /** Cache para archivos SVG */
 export const svgCache = atom<svgCacheElement>({})
+
+/** Estado de conexión al WebSocket */
+export const WebSocketStatusAtom = atom<boolean | undefined>(undefined)
+/** Lista de estado de Terminales (FastStart - cliente) */
+export const TerminalsStatusAtom = atom<WSClientsList>([])

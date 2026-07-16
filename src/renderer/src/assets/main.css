@@ -341,7 +341,6 @@ input[type='number'] {
     align-items: center;
     border-radius: 22px;
     background-color: #202127;
-    backdrop-filter: blur(24px);
 }
 
 .versions li {
@@ -510,11 +509,29 @@ input[type='number'] {
         padding: 5px 20px;
         font-family: 'Menlo', 'Lucida Console', monospace;
         display: flex;
+        gap: 20px;
         overflow: hidden;
         align-items: center;
         border-radius: 22px;
         background-color: #202127;
-        backdrop-filter: blur(24px);
+
+        div {
+            display: flex;
+            align-items: center;
+            border-right: 2px solid var(--color-background-mute);
+            padding-right: 20px;
+
+            &:last-child {
+                padding-right: 0px;
+                border-right: none;
+            }
+        }
+
+        code {
+            background-color: transparent;
+            margin-top: 1px;
+            color: var(--ev-c-text-2);
+        }
 
         span {
             margin-left: 10px;
@@ -757,7 +774,6 @@ input[type='number'] {
     width: 100%;
     height: 100%;
     background-color: #00000080;
-    backdrop-filter: blur(4px);
 }
 
 .info-message {
@@ -836,6 +852,7 @@ input[type='number'] {
 .card-row-container {
     position: relative;
     width: 80vw;
+    height: 120px;
     display: flex;
     justify-content: start;
     gap: 10px;
@@ -900,12 +917,13 @@ input[type='number'] {
 }
 .shortcuts-container {
     width: 80vw;
-    height: 40%;
+    /* height: 40%; */
+    margin-top: auto;
 
     gap: 15px;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 58px);
 
     > div {
         cursor: pointer;
@@ -913,6 +931,7 @@ input[type='number'] {
         border-radius: 15px;
         border: 1px solid #bebebe1a;
         background: #bebebe13;
+        backdrop-filter: blur(5px);
 
         display: flex;
         align-items: center;
@@ -1095,6 +1114,7 @@ input[type='number'] {
 .assets-container {
     padding: 15px;
     border-radius: 15px;
+    backdrop-filter: blur(15px);
 
     --bg-gradient-color: var(--ev-c-item-asset);
     border: 1px solid #bebebe1a;
@@ -2101,6 +2121,27 @@ input[type='number'] {
     padding: 5px;
     border: 1px solid #9c9c9c13;
     background-color: #1a1a1a28;
+
+    div {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        svg {
+            opacity: 0;
+            color: var(--ev-c-text-3);
+            cursor: pointer;
+            &:hover {
+                color: var(--ev-c-text-1);
+            }
+        }
+
+        &:hover {
+            svg {
+                opacity: 1;
+            }
+        }
+    }
 }
 
 .mini-modal {
@@ -2177,4 +2218,64 @@ input[type='number'] {
 }
 .text-target {
     scroll-margin-top: 45px;
+}
+
+.file-manager-container {
+    width: 80vw;
+    svg {
+        opacity: 0;
+        margin-left: 30px;
+        color: var(--ev-c-text-3);
+        cursor: pointer;
+        &:hover {
+            color: var(--ev-c-text-1);
+        }
+    }
+}
+.file-manager-group {
+    > p {
+        text-transform: capitalize;
+        font-weight: 900;
+    }
+}
+.file-manager-subgroup {
+    padding-left: 20px;
+    display: flex;
+    gap: 10px;
+    cursor: pointer;
+
+    > p {
+        text-transform: capitalize;
+    }
+
+    > span {
+        color: var(--ev-c-text-3);
+    }
+
+    &:hover {
+        svg {
+            opacity: 1;
+        }
+    }
+}
+.file-manager-files {
+    padding-left: 40px;
+    display: flex;
+    justify-content: space-between;
+    width: fit-content;
+
+    div {
+        display: flex;
+        gap: 10px;
+    }
+
+    span {
+        color: var(--ev-c-text-3);
+    }
+
+    &:hover {
+        svg {
+            opacity: 1;
+        }
+    }
 }

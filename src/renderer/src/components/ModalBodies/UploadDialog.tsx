@@ -4,7 +4,7 @@ import {
     UploadSetAsDefaultThemeAtom,
     UploadStageAtom
 } from '@renderer/utils/context/context'
-import { test, unicName } from '@renderer/utils/themesUtils'
+import { validName, unicName, permittedName } from '@renderer/utils/themesUtils'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import UploadSvg from '../../assets/upload.svg?react'
@@ -78,23 +78,25 @@ const UploadDialog = ({ closeModal }: Props): React.JSX.Element => {
             default:
                 return (
                     <p
-                        className={`info-message ${!test(themeName) ? 'error-messagge' : !unicName(themeName) ? 'warning-messagge' : ''}`}
+                        className={`info-message ${!validName(themeName) ? 'error-messagge' : !unicName(themeName) ? 'warning-messagge' : ''}`}
                     >
-                        {!test(themeName) && 'Solo se permiten letras, números, puntos y guiones'}
+                        {!validName(themeName) && 'Solo se permiten letras, números, puntos y guiones'}
                         {!unicName(themeName) && 'Se actualizará el tema actual'}
+                        {!permittedName(themeName) && 'Nombre no permitido'}
                     </p>
                 )
         }
     }
 
     const uploadTheme = async (): Promise<void> => {
+        if (!permittedName(themeName)) return
+
         try {
             setLoading(true)
 
             //* Preparar y subir archivos
             const filesRes = await mediaServiceController.uploadThemeAssets(themeName)
             if (!filesRes.length) {
-                // throw new Error('Ningún archivo subido correctamente')
                 console.warn('Ningún archivo subido')                
             }
 
@@ -105,7 +107,7 @@ const UploadDialog = ({ closeModal }: Props): React.JSX.Element => {
             const configRes = await mediaServiceController.uploadThemeConfig(config, themeName)
             if (!configRes?.path) throw new Error('Error al subir *_themeConfig.json')
 
-            //* Actualizar Collection
+            // //* Actualizar Collection
             await loadThemesCollection()
 
             setStage(UPLOAD_STAGE.DONE)
@@ -179,7 +181,7 @@ const UploadDialog = ({ closeModal }: Props): React.JSX.Element => {
                         </div>
                         <div
                             className="action primary"
-                            style={{ pointerEvents: test(themeName) ? 'all' : 'none' }}
+                            style={{ pointerEvents: validName(themeName) ? 'all' : 'none' }}
                         >
                             <a onClick={uploadTheme}>
                                 Subir

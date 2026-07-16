@@ -1,4 +1,4 @@
-import { DistributionMethod, ThemeConfig } from '@shared/types'
+import { ThemeConfig } from '@shared/types'
 import DynamicSvg from '../DynSvg'
 import DownloadSvg from '../../assets/download.svg?react'
 import DeleteSvg from '../../assets/trash.svg?react'
@@ -6,18 +6,15 @@ import ShieldSvg from '../../assets/shield.svg?react'
 import StarSvg from '../../assets/star.svg?react'
 import ToolSvg from '../../assets/tool.svg?react'
 import BlockSvg from '../../assets/block.svg?react'
+import OptionsSvg from '../../assets/gears.svg?react'
 import AsyncOption from './theme-config-components/AsyncOption'
 import mediaServiceController from '@renderer/utils/controllers/mediaServer/mediaServiceController'
 import Modal from '../Modal'
 import { useState } from 'react'
-import {
-    loadThemesCollection,
-    parseAssets,
-    validateFiles
-} from '@renderer/utils/bootSequence'
+import { loadThemesCollection, parseAssets, validateFiles } from '@renderer/utils/bootSequence'
 import Tooltip from '../Tooltip'
 import { DEFAULT_THEME } from '@shared/CONSTANTS'
-import { DefaultConfigAtom, DistributionMethodAtom } from '@renderer/utils/context/context'
+import { DefaultConfigAtom, TerminalsStatusAtom } from '@renderer/utils/context/context'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { softReset } from '@renderer/utils/reset'
 import { preloadAssets } from '@renderer/utils/AssetsPreLoader'
@@ -28,8 +25,8 @@ interface Props {
 }
 
 const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
-    const isRemote = useAtomValue(DistributionMethodAtom) === DistributionMethod.REMOTE
     const originalTheme = themeData.themeName === DEFAULT_THEME
+    const terminals = useAtomValue(TerminalsStatusAtom)
 
     const setDefaultConfig = useSetAtom(DefaultConfigAtom)
     const defaultTheme = themeData.isDefaultTheme
@@ -146,11 +143,7 @@ const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
             >
                 {themeData.logo.mime.match('svg') ? (
                     <DynamicSvg
-                        config={
-                            isRemote
-                                ? { assetName: `${themeData.themeName}_${themeData.logo.name}` }
-                                : { path: themeData.logo.base64 }
-                        }
+                        config={{ assetName: `${themeData.themeName}_${themeData.logo.name}` }}
                     />
                 ) : (
                     <img src={themeData.logo.base64} />
@@ -221,13 +214,18 @@ const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
 
             <div className="theme-config-modal-terminals">
                 <h3>Terminales</h3>
-                <p>Terminal 1</p>
-                <p>Terminal 2</p>
-                <p>Terminal 3</p>
-                <p>Terminal 4</p>
-                <p>Terminal 5</p>
-                <p>Terminal 6</p>
-                <p>Terminal 7</p>
+                {terminals?.length ? (
+                    terminals.map((t) => (
+                        <div key={t.id}>
+                            <p>{t.name}</p>
+                            <label onClick={() => console.log(t.id)}>
+                                <OptionsSvg />
+                            </label>
+                        </div>
+                    ))
+                ) : (
+                    <p style={{ color: '#bebebe41' }}>Sin terminales registradas</p>
+                )}
             </div>
 
             <div className="actions">
@@ -260,7 +258,10 @@ const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
             )}
 
             {infoModal && (
-                <Modal confirm={() => !loading && setInfoModal(false)} close={() => !loading && setInfoModal(false)}>
+                <Modal
+                    confirm={() => !loading && setInfoModal(false)}
+                    close={() => !loading && setInfoModal(false)}
+                >
                     <div className="mini-modal">
                         <h2>Configuración de tema cargada</h2>
                         <p>Todo listo para aplicar modificaciones</p>

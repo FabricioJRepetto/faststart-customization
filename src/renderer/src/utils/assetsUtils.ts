@@ -57,27 +57,24 @@ export const assetsToFiles = async (
     const aux: FileForUpload[] = []
 
     for await (const e of originalDataList) {
-        const custom = newDataList.find((c) => c.name === e.name)
-        if (custom?.customBase64) {
-            const _fileName = custom.customPath.replaceAll('\\', '/').split('/').pop()!
-            const file = await b64ToFile(custom.customBase64, _fileName)
-            aux.push({ file, assetName: e.name })
+        const custom = newDataList.find((c) => c.assetName === e.assetName)
+        if (custom?.custom.source) {
+            // const _fileName = custom.customPath.replaceAll('\\', '/').split('/').pop()!
+            const file = await b64ToFile(custom.custom.source, custom.custom.fileName!)
+            aux.push({ file, assetName: e.assetName })
         }
     }
 
     return aux
 }
 
-export const thirdAssetsToFiles = async (
-    dataList: AssetData[]
-): Promise<FileForUpload[]> => {
+export const thirdAssetsToFiles = async (dataList: AssetData[]): Promise<FileForUpload[]> => {
     const aux: FileForUpload[] = []
 
     for await (const e of dataList) {
-        if (e?.customBase64) {
-            const _fileName = e.customPath.replaceAll('\\', '/').split('/').pop()!
-            const file = await b64ToFile(e.customBase64, _fileName)
-            aux.push({ file, assetName: e.name })
+        if (e?.custom.source) {
+            const file = await b64ToFile(e.custom.source, e.custom.fileName!)
+            aux.push({ file, assetName: e.assetName })
         }
     }
 
@@ -95,29 +92,32 @@ export const dataParser = (
     newDataList: AssetDataBase[]
 ): FinalAssetData[] => {
     return originalDataList.map((e) => {
-        const custom = newDataList.find((c) => c.name === e.name)
-        const _path = custom?.customPath || e.filePath
+        const custom = newDataList.find((c) => c.assetName === e.assetName)
+        if (!custom) return null
+
+        const _path = custom.custom.source!
         return {
-            name: e.name,
+            name: e.assetName,
             path: _path,
             fileType: assetExtention(_path)
         }
-    })
+    }).filter(e => e !== null)
 }
 
-export const thirdDataParser = (remotePaths?: AssetDataBase[]): ThirdScreendata => {
+export const thirdDataParser = (remotePaths: AssetDataBase[]): ThirdScreendata => {
     const config = store.get(EditedThirdScreenConfigDataAtom)
     const newThirdAssets = store.get(EditedThirdScreenAssetsDataAtom)
 
-    const assets = newThirdAssets!.map((e) => {
-        const remote = remotePaths?.find((e) => e.name)
-        const _path = remote?.customPath || e?.customPath || e.filePath
+    const assets = newThirdAssets?.map((e) => {
+        const remote = remotePaths.find((e) => e.assetName)
+        if (!remote) return null
+        const _path = remote.custom.source!
         return {
-            name: e.name,
+            name: e.assetName,
             path: _path,
             fileType: assetExtention(_path)
         }
-    })
+    }).filter(e => e !== null) || []
 
     return { config, assets }
 }
@@ -197,10 +197,14 @@ export const languageParser = (): LanguageData => {
     const ogLang = store.get(DefaultLanguageDataAtom)
     const newLang = store.get(EditedLanguageDataAtom)
 
-    const aux = objectFullStructure(ogLang)
+    const aux: LanguageData = objectFullStructure(ogLang)
     Object.keys(ogLang).map((lang) => {
-        Object.keys(ogLang[lang]).map((key) => {
-            aux[lang][key] = newLang[lang][key] ?? ogLang[lang][key]
+        Object.keys(ogLang[lang]).map((section) => {
+            const finalSection: Record<string, string> = {}
+            Object.keys(ogLang[lang][section]).map((key) => {
+                finalSection[key] = newLang[lang][section][key] || ogLang[lang][section][key]
+            })
+            aux[lang][section] = finalSection
         })
     })
     return aux

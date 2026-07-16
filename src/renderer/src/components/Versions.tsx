@@ -1,9 +1,10 @@
 import pckg from '../../../../package.json'
-import { ServerStatusAtom } from '@renderer/utils/context/context'
+import { ServerStatusAtom, WebSocketStatusAtom } from '@renderer/utils/context/context'
 import {  useAtomValue } from 'jotai'
 
 function Versions(): React.JSX.Element {
-    const status = useAtomValue(ServerStatusAtom)
+    const server = useAtomValue(ServerStatusAtom)
+    const websocket = useAtomValue(WebSocketStatusAtom)
 
     return (
         <ul className="versions">
@@ -11,7 +12,15 @@ function Versions(): React.JSX.Element {
                 Estado del servidor
                 <span
                     className={
-                        status == undefined ? 'getting-status' : status ? 'green-status' : 'red-status'
+                        server == undefined ? 'getting-status' : server ? 'green-status' : 'red-status'
+                    }
+                ></span>
+            </li>
+            <li className="electron-version">
+                WebSocket
+                <span
+                    className={
+                        websocket == undefined ? 'getting-status' : websocket ? 'green-status' : 'red-status'
                     }
                 ></span>
             </li>

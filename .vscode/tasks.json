@@ -11,6 +11,17 @@
                 "id": "flame",
                 "color": "terminal.ansiGreen"
             }
+        },
+        {
+            "type": "npm",
+            "script": "typecheck",
+            "problemMatcher": [],
+            "label": "Run TypeCheck",
+            "detail": "Check for type errors",
+            "icon": {
+                "id": "symbol-type-parameter",
+                "color": "terminal.ansiMagenta"
+            }
         }
     ]
 }

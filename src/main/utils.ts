@@ -14,11 +14,11 @@ const getLibraryDir = (): string => {
 
 export const libraryDir = getLibraryDir()
 
-export const getBase64 = (filePath: string): { base64: string; mime: string; name: string } => {
+export const getBase64 = (filePath: string): { base64: string; mime: string; fileName: string } => {
     try {
         const buffer = readFileSync(filePath)
         const ext = extname(filePath).slice(1).toLowerCase()
-        const name = filePath.replaceAll('\\', '/').split('/').pop()!.split('.')[0]
+        const name = filePath.replaceAll('\\', '/').split('/').pop()!
 
         const mimeTypes: Record<string, string> = {
             png: 'image/png',
@@ -36,7 +36,7 @@ export const getBase64 = (filePath: string): { base64: string; mime: string; nam
         const mime = mimeTypes[ext] ?? 'application/octet-stream'
         const _base64 = buffer.toString('base64')
 
-        return { name, base64: `data:${mime};base64,${_base64}`, mime }
+        return { fileName: name, base64: `data:${mime};base64,${_base64}`, mime }
     } catch (error) {
         console.error(error)
         throw error as Error

@@ -1,13 +1,12 @@
 import {
-    ClientAppVersionDirAtom,
     CurrentScreenAtom,
     CustomEnabledAtom,
-    DistributionMethodAtom,
     FirstLoadAtom,
     ServerStatusAtom,
-    SupervisorAppVersionDirAtom,
+    store,
+    TerminalsStatusAtom,
     ThemesLibraryDataAtom,
-    ThirdAppVersionDirAtom
+    WebSocketStatusAtom
 } from '@renderer/utils/context/context'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { useEffect, useState } from 'react'
@@ -15,22 +14,20 @@ import SpinnerSvg from '../assets/spinner.svg?react'
 import NewSvg from '../assets/theme.svg?react'
 import FilesSvg from '../assets/folder_management.svg?react'
 import GearSvg from '../assets/gear.svg?react'
-import FastUploadSvg from '../assets/rocket.svg?react'
+import TestSvg from '../assets/test.svg?react'
 import ExitSvg from '../assets/logout.svg?react'
 import PowerSvg from '../assets/powerb.svg?react'
 import mediaServiceController from '@renderer/utils/controllers/mediaServer/mediaServiceController'
-import { DistributionMethod, Screens } from '@shared/types'
+import { Screens, WSMessage } from '@shared/types'
 import DynamicSvg from '@renderer/components/DynSvg'
 import { reset } from '@renderer/utils/reset'
+import { WS_BASE_URL } from '@shared/CONSTANTS'
 
 const NewMain = (): React.JSX.Element => {
-    const status = useAtomValue(ServerStatusAtom)
-    const isRemote = useAtomValue(DistributionMethodAtom) === DistributionMethod.REMOTE
+    const ServerStatus = useAtomValue(ServerStatusAtom)
+    const WsStatus = useAtomValue(WebSocketStatusAtom)
+    const terminals = useAtomValue(TerminalsStatusAtom)
     const setScreen = useSetAtom(CurrentScreenAtom)
-
-    const clientDir = useAtomValue(ClientAppVersionDirAtom)
-    const thirdDir = useAtomValue(ThirdAppVersionDirAtom)
-    const supDir = useAtomValue(SupervisorAppVersionDirAtom)
 
     const [customEnabled, setCustomEnabled] = useAtom(CustomEnabledAtom)
     const themes = useAtomValue(ThemesLibraryDataAtom)
@@ -38,7 +35,7 @@ const NewMain = (): React.JSX.Element => {
     const [loadingApply, setLoadingApply] = useState<boolean>(false)
     const [firstLoad, setFirstLoad] = useAtom(FirstLoadAtom)
 
-    useEffect(() => {        
+    useEffect(() => {
         // Para la animación fade in de esta pantalla
         setTimeout(() => setFirstLoad(false), 1500) // el delay es la duración de la animación
     }, [setFirstLoad])
@@ -46,26 +43,98 @@ const NewMain = (): React.JSX.Element => {
     const toggleCustomEnabled = async (): Promise<void> => {
         setLoadingApply(true)
 
-        if (isRemote) {
-            const res = await mediaServiceController.toggleCustomization()
-            if (res) {
-                console.log('Customization toggled')
-                setCustomEnabled(!customEnabled)
-            } else console.log('Error toggling customizations')
-        } else {
-            const res = await window.electronAPI.toggleEnabled(
-                !customEnabled,
-                clientDir,
-                thirdDir,
-                supDir
-            )
+        const res = await mediaServiceController.toggleCustomization()
+        if (res) {
+            console.log('Customization toggled')
             setCustomEnabled(!customEnabled)
-            if (res.success) {
-                setCustomEnabled(!customEnabled)
-                console.log(res.data + '/3 custom files updated correctly')
-            } else console.error('Error enabling customs')
-        }
+        } else console.log('Error toggling customizations')
+
         setLoadingApply(false)
+    }
+
+    async function waitOnceAsync(
+        uri: string,
+        timeoutMs = 60000
+    ): Promise<{ ok: boolean; message: string }> {
+        return new Promise((resolve) => {
+            let done = false
+
+            const client = new WebSocket(uri)
+
+            const finish = (ok: boolean, message: string): void => {
+                if (done) return
+                done = true
+                try {
+                    client.close()
+                } catch (e) {
+                    console.error(e)
+                }
+                resolve({ ok, message })
+            }
+
+            const to = setTimeout(() => finish(false, 'Timeout esperando confirmación'), timeoutMs)
+
+            client.onopen = () => {
+                clearTimeout(to)
+                console.log('[SWS Client] Conectado al servidor')
+                store.set(WebSocketStatusAtom, true)
+                client.send(
+                    JSON.stringify({ type: 'login', data: { type: 'admin', name: 'ARC_admin' } })
+                )
+            }
+
+            client.onmessage = (event: MessageEvent) => {
+                console.log('[SWS Client] Mensaje recibido')
+                try {
+                    const msg = JSON.parse(event.data) as WSMessage
+                    console.log('[SWS Client] Parseado:', msg)
+
+                    switch (msg.type) {
+                        case 'update_connections':
+                            console.log(
+                                'update_connections',
+                                msg.data.filter((e) => e.type === 'terminal').map((t) => t.name)
+                            )
+                            store.set(
+                                TerminalsStatusAtom,
+                                msg.data.filter((e) => e.type === 'terminal')
+                            )
+
+                            break
+
+                        default:
+                            console.log(`Tipo de mensaje ${msg.type} no contemplado`)
+                            break
+                    }
+                } catch (error) {
+                    // No era JSON
+                    console.error('Error parseando mensaje', error)
+                }
+            }
+
+            client.onclose = (event: CloseEvent) => {
+                console.log(
+                    `[SWS Client] Conexión cerrada. Code: ${event.code}, Reason: ${event.reason}`
+                )
+                store.set(WebSocketStatusAtom, false)
+            }
+
+            client.onerror = (event: Event) => {
+                console.error('[SWS Client] Error en la conexión', event)
+                store.set(WebSocketStatusAtom, false)
+            }
+
+            return client
+        })
+    }
+
+    const TEST = async (): Promise<void> => {
+        try {
+            const res = await waitOnceAsync(WS_BASE_URL)
+            console.log(res)
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     return (
@@ -75,16 +144,30 @@ const NewMain = (): React.JSX.Element => {
 
                 <div className="header-group">
                     <div className="header-server-status">
-                        Servidor
-                        <span
-                            className={
-                                status == undefined
-                                    ? 'getting-status'
-                                    : status
-                                      ? 'green-status'
-                                      : 'red-status'
-                            }
-                        ></span>
+                        <div>
+                            <code>Servidor</code>
+                            <span
+                                className={
+                                    ServerStatus == undefined
+                                        ? 'getting-status'
+                                        : ServerStatus
+                                          ? 'green-status'
+                                          : 'red-status'
+                                }
+                            ></span>
+                        </div>
+                        <div>
+                            <code>WebSocket</code>
+                            <span
+                                className={
+                                    WsStatus == undefined
+                                        ? 'getting-status'
+                                        : ServerStatus
+                                          ? 'green-status'
+                                          : 'red-status'
+                                }
+                            ></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -93,46 +176,45 @@ const NewMain = (): React.JSX.Element => {
                 <div>
                     <p>Terminales (WIP)</p>
                     <div className="card-row-container">
-                        {[
-                            { name: 'SR (17)', ip: '192.0.170.172', status: 'online' },
-                            { name: 'SR (lab)', ip: '192.0.170.63', status: 'undefined' },
-                            { name: 'BRM', ip: '192.0.170.63', status: 'offline' },
-                            { name: 'BNA', ip: '192.0.170.65', status: 'offline' },
-                            { name: 'GBRU', ip: '192.0.170.171', status: 'offline' },
-                            { name: 'S2', ip: '192.0.170.69', status: 'offline' },
-                            { name: 'HEADLESS', ip: '192.0.170.170', status: 'offline' }
-                        ].map((e, i) => (
-                            <div className="assets-container main-screen-theme-card" key={i}>
-                                <p>{e.name}</p>
-                                <p>{e.ip}</p>
-                                <p>{e.status}</p>
-                            </div>
-                        ))}
+                        {terminals.length ? (
+                            terminals.map((e, i) => (
+                                <div className="assets-container main-screen-theme-card" key={i}>
+                                    <p>{e.name}</p>
+                                    <p>{e.ip}</p>
+                                </div>
+                            ))
+                        ) : (
+                            <p style={{ color: '#bebebe41' }}>Sin terminales conectadas</p>
+                        )}
                     </div>
                 </div>
 
                 <div>
-                    <p>Temas</p>
+                    <p onClick={() => setScreen(Screens.collections)} style={{ cursor: 'pointer' }}>
+                        Temas
+                    </p>
                     <div className="card-row-container">
-                        {themes?.map((e, i) => (
-                            <div className="assets-container main-screen-theme-card" key={i}>
-                                <p>{e.themeName}</p>
-                                <div className="logo-container">
-                                    {e.logo.mime.match('svg') ? (
-                                        <DynamicSvg
-                                            color={e?.color?.primaryColor}
-                                            config={
-                                                isRemote
-                                                    ? { assetName: `${e.themeName}_${e.logo.name}` }
-                                                    : { path: e.logo.base64 }
-                                            }
-                                        />
-                                    ) : (
-                                        <img src={e.logo.base64} />
-                                    )}
+                        {themes?.length ? (
+                            themes?.map((e, i) => (
+                                <div className="assets-container main-screen-theme-card" key={i}>
+                                    <p>{e.themeName}</p>
+                                    <div className="logo-container">
+                                        {e.logo.mime.match('svg') ? (
+                                            <DynamicSvg
+                                                color={e?.color?.primaryColor}
+                                                config={{
+                                                    assetName: `${e.themeName}_${e.logo.name}`
+                                                }}
+                                            />
+                                        ) : (
+                                            <img src={e.logo.base64} />
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))
+                        ) : (
+                            <p style={{ color: '#bebebe41' }}>Sin temas guardados</p>
+                        )}
                     </div>
                 </div>
 
@@ -147,13 +229,17 @@ const NewMain = (): React.JSX.Element => {
                         </div>
                     </div>
 
-                    <div style={{ opacity: '.75', pointerEvents: 'none' }}>
+                    <div onClick={() => setScreen(Screens.preview)}>
                         <NewSvg />
                         Nuevo Tema
                     </div>
-                    <div style={{ opacity: '.75', pointerEvents: 'none' }}>
+                    {/* <div style={{ opacity: '.75', pointerEvents: 'none' }}> 
                         <FastUploadSvg />
                         Carga Rápida
+                    </div> */}
+                    <div style={{ color: 'lime' }} onClick={TEST}>
+                        <TestSvg />
+                        TEST
                     </div>
 
                     <div onClick={() => setScreen(Screens.template)}>
@@ -161,7 +247,7 @@ const NewMain = (): React.JSX.Element => {
                         Actualizar template base
                     </div>
 
-                    <div style={{ opacity: '.75', pointerEvents: 'none' }}>
+                    <div onClick={() => setScreen(Screens.fileManager)}>
                         <FilesSvg />
                         Gestión de Archivos
                     </div>

@@ -44,7 +44,7 @@ export const loadTemplate = async (): Promise<void> => {
                 icon: [...parseToAssetData(res.icon, 'icon')],
                 image: [...parseToAssetData(res.image, 'image')],
                 background: [...parseToAssetData(res.background, 'background')],
-                thirdscreen: [...parseToAssetData(res.thirdscreen, 'thirdscreen')],
+                thirdscreen: [],
                 audio: [...parseToAssetData(res.audio, 'audio')],
                 styles: objectFullStructure(res.styles),
                 language: res.language
@@ -77,8 +77,7 @@ const loadCustomConfig = async (): Promise<void> => {
             throw new Error(`Error al cargar archivo ${DEFAULT_CONFIG_FILENAME}`)
         }
     } catch (error) {
-        console.error(error)
-        throw error
+        console.warn(error)
     }
 }
 
@@ -129,20 +128,18 @@ export const parseAssets = (): void => {
 }
 
 const parseToAssetData = (
-    list: FinalAssetData[] | { name: string }[],
+    list: FinalAssetData[] | { assetName: string }[],
     assetType: AssetType
 ): AssetData[] => {
     return (
         list?.map((e) => ({
-            name: e.name,
+            assetName: e.assetName,
             assetType: assetType,
-            filePath: e?.path ?? '',
-            base64: '',
-            mimeType: getMime(e?.path),
-            customPath: '',
-            customBase64: '',
-            customMimeType: '',
-            blobUrl: e?.blobUrl ?? ''
+            original: {
+                source: e?.blobUrl || e?.path || '',
+                mime: getMime(e?.path)
+            },
+            custom: {}
         })) || []
     )
 }
@@ -169,9 +166,9 @@ export const remoteBootSequence = async (): Promise<void> => {
     try {
         //* LOAD : template_assets.json
         await loadTemplate()
+        validateFiles()
         //* LOAD : customConfig.json
         await loadCustomConfig()
-        validateFiles()
 
         //* PRE-LOAD : Assets
         // await preloadAssets('blobUrl')

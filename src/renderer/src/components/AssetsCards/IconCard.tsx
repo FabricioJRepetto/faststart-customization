@@ -19,13 +19,13 @@ export const IconCard = ({ icon, setValue, resetValue, id }: Props): React.JSX.E
 
     return (
         <div
-            key={icon.name}
+            key={icon.assetName}
             id={id}
-            className={`assets-container icon-asset-container ${icon.customBase64 ? 'asset-card-has-custom' : 'asset-card-initial'}`}
+            className={`assets-container icon-asset-container ${icon.custom.source ? 'asset-card-has-custom' : 'asset-card-initial'}`}
         >
             <div className="asset-card-header">
-                <p>{assetName(icon.name)}</p>
-                {icon.customBase64 && icon.mimeType && (
+                <p>{assetName(icon.assetName)}</p>
+                {icon.custom.source && icon.original.source && (
                     <Tooltip text="Ver icono original">
                         <div
                             className="button asset-card-show-buton"
@@ -39,22 +39,22 @@ export const IconCard = ({ icon, setValue, resetValue, id }: Props): React.JSX.E
             </div>
 
             <div className="icons-container">
-                {!icon.customBase64 || showOriginal ? (
-                    icon.mimeType ? (
-                        defaultIcon(icon.name)
+                {!icon.custom.source || showOriginal ? (
+                    icon.original.source ? (
+                        defaultIcon(icon.assetName)
                     ) : (
                         <div className="asset-placeholder">Sin definir</div>
                     )
                 ) : (
-                    currentIcon(icon.name)
+                    currentIcon(icon.assetName)
                 )}
             </div>
 
             <div className="actions">
-                {icon.customBase64 && (
+                {icon.custom.source && (
                     <Tooltip text="Volver al icono original">
                         <div className="button">
-                            <a onClick={() => resetValue(icon.name)}>
+                            <a onClick={() => resetValue(icon.assetName)}>
                                 <ResetSvg />
                             </a>
                         </div>
@@ -63,7 +63,7 @@ export const IconCard = ({ icon, setValue, resetValue, id }: Props): React.JSX.E
 
                 <Tooltip text="Remplazar icono">
                     <div className="button">
-                        <a onClick={() => setValue(icon.name)}>
+                        <a onClick={() => setValue(icon.assetName)}>
                             <UploadSvg />
                         </a>
                     </div>

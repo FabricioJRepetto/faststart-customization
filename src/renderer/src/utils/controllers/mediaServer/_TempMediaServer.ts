@@ -124,4 +124,16 @@ export default class _TempMediaServer implements MediaServiceBase {
             return null
         }
     }
+
+    async getFiles(): Promise<DBFile[] | null> {
+        try {
+            const res = await fetch(BACKEND_GET_FILELIST)
+                .then((r) => r.json())
+                .then((r) => r as RawDBFilesListRes)
+            return res.files
+        } catch (error) {
+            console.error(error)
+            return null
+        }
+    }
 }

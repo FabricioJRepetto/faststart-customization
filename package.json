@@ -20,9 +20,9 @@
         "build:linux": "electron-vite build && electron-builder --linux"
     },
     "dependencies": {
-        "@fontsource-variable/sora": "^5.2.6",
         "@electron-toolkit/preload": "^3.0.2",
         "@electron-toolkit/utils": "^4.0.0",
+        "@fontsource-variable/sora": "^5.2.6",
         "electron-updater": "^6.3.9",
         "jotai": "^2.19.0"
     },
@@ -33,6 +33,7 @@
         "@types/node": "^22.19.1",
         "@types/react": "^19.2.7",
         "@types/react-dom": "^19.2.3",
+        "@types/ws": "^8.18.1",
         "@vitejs/plugin-react": "^5.1.1",
         "electron": "^39.2.6",
         "electron-builder": "^26.0.12",

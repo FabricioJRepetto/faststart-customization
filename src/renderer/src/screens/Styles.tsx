@@ -15,6 +15,8 @@ const Styles = (): React.JSX.Element => {
     const setCustomStyles = useSetAtom(EditedStylesDataAtom)
 
     const updateCustom = (key: string, parent: string, value: string): void => {
+        console.log(parent, key, value)
+
         if (parent === 'button' || parent === 'secondaryButton' || parent === 'inputButton') {
             if (key === 'border') {
                 const _v = value === 'true'
@@ -24,12 +26,14 @@ const Styles = (): React.JSX.Element => {
                     ...prev,
                     [parent]: { ...prev[parent], [key]: new_v }
                 }))
+                return
             }
             if (key === 'borderRadius') {
                 setCustomStyles((prev) => ({
                     ...prev,
                     [parent]: { ...prev[parent], [key]: value }
                 }))
+                return
             }
         }
 

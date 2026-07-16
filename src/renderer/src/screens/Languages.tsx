@@ -1,4 +1,4 @@
-import { EditedLanguageDataAtom, TemplateConfigAtom } from '@renderer/utils/context/context'
+import { DefaultLanguageDataAtom, EditedLanguageDataAtom } from '@renderer/utils/context/context'
 import { useAtom, useAtomValue } from 'jotai'
 import { useEffect, useState } from 'react'
 import SearchSvg from '../assets/search.svg?react'
@@ -13,7 +13,7 @@ import { useActiveSection } from '@renderer/utils/hooks/useActiveSection'
 
 const Languages = (): React.JSX.Element => {
     //* Original
-    const OGLangData = useAtomValue(TemplateConfigAtom)?.language || {}
+    const OGLangData = useAtomValue(DefaultLanguageDataAtom) || {}
     //* Nuevo
     const [newLangData, setNewLangData] = useAtom(EditedLanguageDataAtom)
 

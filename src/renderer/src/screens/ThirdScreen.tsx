@@ -20,14 +20,12 @@ const ThirdScreen = (): React.JSX.Element => {
     const [asset, setAsset] = useAtom(EditedThirdScreenAssetsDataAtom)
     const [config, setConfig] = useAtom(EditedThirdScreenConfigDataAtom)
 
-    console.log(asset)
-
     const resetAllValues = (): void => {
         setAsset([...OgAssets!.thirdscreen])
     }
 
     const deleteValue = (key: string): void => {
-        setAsset((prev) => prev!.filter((e) => e.name !== key))
+        setAsset((prev) => prev!.filter((e) => e.assetName !== key))
     }
 
     const setNewConfig = (key: string, value: number | string): void => {
@@ -39,33 +37,40 @@ const ThirdScreen = (): React.JSX.Element => {
     }
 
     const addNew = async (): Promise<void> => {
+        //TODO Reemplazar el uso de electron por inputs
         const res = await window.electronAPI.selectFile(filterType.ImgVideo)
         console.log(res)
 
         if (res.success) {
-            const { filePath, base64, customMimeType } = res.data
+            const { fileName, filePath, base64, customMimeType } = res.data
             console.log(res.data)
 
             setAsset((prev): AssetData[] => {
                 const aux = prev ? [...prev] : []
-                let fileName =
-                    'thirdscreen_asset_' +
-                    (filePath.split('\\')?.pop()?.split('.')?.[0] ?? 'defname')
-                const used = aux.find((e) => e.name === fileName)
+                const ext = filePath.split('\\')?.pop()?.split('.').pop()
+
+                let _fileName = 'thirdscreen_asset_' + fileName
+                const used = aux.find((e) => e.assetName === _fileName)
                 if (used) {
-                    fileName = fileName + '_' + (aux.length + 1)
+                    _fileName =
+                        'thirdscreen_asset_' +
+                        fileName.splt('.')[0] +
+                        '_' +
+                        (aux.length + 1) +
+                        '.' +
+                        ext
                 }
                 return [
                     ...aux,
                     {
-                        name: fileName,
-                        customPath: filePath,
-                        customBase64: base64,
+                        assetName: _fileName,
                         assetType: 'thirdscreen',
-                        filePath: '',
-                        base64: '',
-                        mimeType: '',
-                        customMimeType
+                        original: {},
+                        custom: {
+                            source: base64,
+                            mime: customMimeType,
+                            fileName: fileName
+                        }
                     }
                 ]
             })
@@ -82,22 +87,25 @@ const ThirdScreen = (): React.JSX.Element => {
 
             setAsset((prev): AssetData[] => {
                 const aux = prev ? [...prev] : []
-                let newFileName = 'thirdscreen_asset_' + (fileName.split('.')?.[0] ?? 'defname')
-                const used = aux.find((e) => e.name === newFileName)
+                let newFileName = 'thirdscreen_asset_' + fileName
+                const used = aux.find((e) => e.assetName === newFileName)
                 if (used) {
-                    newFileName = newFileName + '_' + (aux.length + 1)
+                    const aux = f.name.split('.')
+                    const _name = aux[0]
+                    const ext = aux.pop()
+                    newFileName = 'thirdscreen_asset_' + _name + '_' + (aux.length + 1) + '.' + ext
                 }
                 return [
                     ...aux,
                     {
-                        name: newFileName,
-                        customPath: '',
-                        customBase64: base64,
+                        assetName: newFileName,
                         assetType: 'thirdscreen',
-                        filePath: '',
-                        base64: '',
-                        mimeType: '',
-                        customMimeType
+                        original: {},
+                        custom: {
+                            source: base64,
+                            mime: customMimeType,
+                            fileName: fileName
+                        }
                     }
                 ]
             })
@@ -127,8 +135,8 @@ const ThirdScreen = (): React.JSX.Element => {
 
             <div className="third-interval-section">
                 <p>
-                    Intervalo de tiempo (en segundos) en el que se muestra cada imagen/video.
-                    Solo aplicable cuando hay mas de un elemento.
+                    Intervalo de tiempo (en segundos) en el que se muestra cada imagen/video. Solo
+                    aplicable cuando hay mas de un elemento.
                 </p>
                 <input
                     type="number"
@@ -138,11 +146,11 @@ const ThirdScreen = (): React.JSX.Element => {
             </div>
 
             <div className="assets-grid grid-third scrolleable">
-                <div className='grid-divider'></div>
+                <div className="grid-divider"></div>
                 {asset?.length ? (
                     asset!.map((_asset, i) => {
-                        if (!_asset.mimeType && !_asset.customMimeType) return null
-                        if (_asset.mimeType && !_asset.customMimeType)
+                        if (!_asset.original?.source && !_asset.custom.source) return null
+                        if (_asset.original?.source && !_asset.custom.source)
                             return <ThirdCard key={i} data={_asset} deleteValue={deleteValue} />
                         else return <NewAssetCard key={i} data={_asset} deleteValue={deleteValue} />
                     })

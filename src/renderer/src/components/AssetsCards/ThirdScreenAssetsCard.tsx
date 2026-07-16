@@ -1,10 +1,8 @@
 import { assetName } from '@renderer/utils/assetsUtils'
-import { AssetData, DistributionMethod } from '@shared/types'
+import { AssetData } from '@shared/types'
 import { useState } from 'react'
 import ResetSvg from '../../assets/trash.svg?react'
 import AddSvg from '../../assets/add.svg?react'
-import { DistributionMethodAtom } from '@renderer/utils/context/context'
-import { useAtomValue } from 'jotai'
 import Tooltip from '../Tooltip'
 
 interface AddNewProps {
@@ -30,22 +28,25 @@ export const NewAssetCard = ({ data, deleteValue }: NewProps): React.JSX.Element
 
     return (
         <div
-            key={data.name}
+            key={data.assetName}
             className="assets-container thirdscreen-asset-container asset-card-has-custom"
         >
             <div className="asset-card-header third-new-asset">
-                <p>{assetName(data.name)}</p>
+                <p>{assetName(data.assetName)}</p>
 
                 <Tooltip text="Borrar elemento">
-                    <span className="button delete-buton" onClick={() => deleteValue(data.name)}>
+                    <span
+                        className="button delete-buton"
+                        onClick={() => deleteValue(data.assetName)}
+                    >
                         <ResetSvg />
                     </span>
                 </Tooltip>
             </div>
             <div className="custom-thirscreen-container">
-                {data.customMimeType.match('video') ? (
+                {data.custom.mime?.match('video') ? (
                     <video
-                        src={data.customBase64}
+                        src={data.custom.source}
                         width={350}
                         muted
                         autoPlay
@@ -54,7 +55,7 @@ export const NewAssetCard = ({ data, deleteValue }: NewProps): React.JSX.Element
                         onLoadedData={() => setLoaded(true)}
                     />
                 ) : (
-                    <img src={data.customBase64} className={'fade-in'} />
+                    <img src={data.custom.source} className={'fade-in'} />
                 )}
             </div>
         </div>
@@ -63,24 +64,26 @@ export const NewAssetCard = ({ data, deleteValue }: NewProps): React.JSX.Element
 
 export const ThirdCard = ({ data, deleteValue }: NewProps): React.JSX.Element => {
     const [loaded, setLoaded] = useState<boolean>(false)
-    const isRemote = useAtomValue(DistributionMethodAtom) === DistributionMethod.REMOTE
 
     return (
-        <div key={data.name} className="assets-container thirdscreen-asset-container">
+        <div key={data.assetName} className="assets-container thirdscreen-asset-container">
             <div className="asset-card-header">
-                <p>{assetName(data.name)}</p>
+                <p>{assetName(data.assetName)}</p>
 
                 <Tooltip text="Borrar elemento">
-                    <span className="button delete-buton" onClick={() => deleteValue(data.name)}>
+                    <span
+                        className="button delete-buton"
+                        onClick={() => deleteValue(data.assetName)}
+                    >
                         <ResetSvg />
                     </span>
                 </Tooltip>
             </div>
 
             <div className="custom-thirscreen-container">
-                {data.mimeType.match('video') ? (
+                {data.original.mime?.match('video') ? (
                     <video
-                        src={isRemote ? data.blobUrl : data.base64}
+                        src={data.original.source}
                         width={350}
                         muted
                         autoPlay
@@ -90,7 +93,7 @@ export const ThirdCard = ({ data, deleteValue }: NewProps): React.JSX.Element =>
                     />
                 ) : (
                     <img
-                        src={data.base64}
+                        src={data.original.source}
                         onLoad={() => setLoaded(true)}
                         className={loaded ? 'fade-in' : ''}
                     />
