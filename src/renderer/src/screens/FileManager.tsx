@@ -1,7 +1,11 @@
 import mediaServiceController from '@renderer/utils/controllers/mediaServer/mediaServiceController'
 import { DBFile } from '@shared/types'
 import { useEffect, useState } from 'react'
-import OptionsSvg from '../assets/gears.svg?react'
+import OptionsSvg from '../assets/options.svg?react'
+import UploadSvg from '../assets/upload.svg?react'
+import DropZone from '@renderer/components/DropZone'
+import { TEMPLATE_CONFIG_FILENAME } from '@shared/CONSTANTS'
+import { loadTemplate } from '@renderer/utils/bootSequence'
 
 const FileManager = (): React.JSX.Element => {
     const [list, setlist] = useState<object | null>(null)
@@ -28,13 +32,48 @@ const FileManager = (): React.JSX.Element => {
     }, [])
 
     const deleteElement = async (path: string): Promise<void> => {
-        console.log('[DELETE]', path)
+        console.log('[SIMULATE_DELETE]', path)
+    }
+
+    const uploadTemplate = async (f: File): Promise<void> => {
+        try {
+            if (f.name !== TEMPLATE_CONFIG_FILENAME) {
+                console.error('nombre de archivo malo')
+                return
+            }
+            const res = await mediaServiceController.uploadTemplateConfig(f)
+            if (!res) {
+                console.error('respondio mal el server')
+                return
+            }
+
+            console.log(res)
+            await loadTemplate()
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     return (
         <div className="screen-content">
             <div className="screen-header">
                 <h1>Administrador de Archivos</h1>
+
+                <div className="header-group">
+                    <DropZone
+                        fileHandler={uploadTemplate}
+                        configuration={{ allowedExtensions: ['.json'] }}
+                    >
+                        <div className="actions">
+                            <div className="action primary">
+                                <a>
+                                    <UploadSvg />
+                                    Subir Template
+                                </a>
+                            </div>
+                        </div>
+                    </DropZone>
+                </div>
             </div>
 
             {list && (

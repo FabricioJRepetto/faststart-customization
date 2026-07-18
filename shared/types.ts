@@ -19,15 +19,11 @@ export interface IpcResponseFileData {
     customMimeType: string
 }
 
-export enum DistributionMethod {
-    LOCAL = 'LOCAL',
-    REMOTE = 'REMOTE'
-}
-
 export enum Screens {
     landing = 'landing',
     main = 'main',
-    template = 'template',
+    architect = 'architect',
+    test = 'test',
     fileManager = 'fileManager',
     preview = 'preview',
     styles = 'styles',
@@ -284,7 +280,7 @@ export interface StylesData {
     idle: {
         primaryColor: string | undefined
         secondaryColor: string | undefined
-    } 
+    }
     userAction: {
         primaryColor: string | undefined
         secondaryColor: string | undefined
@@ -454,12 +450,93 @@ export interface RawDBUploadFileRes {
 }
 
 //_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_ WebSocket
-type WSClientType = 'terminal' | 'admin'
-export type WSClientsList = { id: string; name: string; type: WSClientType; ip: string }[]
 
-// TODO Sumar tipos de mensaje
-type WSMessageType = 'update_connections'
-// TODO Sumar tipos de data
-type WSMessageData = WSClientsList
+export enum WSClientStatus {
+    IDLE,
+    OPERATING,
+    RUNNING_TASK,
+    SUPERVISOR,
+    OOS,
+    MANDATORY_OOS,
+    OFFLINE
+}
 
-export type WSMessage = { type: WSMessageType; data: WSMessageData }
+//* <-- Incoming Message
+// Type
+export enum WSIncomingMessageType {
+    login_confirmation = 'login_confirmation',
+    update_connections = 'update_connections',
+    run_task = 'run_task'
+}
+
+// Login Confirm
+export interface WSLoginConfim {
+    id: string
+}
+
+// Update Connections
+export interface WSConnectedClient {
+    id: string
+    name: string
+    type: WSClientType
+    ip: string
+    status: WSClientStatus
+    lastUpdate: string
+}
+
+// Run Task
+export interface WSRunTask {
+    task: TASK
+}
+
+// Payload
+export type WSIncomingMessagePayload =
+    | {
+          type: WSIncomingMessageType.login_confirmation
+          data: { loginID: string }
+      }
+    | {
+          type: WSIncomingMessageType.update_connections
+          data: WSConnectedClient[]
+      }
+    | {
+          type: WSIncomingMessageType.run_task
+          data: { task: TASK; instruction?: unknown }
+      }
+
+//___________________________________
+
+//? Send Message -->
+// Type
+export enum WSMessageType {
+    login = 'login',
+    fire_task = 'fire_task',
+    update_status = 'update_status'
+}
+
+// Login
+export type WSClientType = 'terminal' | 'admin'
+interface WSClientData {
+    name: string
+    type: WSClientType
+}
+
+// Fire Task
+export enum TASK {
+    SYNC_THEME = 'SYNC_THEME',
+    SYNC_ADS = 'SYNC_ADS',
+    OOS = 'OOS',
+    ALERT = 'ALERT',
+    REBOOT = 'REBOOT'
+}
+interface WSTaskData {
+    task: TASK
+    terminals?: string[]
+    instruction?: unknown
+}
+
+// Payload
+export type WSMessagePayload =
+    | { type: WSMessageType.login; data: WSClientData }
+    | { type: WSMessageType.fire_task; data: WSTaskData }
+    | { type: WSMessageType.update_status; data: { status: WSClientStatus } }

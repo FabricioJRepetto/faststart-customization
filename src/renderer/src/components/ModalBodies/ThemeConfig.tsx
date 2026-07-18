@@ -6,7 +6,7 @@ import ShieldSvg from '../../assets/shield.svg?react'
 import StarSvg from '../../assets/star.svg?react'
 import ToolSvg from '../../assets/tool.svg?react'
 import BlockSvg from '../../assets/block.svg?react'
-import OptionsSvg from '../../assets/gears.svg?react'
+import OptionsSvg from '../../assets/options.svg?react'
 import AsyncOption from './theme-config-components/AsyncOption'
 import mediaServiceController from '@renderer/utils/controllers/mediaServer/mediaServiceController'
 import Modal from '../Modal'
@@ -24,7 +24,7 @@ interface Props {
     closeModal: () => void
 }
 
-const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
+const ThemeModalSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
     const originalTheme = themeData.themeName === DEFAULT_THEME
     const terminals = useAtomValue(TerminalsStatusAtom)
 
@@ -214,10 +214,14 @@ const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
 
             <div className="theme-config-modal-terminals">
                 <h3>Terminales</h3>
+                    
+                <div className='scrollable'>
                 {terminals?.length ? (
                     terminals.map((t) => (
-                        <div key={t.id}>
+                        <div key={t.id} className='terminal-container'>
                             <p>{t.name}</p>
+                            <code>{t.ip}</code>
+                            <p>[Tema asignado]</p>
                             <label onClick={() => console.log(t.id)}>
                                 <OptionsSvg />
                             </label>
@@ -226,6 +230,7 @@ const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
                 ) : (
                     <p style={{ color: '#bebebe41' }}>Sin terminales registradas</p>
                 )}
+                </div>
             </div>
 
             <div className="actions">
@@ -272,4 +277,4 @@ const ThemeSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
     )
 }
 
-export default ThemeSettings
+export default ThemeModalSettings

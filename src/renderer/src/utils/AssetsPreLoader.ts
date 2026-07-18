@@ -107,7 +107,6 @@ export const preloadAssets = async (
             assetsQuantity += assets.length
 
             await Promise.all(assets.map(({ type, url }) => loaders[type as AssetType](url)))
-
         } else {
             //: BLOB URL CACHE
             console.log(' - Generating blobs for icons')
@@ -170,11 +169,11 @@ export const clearMediaCache = (): void => {
     const config = store.get(DefaultConfigAtom)!
     const themes = store.get(ThemesLibraryDataAtom)!
     const aux = [
-        ...config.icon,
-        ...config.background,
-        ...config.thirdscreen.assets,
-        ...config.audio,
-        ...themes.map((t) => t.background)
+        ...(config?.icon || []),
+        ...(config?.background || []),
+        ...(config?.thirdscreen.assets || []),
+        ...(config?.audio || []),
+        ...themes.map((t) => t.background || null).filter(e => e)
     ]
     aux.forEach(({ blobUrl }) => {
         if (blobUrl) URL.revokeObjectURL(blobUrl)

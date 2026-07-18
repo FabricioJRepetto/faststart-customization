@@ -1,5 +1,5 @@
 import Modal from '@renderer/components/Modal'
-import ThemeSettings from '@renderer/components/ModalBodies/ThemeConfig'
+import ThemeModalSettings from '@renderer/components/ModalBodies/ThemeConfig'
 import ThemeCard from '@renderer/components/AssetsCards/ThemeCard'
 import Tooltip from '@renderer/components/Tooltip'
 import { loadThemesCollection } from '@renderer/utils/bootSequence'
@@ -75,7 +75,6 @@ const Collections = (): React.JSX.Element => {
                             key={i}
                             theme={t}
                             isDefault={t.isDefaultTheme}
-                            applyCb={() => null}
                             deleteCb={(v: string) => !loading && openDeleteModal(v)}
                             openSettings={(v: string) =>
                                 !loading && setSettingsModal({ themeName: v })
@@ -119,7 +118,7 @@ const Collections = (): React.JSX.Element => {
                     confirm={() => setSettingsModal(false)}
                     close={() => setSettingsModal(false)}
                 >
-                    <ThemeSettings
+                    <ThemeModalSettings
                         themeData={
                             collection!.find((t) => t.themeName === settingsModal.themeName)!
                         }

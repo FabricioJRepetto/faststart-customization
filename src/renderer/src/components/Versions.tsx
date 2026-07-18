@@ -1,10 +1,10 @@
 import pckg from '../../../../package.json'
-import { ServerStatusAtom, WebSocketStatusAtom } from '@renderer/utils/context/context'
-import {  useAtomValue } from 'jotai'
+import { ServerStatusAtom, store, WebSocketStatusAtom } from '@renderer/utils/context/context'
+import { useAtomValue } from 'jotai'
 
 function Versions(): React.JSX.Element {
-    const server = useAtomValue(ServerStatusAtom)
-    const websocket = useAtomValue(WebSocketStatusAtom)
+    const server = useAtomValue(ServerStatusAtom, { store })
+    const ws = useAtomValue(WebSocketStatusAtom, {store})
 
     return (
         <ul className="versions">
@@ -20,7 +20,7 @@ function Versions(): React.JSX.Element {
                 WebSocket
                 <span
                     className={
-                        websocket == undefined ? 'getting-status' : websocket ? 'green-status' : 'red-status'
+                        ws == undefined ? 'getting-status' : ws ? 'green-status' : 'red-status'
                     }
                 ></span>
             </li>

@@ -34,12 +34,10 @@ const Tooltip = ({ text, children }: Props): React.JSX.Element => {
                 left = window.innerWidth - tooltipRect.width - 8
             }
 
-            // Se sale por la izquierda
             if (left < 0) {
                 left = 8
             }
 
-            // Se sale por arriba -> lo mando abajo del trigger
             if (top < 0) {
                 top = triggerRect.bottom + 8
             }
@@ -62,7 +60,6 @@ const Tooltip = ({ text, children }: Props): React.JSX.Element => {
                     ref={tooltipRef}
                     className={`tooltip-text fade-in`}
                     style={{
-                        position: 'fixed',
                         top: position.top,
                         left: position.left
                     }}

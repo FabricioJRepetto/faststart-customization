@@ -11,10 +11,9 @@ import {
     ThemeConfig,
     ThirdScreenConfig,
     DefaultThirdConfigData,
-    DistributionMethod,
     UPLOAD_STAGE,
     TemplateConfig,
-    WSClientsList
+    WSConnectedClient
 } from '@shared/types'
 
 export const store = createStore()
@@ -22,9 +21,6 @@ export const store = createStore()
 export const FirstLoadAtom = atom<boolean>(true)
 /** Pantalla actual a renderizar */
 export const CurrentScreenAtom = atom<Screens>(Screens.landing)
-
-/** Forma de distribuir los assets, puede ser local (moviendo los archivos al directorio de cada app) o subiendolos a un servidor. */
-export const DistributionMethodAtom = atom<DistributionMethod>()
 
 /** Directorio base de la aplicación. @example 'C:\ncr-cc' */
 export const RootDirectoryAtom = atom<string>('C:\\ncr-cc')
@@ -111,5 +107,5 @@ export const svgCache = atom<svgCacheElement>({})
 
 /** Estado de conexión al WebSocket */
 export const WebSocketStatusAtom = atom<boolean | undefined>(undefined)
-/** Lista de estado de Terminales (FastStart - cliente) */
-export const TerminalsStatusAtom = atom<WSClientsList>([])
+/** Lista de estado de Terminales (FastStart - cliente) conectadas */
+export const TerminalsStatusAtom = atom<WSConnectedClient[]>([])

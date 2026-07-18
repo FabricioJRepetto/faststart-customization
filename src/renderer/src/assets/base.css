@@ -23,8 +23,12 @@
     --ev-c-red-3: #4b000c;
 
     --ev-c-orange-1: #dd7b1e;
-    --ev-c-orange-2: #a55e1c;
-    --ev-c-orange-3: #834c18;
+    --ev-c-orange-2: #c25e00;
+    --ev-c-orange-3: #964800;
+
+    --ev-c-blue-1: #1ec7dd;
+    --ev-c-blue-2: #049baf;
+    --ev-c-blue-3: #007281;
 
     --ev-c-text-1: rgba(255, 255, 245, 0.86);
     --ev-c-text-2: rgba(235, 235, 245, 0.6);

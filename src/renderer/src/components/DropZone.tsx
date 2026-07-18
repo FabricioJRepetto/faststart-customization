@@ -1,7 +1,4 @@
-import { DistributionMethodAtom } from '@renderer/utils/context/context'
 import { extractFilesFromDataTransfer, hasAllowedExtension } from '@renderer/utils/filesManager'
-import { DistributionMethod } from '@shared/types'
-import { useAtomValue } from 'jotai'
 import { DragEvent, ReactNode, useState } from 'react'
 
 type HandlerArgs = File | File[]
@@ -23,8 +20,6 @@ const DropZone = ({
     const { allowMultiple, allowedExtensions } = configuration
     const [isDraggingOver, setIsDraggingOver] = useState(false)
     const [hasError, setHasError] = useState(false)
-
-    const isRemote = useAtomValue(DistributionMethodAtom) === DistributionMethod.REMOTE
 
     const handleDrop = async (
         event: DragEvent<HTMLInputElement>
@@ -76,7 +71,7 @@ const DropZone = ({
         setHasError(false)
     }
 
-    return isRemote ? (
+    return (
         <div
             onDrop={handleDrop}
             onDragOver={handleDragOver}
@@ -85,8 +80,6 @@ const DropZone = ({
         >
             {children}
         </div>
-    ) : (
-        <>{children}</>
     )
 }
 

@@ -3,7 +3,13 @@ import {
     DEFAULT_CONFIG_FILENAME,
     TEMPLATE_CONFIG_FILENAME
 } from '@shared/CONSTANTS'
-import { AssetData, AssetType, FinalAssetData, TemplateConfig } from '@shared/types'
+import {
+    AssetData,
+    AssetType,
+    FinalAssetData,
+    TemplateConfig,
+    TemplateRawConfig
+} from '@shared/types'
 import {
     AssetsDataAtom,
     CustomEnabledAtom,
@@ -40,16 +46,7 @@ export const loadTemplate = async (): Promise<void> => {
                 '- Parsing and saving data'
             )
             console.log(res)
-            const aux: TemplateConfig = {
-                icon: [...parseToAssetData(res.icon, 'icon')],
-                image: [...parseToAssetData(res.image, 'image')],
-                background: [...parseToAssetData(res.background, 'background')],
-                thirdscreen: [],
-                audio: [...parseToAssetData(res.audio, 'audio')],
-                styles: objectFullStructure(res.styles),
-                language: res.language
-            }
-            store.set(TemplateConfigAtom, aux)
+            applyTemplate(res)
         } else {
             throw new Error(`Error al cargar archivo ${TEMPLATE_CONFIG_FILENAME}`)
         }
@@ -59,7 +56,20 @@ export const loadTemplate = async (): Promise<void> => {
     }
 }
 
-const loadCustomConfig = async (): Promise<void> => {
+export const applyTemplate = (data: TemplateRawConfig): void => {
+    const aux: TemplateConfig = {
+        icon: [...parseToAssetData(data.icon, 'icon')],
+        image: [...parseToAssetData(data.image, 'image')],
+        background: [...parseToAssetData(data.background, 'background')],
+        thirdscreen: [],
+        audio: [...parseToAssetData(data.audio, 'audio')],
+        styles: objectFullStructure(data.styles),
+        language: data.language
+    }
+    store.set(TemplateConfigAtom, aux)
+}
+
+export const loadCustomConfig = async (): Promise<void> => {
     try {
         console.log('-----------------------------\n', `- fetching ${DEFAULT_CONFIG_FILENAME}...\n`)
         const res = await mediaServiceController.getDefaultConfigFile()
@@ -144,31 +154,13 @@ const parseToAssetData = (
     )
 }
 
-// const parseConfigToAssetList = (config: CustomConfig): AssetList => {
-//     try {
-//         const aux: AssetList = {
-//             icon: parseToAssetData(config.icon, 'icon'),
-//             image: parseToAssetData(config.image, 'image'),
-//             background: parseToAssetData(config.background, 'background'),
-//             audio: parseToAssetData(config.audio, 'audio'),
-//             thirdscreen: parseToAssetData(config.thirdscreen.assets, 'thirdscreen'),
-//             other: []
-//         }
-
-//         return aux
-//     } catch (error) {
-//         console.error(error)
-//         throw error
-//     }
-// }
-
 export const remoteBootSequence = async (): Promise<void> => {
     try {
         //* LOAD : template_assets.json
         await loadTemplate()
         validateFiles()
         //* LOAD : customConfig.json
-        await loadCustomConfig()
+        // await loadCustomConfig()
 
         //* PRE-LOAD : Assets
         // await preloadAssets('blobUrl')
@@ -182,7 +174,7 @@ export const remoteBootSequence = async (): Promise<void> => {
     }
 }
 
-/** Valída que no falten archivos necesarios. EJECUTAR LUEGO DE loadLanguageFile, loadStylesFile Y loadCustomConfigFile*/
+/** Valída que no falten archivos necesarios. Ejecutar LUEGO de obtener el template */
 export const validateFiles = (): void => {
     const languages = !!Object.keys(store.get(DefaultLanguageDataAtom)).length
     const styles = store.get(DefaultStylesDataAtom)

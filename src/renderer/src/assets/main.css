@@ -225,7 +225,6 @@ input[type='number'] {
 
 .actions {
     display: flex;
-    /* padding-top: 32px; */
     margin: -6px;
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -853,12 +852,13 @@ input[type='number'] {
     position: relative;
     width: 80vw;
     height: 120px;
+
     display: flex;
     justify-content: start;
     gap: 10px;
 
-    overflow-y: visible;
-    overflow-x: auto;
+    overflow-y: clip;
+    overflow-x: scroll;
     &::-webkit-scrollbar {
         display: none;
     }
@@ -871,27 +871,18 @@ input[type='number'] {
         #00000000
     );
     border-image-slice: 1;
-
-    > div {
-        margin: 5px 0;
-        padding: 10px;
-        border-radius: 10px;
-        border: 1px solid #bebebe1a;
-        background-color: #bebebe13;
-        min-width: 130px;
-        width: 130px;
-
-        p:first-child {
-            font-weight: 600;
-            color: var(--ev-c-text-1);
-        }
-        p {
-            color: var(--ev-c-text-2);
-        }
-    }
 }
-.main-screen-theme-card {
+.card-row-card {
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #bebebe1a;
+    min-width: 160px;
+    width: 160px;
+
     height: 110px;
+    position: relative;
+    cursor: pointer;
 
     .logo-container {
         width: 100%;
@@ -911,13 +902,86 @@ input[type='number'] {
     img,
     svg {
         height: 50px !important;
-        max-width: 100% !important;
+        max-width: 120px;
         width: auto;
     }
+
+    p:first-child {
+        font-weight: 600;
+        color: var(--ev-c-text-1);
+    }
+    p {
+        color: var(--ev-c-text-2);
+    }
+
+    &:hover {
+        border: 1px solid #bebebe41;
+    }
+}
+.terminal-ip {
+    font-size: 12px;
+    color: var(--ev-c-text-3) !important;
+    font-weight: 100;
+}
+.terminal-small-date {
+    font-size: 12px;
+    font-weight: 100;
+    text-align: end;
+    color: var(--ev-c-text-3) !important;
+}
+.terminal-state-idle {
+    color: rgb(27, 173, 27) !important;
+}
+.terminal-state-operating {
+    color: goldenrod !important;
+}
+.terminal-state-runing-task {
+    background: -webkit-linear-gradient(
+        35deg,
+        var(--ev-c-orange-3),
+        var(--ev-c-orange-2) 40%,
+        var(--ev-c-orange-1) 50%,
+        var(--ev-c-orange-2) 55%,
+        var(--ev-c-orange-3)
+    );
+    background-size: 2000px;
+    background-position: 0px;
+    background-repeat: repeat;
+    animation: movingBg linear infinite;
+    animation-duration: 1.5s;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.terminal-state-supervisor {
+    background: -webkit-linear-gradient(
+        35deg,
+        var(--ev-c-blue-3),
+        var(--ev-c-blue-2) 40%,
+        var(--ev-c-blue-1) 50%,
+        var(--ev-c-blue-2) 55%,
+        var(--ev-c-blue-3)
+    );
+    background-size: 2000px;
+    background-position: 0px;
+    background-repeat: repeat;
+    animation: movingBg linear infinite;
+    animation-duration: 1.5s;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.terminal-state-oos {
+    color: rgb(204, 58, 0) !important;
+}
+.terminal-state-mandatory-oos {
+    color: rgb(204, 58, 0) !important;
+}
+.terminal-state-offline {
+    color: rgb(0, 0, 0) !important;
 }
 .shortcuts-container {
     width: 80vw;
-    /* height: 40%; */
     margin-top: auto;
 
     gap: 15px;
@@ -1114,10 +1178,10 @@ input[type='number'] {
 .assets-container {
     padding: 15px;
     border-radius: 15px;
-    backdrop-filter: blur(15px);
+    position: relative;
 
-    --bg-gradient-color: var(--ev-c-item-asset);
     border: 1px solid #bebebe1a;
+    --bg-gradient-color: var(--ev-c-item-asset);
     background: -webkit-linear-gradient(
         90deg,
         var(--bg-gradient-color),
@@ -1127,6 +1191,16 @@ input[type='number'] {
     transition:
         --bg-gradient-color 0.5s ease,
         border-color 0.5s ease;
+}
+.assets-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(5px);
+    z-index: -1;
 }
 
 .asset-card-has-custom {
@@ -1984,14 +2058,11 @@ input[type='number'] {
 }
 
 .tooltip {
-    position: relative;
     height: fit-content;
     width: fit-content;
 
     .tooltip-text {
-        position: absolute;
-        top: 50%;
-        left: 100%;
+        position: fixed;
         z-index: 9999;
         pointer-events: none;
 
@@ -2063,7 +2134,7 @@ input[type='number'] {
 }
 
 .theme-config-modal-options {
-    height: 120px;
+    height: fit-content;
     border-radius: 15px;
     padding: 5px;
     border: 1px solid #9c9c9c13;
@@ -2071,7 +2142,7 @@ input[type='number'] {
 
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: 1fr, 1fr, 1fr;
     align-items: center;
     gap: 10px;
 }
@@ -2118,27 +2189,35 @@ input[type='number'] {
 .theme-config-modal-terminals {
     height: 240px;
     border-radius: 15px;
-    padding: 5px;
+    padding: 15px 20px;
     border: 1px solid #9c9c9c13;
     background-color: #1a1a1a28;
 
-    div {
+    h3 {
+        margin-bottom: 15px;
+    }
+
+    .terminal-container {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+        align-items: center;
+
+        border: 1px solid #9c9c9c13;
+        background-color: #bebebe13;
+        padding: 5px 20px;
+        border-radius: 10px;
+
+        code {
+            color: var(--ev-c-text-3);
+        }
 
         svg {
-            opacity: 0;
+            margin-bottom: -7px;
             color: var(--ev-c-text-3);
             cursor: pointer;
             &:hover {
                 color: var(--ev-c-text-1);
-            }
-        }
-
-        &:hover {
-            svg {
-                opacity: 1;
             }
         }
     }
@@ -2278,4 +2357,74 @@ input[type='number'] {
             opacity: 1;
         }
     }
+}
+
+.terminal-modal-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 500px;
+}
+
+.terminal-options {
+    width: 100%;
+    border-radius: 7px;
+    outline: 1px solid #bebebe1c;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    p {
+        color: var(--ev-c-text-2);
+        cursor: pointer;
+
+        &:hover {
+            color: var(--ev-c-text-1);
+        }
+    }
+}
+
+/** FLOW ENGINE */
+.architect-screen-content {
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--color-background);
+}
+.architect-blueprint-header {
+    padding: 5px 0 0 20px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    width: 100%;
+
+    .header-icon {
+        height: 40px;
+        width: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        svg {
+            color: var(--ev-c-green-1);
+            height: 100%;
+            width: auto;
+            margin-top: -5px;
+            cursor: pointer;
+
+            &:hover {
+                color: var(--ev-c-green-0);
+            }
+        }
+    }
+}
+.architect-blueprint-container {
+    outline: 1px solid #bebebe41;
+    background-color: var(--color-background-soft);
+    box-shadow: inset 0 0 20px #0000005d;
+
+    border-radius: 5px;
+    margin: 5px;
+    width: calc(100% - 10px);
+    height: calc(100% - 60px);
 }

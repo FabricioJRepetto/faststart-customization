@@ -1,24 +1,24 @@
-import { useAtom, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import Versions from '../components/Versions'
 import NATL from '../assets/NATL-logo.svg?react'
 import {
     CurrentScreenAtom,
-    DistributionMethodAtom,
     ServerStatusAtom
 } from '@renderer/utils/context/context'
-import { DistributionMethod, Screens } from '@shared/types'
-import { BACKEND_BASE_URL } from '../../../../shared/CONSTANTS'
+import { Screens } from '@shared/types'
+import { BACKEND_BASE_URL, WS_BASE_URL } from '../../../../shared/CONSTANTS'
 import SpinnerSvg from '../assets/spinner.svg?react'
 import { remoteBootSequence } from '@renderer/utils/bootSequence'
 import RemoteSvg from '../assets/wifi.svg?react'
 import { delay } from '@renderer/utils/delays'
+import WSService from '@renderer/utils/controllers/WebSocketService/WebSocketServiceController'
 
 const Landing = (): React.JSX.Element => {
     const setScreen = useSetAtom(CurrentScreenAtom)
     const [serverStatus, setStatus] = useAtom(ServerStatusAtom)
+    const WsStatus = useAtomValue(ServerStatusAtom)
 
-    const [method, setMethod] = useAtom(DistributionMethodAtom)
     const [fadeout, setFadeout] = useState(false)
 
     const [loading, setLoading] = useState(false)
@@ -27,7 +27,11 @@ const Landing = (): React.JSX.Element => {
         const retries = r
         setStatus(undefined)
 
-        const res = await fetch(BACKEND_BASE_URL, { method: 'HEAD', mode: 'no-cors', cache: 'no-cache' })
+        const res = await fetch(BACKEND_BASE_URL+ '/ping', {
+            method: 'HEAD',
+            mode: 'no-cors',
+            cache: 'no-cache'
+        })
             .then(() => true)
             .catch(() => false)
 
@@ -50,14 +54,18 @@ const Landing = (): React.JSX.Element => {
 
     useEffect(() => {
         ping(5)
+        WSService.init(WS_BASE_URL, 'ƒAB')
+        // eslint-disable-next-line
     }, [])
 
     const remoteStartUp = async (): Promise<void> => {
         setLoading(true)
 
+        if (!WsStatus) WSService.init(WS_BASE_URL, 'ƒAB')
+
         if (serverStatus === false) {
-            await ping()
-            return
+            const res = await ping()
+            if (!res) return
         }
 
         const start = performance.now()
@@ -67,7 +75,6 @@ const Landing = (): React.JSX.Element => {
             setFadeout(true)
             await delay(500)
             setScreen(Screens.main)
-            setMethod(DistributionMethod.REMOTE)
         } catch (error) {
             console.error(error)
         } finally {
@@ -92,26 +99,24 @@ const Landing = (): React.JSX.Element => {
                 </div>
             </div>
 
-            {!method && (
-                <div className={`${loading ? 'fade-out' : ''}`}>
-                    <div className="actions landing-buttons">
-                        <div
-                            className={serverStatus ? 'action primary waiter' : 'action waiter'}
-                            style={{
-                                pointerEvents: serverStatus !== undefined ? 'all' : 'none',
-                                opacity: serverStatus !== undefined ? '1' : '0.5'
-                            }}
-                        >
-                            <a target="_blank" rel="noreferrer" onClick={remoteStartUp}>
-                                {loading && <SpinnerSvg className="spinner" />}
-                                <span style={{ opacity: loading ? '0' : 'unset' }}>
-                                    <RemoteSvg /> Conectar
-                                </span>
-                            </a>
-                        </div>
+            <div className={`${loading ? 'fade-out' : ''}`}>
+                <div className="actions landing-buttons">
+                    <div
+                        className={serverStatus ? 'action primary waiter' : 'action waiter'}
+                        style={{
+                            pointerEvents: serverStatus !== undefined ? 'all' : 'none',
+                            opacity: serverStatus !== undefined ? '1' : '0.5'
+                        }}
+                    >
+                        <a target="_blank" rel="noreferrer" onClick={remoteStartUp}>
+                            {loading && <SpinnerSvg className="spinner" />}
+                            <span style={{ opacity: loading ? '0' : 'unset' }}>
+                                <RemoteSvg /> Conectar
+                            </span>
+                        </a>
                     </div>
                 </div>
-            )}
+            </div>
 
             <Versions></Versions>
         </div>

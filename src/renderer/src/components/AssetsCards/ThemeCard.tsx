@@ -1,5 +1,4 @@
-import { DistributionMethod, ThemeConfig } from '@shared/types'
-import ApplySvg from '../../assets/apply.svg?react'
+import { ThemeConfig } from '@shared/types'
 import DeleteSvg from '../../assets/trash.svg?react'
 import ShieldSvg from '../../assets/shield.svg?react'
 import StarSvg from '../../assets/star.svg?react'
@@ -8,27 +7,22 @@ import SettingsSvg from '../../assets/settings.svg?react'
 import { DEFAULT_THEME } from '@shared/CONSTANTS'
 import { useEffect, useState } from 'react'
 import DynamicSvg from '../DynSvg'
-import { useAtomValue } from 'jotai'
-import { DistributionMethodAtom } from '@renderer/utils/context/context'
 import Tooltip from '../Tooltip'
 
 interface Props {
     theme: ThemeConfig
     isDefault: boolean
-    applyCb: (v: string) => void
     deleteCb: (v: string) => void
     openSettings: (v: string) => void
 }
 const ThemeCard = ({
     theme,
     isDefault,
-    applyCb,
     deleteCb,
     openSettings
 }: Props): React.JSX.Element => {
     const originalTheme = theme.themeName === DEFAULT_THEME
     const [COLOR, setCOLOR] = useState('white')
-    const isRemote = useAtomValue(DistributionMethodAtom) === DistributionMethod.REMOTE
 
     useEffect(() => {
         ;(async () => {
@@ -72,18 +66,11 @@ const ThemeCard = ({
                 </div>
             </span>
             <div className="theme-card" style={{ color: COLOR }}>
-                <img
-                    src={isRemote ? theme.background.blobUrl : theme.background.base64}
-                    className="theme-card-background"
-                />
+                <img src={theme.background.blobUrl} className="theme-card-background" />
                 <div className="theme-card-logo">
                     {theme.logo.mime.match('svg') ? (
                         <DynamicSvg
-                            config={
-                                isRemote
-                                    ? { assetName: `${theme.themeName}_${theme.logo.name}` }
-                                    : { path: theme.logo.base64 }
-                            }
+                            config={{ assetName: `${theme.themeName}_${theme.logo.name}` }}
                         />
                     ) : (
                         <img src={theme.logo.base64} />
@@ -91,18 +78,10 @@ const ThemeCard = ({
                 </div>
             </div>
             <div className="theme-card-footer">
-                {isRemote ? (
-                    <span
-                        className="button apply-button"
-                        onClick={() => openSettings(theme.themeName)}
-                    >
-                        <SettingsSvg />
-                    </span>
-                ) : (
-                    <span className="button apply-button" onClick={() => applyCb(theme.themeName)}>
-                        <ApplySvg />
-                    </span>
-                )}
+                <span className="button apply-button" onClick={() => openSettings(theme.themeName)}>
+                    <SettingsSvg />
+                </span>
+
                 {!originalTheme && (
                     <span className="button delete-buton" onClick={() => deleteCb(theme.themeName)}>
                         <DeleteSvg />

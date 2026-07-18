@@ -42,6 +42,18 @@ export const ColorStyleCard = ({
     const hasCustom = customStyles?.[parentName]?.[keyName]
     const colorRef = useRef<HTMLInputElement>(null)
 
+    const syncValue = (): void => {
+        const value = customStyles?.[parentName]?.[keyName]
+        if (value && colorRef.current) {
+            colorRef.current.value = customStyles?.[parentName]?.[keyName]
+        }
+    }
+
+    useEffect(() => {
+        syncValue()
+        // eslint-disable-next-line
+    }, [])
+
     return (
         <div
             className={`assets-container color-asset-container ${hasCustom ? 'asset-card-has-custom' : 'asset-card-initial'}`}
@@ -72,7 +84,7 @@ export const ColorStyleCard = ({
                 <input
                     type="text"
                     placeholder="Sin indicar"
-                    value={customStyles?.[parentName]?.[keyName] || ''}
+                    value={customStyles?.[parentName]?.[keyName] || undefined}
                     onChange={(e) => update(keyName, parentName, e.target.value)}
                 ></input>
                 <label
@@ -129,9 +141,7 @@ export const BorderStyleCard = ({
                     </Tooltip>
                 )}
             </div>
-            <p className="tag">
-                Mostrar borde (Inicial: {value?.border ? 'si' : 'no'})
-            </p>
+            <p className="tag">Mostrar borde (Inicial: {value?.border ? 'si' : 'no'})</p>
             <div
                 className="original-color-sample input-wrapper"
                 onClick={() =>

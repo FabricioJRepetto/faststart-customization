@@ -1,20 +1,14 @@
-import {
-    DefaultStylesData,
-    DefaultThirdConfigData,
-    DistributionMethod,
-    Screens,
-    UPLOAD_STAGE
-} from '@shared/types'
+import { DefaultStylesData, DefaultThirdConfigData, Screens, UPLOAD_STAGE } from '@shared/types'
 import {
     ClientAppVersionDirAtom,
     CurrentScreenAtom,
     DefaultConfigAtom,
     DefaultLanguageDataAtom,
     DefaultStylesDataAtom,
-    DistributionMethodAtom,
     EditedAudiosDataAtom,
     EditedBackgroundsDataAtom,
     EditedIconsDataAtom,
+    EditedImagesDataAtom,
     EditedLanguageDataAtom,
     EditedStylesDataAtom,
     EditedThirdScreenAssetsDataAtom,
@@ -36,17 +30,16 @@ import {
     WebSocketStatusAtom
 } from './context/context'
 import { clearMediaCache } from './AssetsPreLoader'
+import WSService from './controllers/WebSocketService/WebSocketServiceController'
 
 /** Resetea todos los valores del contexto */
 export const reset = (): void => {
     //_ App
     store.set(FirstLoadAtom, true)
-    store.set(DistributionMethodAtom, undefined)
     store.set(PreviewScreenIndexAtom, 0)
     store.set(svgCache, {})
 
-    const isRemote = store.get(DistributionMethodAtom) === DistributionMethod.REMOTE
-    if (isRemote) clearMediaCache()
+    clearMediaCache()
 
     //_ Data
     store.set(TemplateConfigAtom, undefined)
@@ -61,6 +54,7 @@ export const reset = (): void => {
 
     store.set(EditedBackgroundsDataAtom, undefined)
     store.set(EditedIconsDataAtom, undefined)
+    store.set(EditedImagesDataAtom, undefined)
     store.set(EditedAudiosDataAtom, undefined)
 
     store.set(EditedThirdScreenAssetsDataAtom, undefined)
@@ -73,7 +67,7 @@ export const reset = (): void => {
     store.set(ThirdAppVersionDirAtom, '')
 
     //_ Remoto
-    //TODO Cerrar conexión al WS
+    WSService.close()
     store.set(WebSocketStatusAtom, undefined)
     store.set(UploadProgressAtom, { ok: 0, failed: 0, total: 0, currentFile: '' })
     store.set(UploadStageAtom, UPLOAD_STAGE.NAME)
@@ -99,10 +93,28 @@ export const softReset = (): void => {
 
     store.set(EditedBackgroundsDataAtom, undefined)
     store.set(EditedIconsDataAtom, undefined)
+    store.set(EditedImagesDataAtom, undefined)
     store.set(EditedAudiosDataAtom, undefined)
 
     store.set(EditedThirdScreenAssetsDataAtom, undefined)
     store.set(EditedThirdScreenConfigDataAtom, DefaultThirdConfigData)
 
     store.set(TerminalsStatusAtom, [])
+}
+
+/** Limpia media cache y Resetea Data: DefaultConfig, Language (Og+Edit), Styles (Og+Edit), Backgrounds, Icons, Audios, Third (Config+Assets) */
+export const resetEditions = (): void => {
+    clearMediaCache()
+
+    store.set(DefaultConfigAtom, undefined)
+
+    const config = store.get(TemplateConfigAtom)!
+
+    store.set(EditedIconsDataAtom, [...config.icon])
+    store.set(EditedImagesDataAtom, [...config.image])
+    store.set(EditedBackgroundsDataAtom, [...config.background])
+    store.set(EditedAudiosDataAtom, [...config.audio])
+    store.set(EditedThirdScreenAssetsDataAtom, [])
+
+    store.set(EditedThirdScreenConfigDataAtom, DefaultThirdConfigData)
 }

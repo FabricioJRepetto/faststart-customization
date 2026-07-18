@@ -7,7 +7,7 @@ import Tooltip from './Tooltip'
 
 const SidebarMenu = (): React.JSX.Element => {
     const [screen, setScreen] = useAtom(CurrentScreenAtom)
-    const renderSidebar = screen !== Screens.landing
+    const renderSidebar = screen !== Screens.landing && screen !== Screens.architect
     const firstLoad = useAtomValue(FirstLoadAtom)
 
     return renderSidebar ? (
