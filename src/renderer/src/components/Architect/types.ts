@@ -72,7 +72,7 @@ export interface NodeData {
     screenType: ScreenType
     flow?: string
     timeout: boolean
-    /** Variablles que necesita del storage */
+    /** Variables que necesita del storage */
     storage: string[]
     actions: NodeAction[]
 

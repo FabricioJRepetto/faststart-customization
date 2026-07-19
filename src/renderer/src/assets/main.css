@@ -2482,10 +2482,54 @@ input[type='number'] {
     background-color: var(--color-background);
     padding: 10px 20px;
 }
+.properties-menu-header {
+    display: flex;
+    justify-content: space-between;
+
+    .properties-menu-header-button {
+        cursor: pointer;
+        svg {
+            margin-top: 3px;
+        }
+    }
+}
 
 .properties-menu-content {
-    height: 90%;
-    overflow: auto;
+    height: 93%;
+    overflow-y: scroll;
+    overflow-x: clip;
+    /* border: 1px solid #bebebe13; */
+    /* border-radius: 7px; */
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.properties-menu-section {
+    height: 20px;
+    overflow: clip;
+}
+.section-open {
+    height: fit-content;
+}
+
+.action-container {
+    > p {
+        border-bottom: 1px solid var(--ev-c-green-1);
+        margin-top: 10px;
+        color: var(--ev-c-text-1);
+        text-transform: capitalize;
+    }
+
+    > div {
+        border-top: 1px solid #bebebe13;
+        padding-left: 15px;
+        color: var(--ev-c-text-2);
+        text-overflow: clip;
+        white-space: nowrap;
+        font-size: 12px;
+    }
 }
 
 /*_______ Nodes _______*/
@@ -2494,7 +2538,7 @@ input[type='number'] {
     position: absolute;
     background: #1e1e1e;
     outline: 2px solid #333;
-    border-radius:  0px 10px 10px 10px;
+    border-radius: 0px 10px 10px 10px;
     cursor: grab;
     user-select: none;
     touch-action: none;
@@ -2519,7 +2563,7 @@ input[type='number'] {
     justify-content: start;
     align-items: center;
     padding: 6px 20px;
-    border-top: 2px solid  #333;
+    border-top: 2px solid #333;
 }
 
 .flow-node-handle-base {
