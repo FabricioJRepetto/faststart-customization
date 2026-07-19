@@ -26,8 +26,8 @@ export function useNodeDrag(
         e.stopPropagation()
         drag.current = {
             id: node.id,
-            startNodeX: node.x,
-            startNodeY: node.y,
+            startNodeX: node.flowConfig.x,
+            startNodeY: node.flowConfig.y,
             startPointerX: e.clientX,
             startPointerY: e.clientY
         }

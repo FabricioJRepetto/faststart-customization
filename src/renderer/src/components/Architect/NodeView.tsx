@@ -1,5 +1,4 @@
-import type { FlowNode } from './types'
-import { getNodeHandles } from './Geometry'
+import type { ActionType, FlowNode } from './types'
 import OptionsSvg from '../../assets/options.svg?react'
 
 interface Props {
@@ -16,13 +15,14 @@ interface Props {
     ) => void
     onHandlePointerMove: (e: React.PointerEvent<HTMLDivElement>) => void
     onHandlePointerUp: (e: React.PointerEvent<HTMLDivElement>) => void
-    onNodeOptionsPointerDown: (e: React.MouseEvent<HTMLDivElement>, node: FlowNode) => void
+    openNodeOptions: (node: FlowNode) => void
 }
 
 // Reparte N handles equiespaciados verticalmente (mismo cálculo que
 // getHandlePosition en geometry.ts, tienen que coincidir siempre)
-function offsetForIndex(index: number, total: number): string {
-    return `${((index + 1) / (total + 1)) * 100}%`
+function offsetForIndex(index: number): string {
+    // return `${((index + 1) / (total + 1)) * 100}%`
+    return `${((index * 32) + (16))}px`
 }
 
 export function NodeView({
@@ -33,10 +33,30 @@ export function NodeView({
     onHandlePointerDown,
     onHandlePointerMove,
     onHandlePointerUp,
-    onNodeOptionsPointerDown
+    openNodeOptions
 }: Props): React.JSX.Element {
-    const entradas = getNodeHandles(node, 'entrada')
-    const salidas = getNodeHandles(node, 'salida')
+    // const entradas = getNodeHandles(node, 'entrada')
+    // const salidas = getNodeHandles(node, 'salida')
+
+    const actionColor = (v: ActionType): string => {
+        switch (v) {
+            case 'service':
+                return '#6262e5'
+            case 'terminal':
+                return '#53b653'
+            case 'userInput':
+                return '#c07a1f'
+            case 'timeout':
+                // return '#1e1e1e'
+                return '#999'
+        }
+    }
+
+    const nodeHeight = (): number => { 
+        // const handles = node.data.actions.reduce((pre,cur) => (pre + cur.reactions.length), 0)
+        const height = node.flowConfig.height + (node.flowConfig.salidas?.length ?? 1) * 32
+        return Math.max(64, height)
+     }
 
     return (
         <div
@@ -45,59 +65,68 @@ export function NodeView({
             onPointerUp={onNodePointerUp}
             className="flow-node-container"
             style={{
-                left: node.x,
-                top: node.y,
-                width: node.width,
-                height: node.height
+                left: node.flowConfig.x,
+                top: node.flowConfig.y,
+                width: node.flowConfig.width,
+                height: nodeHeight()
             }}
         >
             <div
+                className="flow-node-header"
                 style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    padding: '6px 10px',
-                    background: node.color ?? '#2a2a2a',
-                    borderRadius: '8px 8px 0 0',
-                    fontSize: 12,
-                    fontWeight: 600,
-                    color: '#fff'
+                    background: node.flowConfig.color ?? '#2a2a2a'
                 }}
             >
-                {node.titulo}
+                <p>{node.flowConfig.titulo}</p>
+                {node.data.flow && <p>- {node.data.flow}</p>}
             </div>
 
             {/* Handles de entrada: necesitan los data-attributes para que useConnection los detecte al soltar */}
-            {entradas.map((h) => (
-                <div
-                    key={h.id}
-                    data-flow-handle="target"
-                    data-node-id={node.id}
-                    data-handle-id={h.id}
-                    className="flow-node-handle-base flow-node-handle-in"
-                />
-            ))}
+            {/* {entradas.map(() => (
+            ))} */}
+            <div
+                key={'in'}
+                data-flow-handle="target"
+                data-node-id={node.id}
+                data-handle-id={'in'}
+                className="flow-node-handle-base flow-node-handle-in"
+            />
 
             {/* Handles de salida: acá arranca el drag de una conexión nueva */}
-            {salidas.map((h, i) => (
+            {node.data.actions.map((action, i, array) => (
                 <div
-                    key={h.id}
-                    data-flow-handle="source"
-                    data-node-id={node.id}
-                    data-handle-id={h.id}
-                    onPointerDown={(e) => onHandlePointerDown(e, node, h.id)}
-                    onPointerMove={onHandlePointerMove}
-                    onPointerUp={onHandlePointerUp}
-                    className="flow-node-handle-base flow-node-handle-out"
+                    key={action.actionID}
+                    className="flow-node-action-container"
                     style={{
-                        top: offsetForIndex(i, salidas.length)
+                        borderRadius: i === array.length - 1 ? '0 0 10px 10px' : '0',
+                        color: actionColor(action.type),
+                        height: action.reactions.length * 32 + 'px'
                     }}
                 >
-                    {h.label && <span>{h.label}</span>}
+                    <p>{action.type}</p>
+                    {action.reactions.map((h, i) => (
+                        <div
+                            key={h.id}
+                            data-flow-handle="source"
+                            data-node-id={node.id}
+                            data-handle-id={h.id}
+                            onPointerDown={(e) => onHandlePointerDown(e, node, h.id)}
+                            onPointerMove={onHandlePointerMove}
+                            onPointerUp={onHandlePointerUp}
+                            className="flow-node-handle-base flow-node-handle-out"
+                            style={{
+                                top: offsetForIndex(i)
+                            }}
+                        >
+                            {h.label && <span>{h.label}</span>}
+                        </div>
+                    ))}
                 </div>
             ))}
 
             <div
-                onPointerDown={(e) => onNodeOptionsPointerDown(e, node)}
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={() => openNodeOptions(node)}
                 className="node-options-button"
             >
                 <OptionsSvg />

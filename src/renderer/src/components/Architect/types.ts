@@ -2,6 +2,7 @@
 // El label es opcional, útil cuando una salida representa una acción
 // concreta (ej: "Guardar", "Cancelar").
 export interface HandleDef {
+    /** ID = ID de Nodo + Type de action + actionID + ID de Reaction */
     id: string
     label?: string
 }
@@ -10,14 +11,18 @@ export interface HandleDef {
 // (pan+zoom) es lo que después las transforma a coordenadas de pantalla.
 export interface FlowNode {
     id: string
-    x: number
-    y: number
-    width: number
-    height: number
-    titulo: string
-    color?: string
-    entradas?: HandleDef[] // handles a la izquierda (destino). Default: uno solo, id 'in'
-    salidas?: HandleDef[] // handles a la derecha (origen). Default: uno solo, id 'out'
+    flowConfig: {
+        x: number
+        y: number
+        width: number
+        height: number
+        titulo: string
+        color?: string
+        /** @deprecated */
+        entradas?: HandleDef[]
+        /** Mantener sincronizadas con data.actions.reactions */
+        salidas?: HandleDef[] // handles a la derecha (origen). Default: uno solo, id 'out'
+    }
     data: NodeData
 }
 
@@ -52,8 +57,8 @@ export interface ConnectionDraft {
     pointer: { x: number; y: number }
 }
 
-// Tipos de Nodos. Incluye todos los tipo de pantalla
-export enum NodeType {
+// Tipos de Pantalla. Incluye todos los tipo de pantalla
+export enum ScreenType {
     idle = 'idle',
     userAction = 'userAction',
     infoScreen = 'infoScreen',
@@ -64,5 +69,36 @@ export enum NodeType {
 }
 
 export interface NodeData {
-        screenType: NodeType
-    }
+    screenType: ScreenType
+    flow?: string
+    timeout: boolean
+    /** Variablles que necesita del storage */
+    storage: string[]
+    actions: NodeAction[]
+
+    // TODO - Flujo logico dentro de cada nodo
+    logicalFlow: string
+    //TODO - Components Registry
+    ui: string[]
+}
+
+export interface NodeAction {
+    /** Apunta al registry necesario, Terminal, Service, etc. */
+    type: ActionType
+    /** TODO - Esta ID tiene que pegar contra el registry de service, terminal, etc.
+     * @example Terminal: MixedMedia.Start - Dispenser.Start - etc
+     * @example Service: Login.Qr - Login.Bio - etc
+     * */
+    actionID: string
+    /** Posibles outcomes */
+    reactions: ReactionType[]
+}
+export type ActionType = 'userInput' | 'timeout' | 'terminal' | 'service'
+/** Mantener ID sincronizada con flogConfig.salidas */
+export interface ReactionType extends HandleDef {
+    /** Este CODE identifica la respuesta que devuelve el registry involucrado.
+     * @example Terminal: Dispenser.cashDispenseFailed - MixMedia.mediaCollected - etc
+     * @example Service: Login.Error - Login.Ok - etc
+     */
+    reactionCode: string
+}

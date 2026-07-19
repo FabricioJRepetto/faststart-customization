@@ -9,14 +9,14 @@ export function snapToGrid(value: number, gridSize: number): number {
     return Math.round(value / gridSize) * gridSize
 }
 
-const DEFAULT_ENTRADAS: HandleDef[] = [{ id: 'in' }]
-const DEFAULT_SALIDAS: HandleDef[] = [{ id: 'out' }]
+const DEFAULT_ENTRADAS: HandleDef[] = []
+const DEFAULT_SALIDAS: HandleDef[] = []
 
 // Devuelve la lista de handles de un lado del nodo. Si el nodo no define
 // entradas/salidas custom, cae a un único handle por default.
 export function getNodeHandles(node: FlowNode, type: 'entrada' | 'salida'): HandleDef[] {
-    if (type === 'entrada') return node.entradas?.length ? node.entradas : DEFAULT_ENTRADAS
-    return node.salidas?.length ? node.salidas : DEFAULT_SALIDAS
+    if (type === 'entrada') return DEFAULT_ENTRADAS
+    return node.flowConfig?.salidas || DEFAULT_SALIDAS
 }
 
 // Posición absoluta (en coordenadas del "mundo") de un handle puntual,
@@ -26,17 +26,26 @@ export function getNodeHandles(node: FlowNode, type: 'entrada' | 'salida'): Hand
 export function getHandlePosition(
     node: FlowNode,
     handleId: string,
-    type: 'entrada' | 'salida'
+    type: 'entrada' | 'salida' = 'salida'
 ): { x: number; y: number } {
+    if (type === 'entrada') {
+        return {
+            x: node.flowConfig.x,
+            y: node.flowConfig.y + node.flowConfig.height / 2
+        }
+    }
+
     const handles = getNodeHandles(node, type)
     const index = Math.max(
         0,
         handles.findIndex((h) => h.id === handleId)
     )
-    const offset = (index + 1) / (handles.length + 1)
+    // const offset = (index + 1) / (handles.length + 1)
+    const offset = node.flowConfig.height * 1.5
+    const Ypos = node.flowConfig.height * index
     return {
-        x: type === 'entrada' ? node.x : node.x + node.width,
-        y: node.y + node.height * offset
+        x: node.flowConfig.x + node.flowConfig.width,
+        y: node.flowConfig.y + offset + Ypos
     }
 }
 

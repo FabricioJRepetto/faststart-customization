@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FlowEdge, FlowNode } from './types'
-import { useViewport } from './hooks/Useviewport'
-import { useNodeDrag } from './hooks/Useondrag'
 import { useConnection } from './hooks/useConnection'
 import { NodeView } from './NodeView'
 import { EdgeView } from './EdgeView'
 import { getBezierPath, getHandlePosition } from './Geometry'
 import { useAtom, useSetAtom } from 'jotai'
 import { FlowEdges, FlowNodes, SelectedNode } from './FlowStorage'
+import { useViewport } from './hooks/useViewport'
+import { useNodeDrag } from './hooks/useOndrag'
 
 const GRID_SIZE = 20
 
@@ -17,9 +17,7 @@ export default function Canvas(): React.JSX.Element {
     const selectedNode = useSetAtom(SelectedNode)
     const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null)
 
-    const selectNode = (e: React.MouseEvent<HTMLDivElement>, node: FlowNode): void => {
-        console.log('click select')
-        e.stopPropagation()
+    const openNodeOptions = (node: FlowNode): void => {
         selectedNode(node)
     }
 
@@ -35,7 +33,7 @@ export default function Canvas(): React.JSX.Element {
 
     const moveNode = useCallback(
         (id: string, x: number, y: number) => {
-            setNodes((nds) => nds.map((n) => (n.id === id ? { ...n, x, y } : n)))
+            setNodes((nds) => nds.map((n) => (n.id === id ? { ...n, flowConfig: {...n.flowConfig, x, y} } : n)))
         },
         [setNodes]
     )
@@ -80,7 +78,6 @@ export default function Canvas(): React.JSX.Element {
     // en un input/textarea para no interferir con edición de texto en otro lado.
     useEffect(() => {
         function onKeyDown(e: KeyboardEvent): void {
-            console.log(e.key, selectedEdgeId)
             if (!selectedEdgeId) return
             if (e.key !== 'Delete' && e.key !== 'Backspace') return
             const target = e.target as HTMLElement
@@ -156,7 +153,7 @@ export default function Canvas(): React.JSX.Element {
                             markerHeight="8"
                             orient="auto-start-reverse"
                         >
-                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#6ea8fe" />
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#32363f" />
                         </marker>
                     </defs>
 
@@ -174,7 +171,7 @@ export default function Canvas(): React.JSX.Element {
                         <path
                             d={ghostPath}
                             fill="none"
-                            stroke="#6ea8fe"
+                            stroke="#006152"
                             strokeWidth={2}
                             strokeDasharray="4 4"
                         />
@@ -191,7 +188,7 @@ export default function Canvas(): React.JSX.Element {
                         onHandlePointerDown={onHandlePointerDown}
                         onHandlePointerMove={onHandlePointerMove}
                         onHandlePointerUp={onHandlePointerUp}
-                        onNodeOptionsPointerDown={selectNode}
+                        openNodeOptions={openNodeOptions}
                     />
                 ))}
             </div>

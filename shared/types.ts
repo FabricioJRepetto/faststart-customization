@@ -527,7 +527,8 @@ export enum TASK {
     SYNC_ADS = 'SYNC_ADS',
     OOS = 'OOS',
     ALERT = 'ALERT',
-    REBOOT = 'REBOOT'
+    REBOOT = 'REBOOT',
+    SERVE_LOGS = 'SERVE_LOGS'
 }
 interface WSTaskData {
     task: TASK
