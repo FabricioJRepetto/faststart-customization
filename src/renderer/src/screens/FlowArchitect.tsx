@@ -3,7 +3,8 @@ import HomeSvg from '../assets/home.svg?react'
 import { useSetAtom } from 'jotai'
 import { CurrentScreenAtom } from '@renderer/utils/context/context'
 import { Screens } from '@shared/types'
-import FlowCanvas from '@renderer/components/Architect/FlowCanvas'
+import FlowMenu from '@renderer/components/Architect/FlowMenu'
+import Canvas from '@renderer/components/Architect/Canvas'
 
 const FlowArchitect = (): React.JSX.Element => {
     const setScreen = useSetAtom(CurrentScreenAtom)
@@ -20,10 +21,14 @@ const FlowArchitect = (): React.JSX.Element => {
                 </div>
 
                 <h1>Arquitecto de flujos</h1>
+
+                <code className="architect-key-shortcuts">[wheel] zoom, [supr] borra conexión</code>
             </div>
 
             <div className="architect-blueprint-container">
-                <FlowCanvas />
+                <Canvas />
+
+                <FlowMenu />
             </div>
         </div>
     )
