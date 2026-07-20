@@ -5,20 +5,21 @@ import { NodeView } from './NodeView'
 import { EdgeView } from './EdgeView'
 import { getBezierPath, getHandlePosition } from './Geometry'
 import { useAtom, useSetAtom } from 'jotai'
-import { FlowEdges, FlowNodes, SelectedNode } from './FlowStorage'
+import { FlowEdges, FlowNodes, SelectedNodeId } from './FlowStorage'
 import { useViewport } from './hooks/useViewport'
 import { useNodeDrag } from './hooks/useOndrag'
+import { addHandleTarget, removeHandleTarget } from './utils/updateNode'
 
 const GRID_SIZE = 20
 
 export default function Canvas(): React.JSX.Element {
     const [nodes, setNodes] = useAtom(FlowNodes)
     const [edges, setEdges] = useAtom(FlowEdges)
-    const selectedNode = useSetAtom(SelectedNode)
+    const selectedNode = useSetAtom(SelectedNodeId)
     const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null)
 
     const openNodeOptions = (node: FlowNode): void => {
-        selectedNode(node)
+        selectedNode(node.id)
     }
 
     const {
@@ -33,7 +34,9 @@ export default function Canvas(): React.JSX.Element {
 
     const moveNode = useCallback(
         (id: string, x: number, y: number) => {
-            setNodes((nds) => nds.map((n) => (n.id === id ? { ...n, flowConfig: {...n.flowConfig, x, y} } : n)))
+            setNodes((nds) =>
+                nds.map((n) => (n.id === id ? { ...n, flowConfig: { ...n.flowConfig, x, y } } : n))
+            )
         },
         [setNodes]
     )
@@ -47,8 +50,8 @@ export default function Canvas(): React.JSX.Element {
     const addEdge = useCallback(
         (edge: FlowEdge) => {
             setEdges((eds) => {
-                // Se filtra posible edge previo que nazca del mismo nodo y mismo handle
-                // Regla: salida = máx 1, entrada = N
+                //? Regla: Conexiones - salida = máx 1, entrada = N
+                // Se filtra posible edge previo que nazca del mismo handle
                 const withoutPreviousFromSameSource = Object.fromEntries(
                     Object.entries(eds).filter(
                         ([, e]) =>
@@ -57,8 +60,11 @@ export default function Canvas(): React.JSX.Element {
                 )
                 return { ...withoutPreviousFromSameSource, [edge.id]: edge }
             })
+            setNodes((prev) => {
+                return addHandleTarget(prev, edge.source, edge.sourceHandle, edge.target) || prev
+            })
         },
-        [setEdges]
+        [setEdges, setNodes]
     )
 
     const removeEdge = useCallback(
@@ -70,8 +76,11 @@ export default function Canvas(): React.JSX.Element {
             })
             // setSelectedEdgeId((current) => (current === edgeId ? null : current))
             setSelectedEdgeId(null)
+            setNodes((prev) => {
+                return removeHandleTarget(prev, edgeId) || prev
+            })
         },
-        [setEdges]
+        [setEdges, setNodes]
     )
 
     // Delete/Backspace borra el edge seleccionado. Se ignora si el foco está
@@ -182,6 +191,9 @@ export default function Canvas(): React.JSX.Element {
                     <NodeView
                         key={node.id}
                         node={node}
+                        connections={
+                            !!Object.values(edges).find((e) => e.target === node.id)
+                        }
                         onNodePointerDown={onPointerDown}
                         onNodePointerMove={onPointerMove}
                         onNodePointerUp={onPointerUp}

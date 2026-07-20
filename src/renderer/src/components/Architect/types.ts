@@ -2,7 +2,7 @@
 // El label es opcional, útil cuando una salida representa una acción
 // concreta (ej: "Guardar", "Cancelar").
 export interface HandleDef {
-    /** ID = ID de Nodo + Type de action + actionID + ID de Reaction */
+    /** @example [NodoID]+[ActionType]+[ActionID]+[ReactionCode] */
     id: string
     label?: string
 }
@@ -20,8 +20,6 @@ export interface FlowNode {
         color?: string
         /** @deprecated */
         entradas?: HandleDef[]
-        /** Mantener sincronizadas con data.actions.reactions */
-        salidas?: HandleDef[] // handles a la derecha (origen). Default: uno solo, id 'out'
     }
     data: NodeData
 }
@@ -101,4 +99,6 @@ export interface ReactionType extends HandleDef {
      * @example Service: Login.Error - Login.Ok - etc
      */
     reactionCode: string
+    /** ID del Nodo objetivo */
+    target?: string
 }

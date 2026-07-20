@@ -2,6 +2,7 @@ import { CurrentScreenAtom, FirstLoadAtom } from '@renderer/utils/context/contex
 import { useAtom, useAtomValue } from 'jotai'
 import HomeSvg from '../assets/home.svg?react'
 import PreviewSvg from '../assets/preview.svg?react'
+import FlowSvg from '../assets/black-hole.svg?react'
 import { Screens } from '@shared/types'
 import Tooltip from './Tooltip'
 
@@ -34,6 +35,16 @@ const SidebarMenu = (): React.JSX.Element => {
                         className={screen === Screens.preview ? 'selected' : ''}
                     >
                         <PreviewSvg />
+                    </a>
+                </Tooltip>
+
+                <Tooltip text="Arquitecto">
+                    <a
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={() => setScreen(Screens.architect)}
+                    >
+                        <FlowSvg />
                     </a>
                 </Tooltip>
             </div>

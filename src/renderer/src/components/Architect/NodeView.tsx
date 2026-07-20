@@ -1,8 +1,10 @@
 import type { ActionType, FlowNode } from './types'
 import OptionsSvg from '../../assets/options.svg?react'
+import { useEffect } from 'react'
 
 interface Props {
     node: FlowNode
+    connections: boolean
     // drag del nodo completo (arrastrar por el cuerpo)
     onNodePointerDown: (e: React.PointerEvent<HTMLDivElement>, node: FlowNode) => void
     onNodePointerMove: (e: React.PointerEvent<HTMLDivElement>) => void
@@ -22,11 +24,12 @@ interface Props {
 // getHandlePosition en geometry.ts, tienen que coincidir siempre)
 function offsetForIndex(index: number): string {
     // return `${((index + 1) / (total + 1)) * 100}%`
-    return `${((index * 32) + (16))}px`
+    return `${index * 32 + 16}px`
 }
 
 export function NodeView({
     node,
+    connections,
     onNodePointerDown,
     onNodePointerMove,
     onNodePointerUp,
@@ -47,16 +50,22 @@ export function NodeView({
             case 'userInput':
                 return '#c07a1f'
             case 'timeout':
-                // return '#1e1e1e'
                 return '#999'
         }
     }
 
-    const nodeHeight = (): number => { 
+    const nodeHeight = (): number => {
         // const handles = node.data.actions.reduce((pre,cur) => (pre + cur.reactions.length), 0)
-        const height = node.flowConfig.height + (node.flowConfig.salidas?.length ?? 1) * 32
+        const height =
+            node.flowConfig.height +
+            (node.data.actions.flatMap((a) => a.reactions).length ?? 1) * 32
         return Math.max(64, height)
-     }
+    }
+
+    useEffect(() => {
+        console.log('[ASD] connection', connections)
+    }, [connections])
+    
 
     return (
         <div
@@ -89,7 +98,7 @@ export function NodeView({
                 data-flow-handle="target"
                 data-node-id={node.id}
                 data-handle-id={'in'}
-                className="flow-node-handle-base flow-node-handle-in"
+                className={`flow-node-handle-base flow-node-handle-in ${connections ? 'connected':''}`}
             />
 
             {/* Handles de salida: acá arranca el drag de una conexión nueva */}

@@ -41,7 +41,7 @@ export function useViewport(initial: Viewport = { x: 0, y: 0, zoom: 1 }): Return
     // Zoom con la rueda del mouse (o pellizco en trackpad), centrado en la
     // posición del cursor: el punto del mundo bajo el mouse queda fijo.
     const onWheel = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
-        e.preventDefault()
+        // e.preventDefault()
         const rect = e.currentTarget.getBoundingClientRect()
         const mouseX = e.clientX - rect.left
         const mouseY = e.clientY - rect.top

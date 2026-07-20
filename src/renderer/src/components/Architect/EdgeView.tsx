@@ -38,7 +38,7 @@ export function EdgeView({ edge, nodes, selected, onSelect }: Props): React.JSX.
                 fill="none"
                 stroke={selected ? '#00b196' : '#32363f'}
                 strokeWidth={2}
-                markerEnd="url(#flow-arrow)"
+                // markerEnd="url(#flow-arrow)"
                 style={{ pointerEvents: 'none' }}
             />
         </g>

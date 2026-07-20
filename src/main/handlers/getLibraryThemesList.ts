@@ -35,15 +35,20 @@ export const getLibraryThemesList = async (): Promise<IpcResponse<ThemeConfig[]>
                 const isActive = config?.isActive ?? false
                 const isDefaultTheme = config?.isDefaultTheme ?? false
 
-                return {
+                const aux: ThemeConfig = {
                     themeName,
                     color,
                     background,
-                    logo,
+                    logo: {
+                        name: logo.fileName,
+                        base64: logo.base64,
+                        mime: logo.mime
+                    },
                     customEnabled,
                     isActive,
                     isDefaultTheme
-                }
+                } 
+                return aux
             })
         return { success: true, data: aux }
     } catch (error) {

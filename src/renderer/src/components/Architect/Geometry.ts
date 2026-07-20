@@ -16,7 +16,8 @@ const DEFAULT_SALIDAS: HandleDef[] = []
 // entradas/salidas custom, cae a un único handle por default.
 export function getNodeHandles(node: FlowNode, type: 'entrada' | 'salida'): HandleDef[] {
     if (type === 'entrada') return DEFAULT_ENTRADAS
-    return node.flowConfig?.salidas || DEFAULT_SALIDAS
+    // return node.flowConfig?.salidas || DEFAULT_SALIDAS
+    return node.data.actions.flatMap(a => a.reactions) || DEFAULT_SALIDAS
 }
 
 // Posición absoluta (en coordenadas del "mundo") de un handle puntual,

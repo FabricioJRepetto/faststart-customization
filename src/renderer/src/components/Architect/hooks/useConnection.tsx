@@ -63,7 +63,7 @@ export function useConnection({ screenToWorld, onConnect }: Args): Return {
                 // evita conectar un nodo consigo mismo
                 if (targetNodeId !== draft.sourceNodeId) {
                     onConnect({
-                        id: `e-${draft.sourceNodeId}.${draft.sourceHandleId}-${targetNodeId}.${targetHandleId}-${Date.now()}`,
+                        id: `e-${draft.sourceHandleId}-${targetNodeId}.${targetHandleId}-${Date.now()}`,
                         source: draft.sourceNodeId,
                         sourceHandle: draft.sourceHandleId,
                         target: targetNodeId,
