@@ -96,9 +96,8 @@ const UploadDialog = ({ closeModal }: Props): React.JSX.Element => {
 
             //* Preparar y subir archivos
             const filesRes = await mediaServiceController.uploadThemeAssets(themeName)
-            if (!filesRes.length) {
-                console.warn('Ningún archivo subido')                
-            }
+            if (!filesRes.length) console.warn('Ningún archivo subido')                
+            console.warn(filesRes)
 
             //* Generar y subir el *_themeConfig.json con los paths correctos
             const config = getThemeConfig(filesRes, themeName)

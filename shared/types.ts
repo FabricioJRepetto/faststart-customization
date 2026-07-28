@@ -164,10 +164,11 @@ export enum filterType {
     ImgVideo = 'ImgVideo'
 }
 
+export type FinalAssetType = 'image' | 'svg' | 'video' | 'audio' | 'json' | 'text' | 'unknown'
 export interface FinalAssetData {
     name: string
     path: string
-    fileType: string
+    fileType: FinalAssetType
     blobUrl?: string
 }
 
@@ -403,6 +404,7 @@ export interface MediaServiceBase {
 export interface FileForUpload {
     file: File
     assetName: string
+    deleteOld?: string
 }
 export interface UploadedFile extends AssetDataBase {
     assetName: string
@@ -452,6 +454,7 @@ export interface RawDBUploadFileRes {
 //_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_ WebSocket
 
 export enum WSClientStatus {
+    ONLINE,
     IDLE,
     OPERATING,
     RUNNING_TASK,
@@ -477,11 +480,12 @@ export interface WSLoginConfim {
 // Update Connections
 export interface WSConnectedClient {
     id: string
+    ip: string
     name: string
     type: WSClientType
-    ip: string
     status: WSClientStatus
     lastUpdate: string
+    description?: string
 }
 
 // Run Task
@@ -519,6 +523,7 @@ export type WSClientType = 'terminal' | 'admin'
 interface WSClientData {
     name: string
     type: WSClientType
+    id?: string
 }
 
 // Fire Task
@@ -540,4 +545,4 @@ interface WSTaskData {
 export type WSMessagePayload =
     | { type: WSMessageType.login; data: WSClientData }
     | { type: WSMessageType.fire_task; data: WSTaskData }
-    | { type: WSMessageType.update_status; data: { status: WSClientStatus } }
+    | { type: WSMessageType.update_status; data: { status: WSClientStatus; description?: string } }

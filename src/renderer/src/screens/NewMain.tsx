@@ -1,6 +1,7 @@
 import {
     CurrentScreenAtom,
     CustomEnabledAtom,
+    EditingThemeAtom,
     FirstLoadAtom,
     ServerStatusAtom,
     store,
@@ -16,9 +17,12 @@ import TestSvg from '../assets/test.svg?react'
 import ExitSvg from '../assets/logout.svg?react'
 import PowerSvg from '../assets/powerb.svg?react'
 import mediaServiceController from '@renderer/utils/controllers/mediaServer/mediaServiceController'
-import { Screens } from '@shared/types'
+import { Screens, TASK, WSConnectedClient, WSMessageType } from '@shared/types'
 import { reset, resetEditions } from '@renderer/utils/reset'
 import { TerminalsCardRow, ThemesCardRow } from '@renderer/components/CardsRow'
+import Modal from '@renderer/components/Modal'
+import TerminalModalConfig from '@renderer/components/ModalBodies/TerminalConfig'
+import WSService from '@renderer/utils/controllers/WebSocketService/WebSocketServiceController'
 
 const NewMain = (): React.JSX.Element => {
     const ServerStatus = useAtomValue(ServerStatusAtom, { store })
@@ -29,6 +33,8 @@ const NewMain = (): React.JSX.Element => {
 
     const [loadingApply, setLoadingApply] = useState<boolean>(false)
     const [firstLoad, setFirstLoad] = useAtom(FirstLoadAtom)
+
+    const [modal, setModal] = useState<WSConnectedClient | null>()
 
     useEffect(() => {
         // Para la animación fade in de esta pantalla
@@ -47,10 +53,20 @@ const NewMain = (): React.JSX.Element => {
         setLoadingApply(false)
     }
 
+    const fireTask = async (task: TASK, id?: string[]): Promise<void> => {
+        const message = task === TASK.ALERT ? 'Alerta de prueba' : undefined
+        WSService.emit({
+            type: WSMessageType.fire_task,
+            data: { task, terminals: id, instruction: message }
+        })
+    }
+
     return (
         <div className={`screen-content new-main-screen-container ${firstLoad ? 'fade-in' : ''}`}>
             <div className="screen-header">
-                <h1>✦FabStart✦</h1>
+                <h1>
+                    <code style={{ color: '#ececec', background: 'none', fontSize: '3rem' }}>ƒ✦Start</code>
+                </h1>
 
                 <div className="header-group">
                     <div className="header-server-status">
@@ -83,7 +99,7 @@ const NewMain = (): React.JSX.Element => {
             </div>
 
             <div className="main-screen-content">
-                <TerminalsCardRow cardClick={() => null} />
+                <TerminalsCardRow cardClick={setModal} />
                 <ThemesCardRow />
 
                 <div className="shortcuts-container">
@@ -100,6 +116,7 @@ const NewMain = (): React.JSX.Element => {
                     <div
                         onClick={() => {
                             resetEditions()
+                            store.set(EditingThemeAtom, false)
                             setScreen(Screens.preview)
                         }}
                     >
@@ -124,6 +141,16 @@ const NewMain = (): React.JSX.Element => {
                         <ExitSvg />
                     </div>
                 </div>
+
+                {modal && (
+                    <Modal confirm={() => null} close={() => setModal(null)}>
+                        <TerminalModalConfig
+                            terminal={modal}
+                            fireTask={fireTask}
+                            closeModal={() => setModal(null)}
+                        />
+                    </Modal>
+                )}
             </div>
         </div>
     )

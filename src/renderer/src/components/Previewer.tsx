@@ -30,9 +30,9 @@ export interface PreviewScreenProps {
 
 export const Previewer = (): React.JSX.Element => {
     const [screen, setScreen] = useAtom(PreviewScreenIndexAtom)
-    const edinting = useAtomValue(EditingThemeAtom)
+    const editing = useAtomValue(EditingThemeAtom)
 
-    const [ogData] = useAtom(DefaultConfigAtom)
+    const themeName = useAtomValue(DefaultConfigAtom)?.themeName
     const [OgStyleData] = useAtom(DefaultStylesDataAtom)
 
     const [bgData] = useAtom(EditedBackgroundsDataAtom)
@@ -89,30 +89,30 @@ export const Previewer = (): React.JSX.Element => {
         switch (currScreen) {
             case 'Idle':
                 navigate(Screens.backgrounds, BACKGROUNDS.idle)
-                break;
+                break
 
             case 'Menu':
                 navigate(Screens.backgrounds, BACKGROUNDS.user_action)
-                break;
-                
+                break
+
             case 'Input':
                 navigate(Screens.backgrounds, BACKGROUNDS.user_action)
-                break;
-                
+                break
+
             case 'Success':
                 navigate(Screens.backgrounds, BACKGROUNDS.success)
-                break;
-                
+                break
+
             case 'Error':
                 navigate(Screens.backgrounds, BACKGROUNDS.error)
-                break;
-                
+                break
+
             case 'Info':
                 navigate(Screens.backgrounds, BACKGROUNDS.info)
-                break;
-                        
+                break
+
             default:
-                break;
+                break
         }
     }
 
@@ -122,30 +122,30 @@ export const Previewer = (): React.JSX.Element => {
         switch (currScreen) {
             case 'Idle':
                 navigate(Screens.styles, STYLES.idle)
-                break;
+                break
 
             case 'Menu':
                 navigate(Screens.styles, STYLES.user_action)
-                break;
-                
+                break
+
             case 'Input':
                 navigate(Screens.styles, STYLES.user_action)
-                break;
-                
+                break
+
             case 'Success':
                 navigate(Screens.styles, STYLES.success)
-                break;
-                
+                break
+
             case 'Error':
                 navigate(Screens.styles, STYLES.error)
-                break;
-                
+                break
+
             case 'Info':
                 navigate(Screens.styles, STYLES.info)
-                break;
-                        
+                break
+
             default:
-                break;
+                break
         }
     }
 
@@ -197,14 +197,17 @@ export const Previewer = (): React.JSX.Element => {
     return (
         <div className="preview-wrapper">
             <div className="preview-container">
-                <span className="preview-theme-name">
-                    {edinting && (
-                        <div>
-                            <ThemeSvg />
-                            <p>{ogData?.themeName}</p>
-                        </div>
-                    )}
-                    <p>{SCREENS[screen].key}</p>
+                <span className="preview-theme-screen-data">
+                    <div className="preview-theme-name">
+                        {editing && (
+                            <>
+                                <ThemeSvg />
+                                <p>{themeName}</p>
+                                <p>{' - '}</p>
+                            </>
+                        )}
+                        <p>{SCREENS[screen].key}</p>
+                    </div>
                     <div className="actions">
                         <div className="action" onClick={editBackground}>
                             <a>Cambiar fondo</a>

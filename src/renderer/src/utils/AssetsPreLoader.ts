@@ -3,9 +3,10 @@ import {
     store,
     svgCache,
     svgCacheElement,
+    ThemeConfigAtom,
     ThemesLibraryDataAtom
 } from './context/context'
-import { CustomConfig, FinalAssetData, ThemeConfig } from '@shared/types'
+import { AssetData, AssetType, FinalAssetData, TemplateConfig, ThemeConfig } from '@shared/types'
 
 const preloadImage = (url: string): Promise<void> => {
     return new Promise((resolve, reject) => {
@@ -40,14 +41,30 @@ const preloadSvg = async (url: string, name: string): Promise<{ name: string; va
     return { name: name, value: text }
 }
 
-const preloadMedia = async (element: FinalAssetData): Promise<FinalAssetData> => {
-    if (element.fileType === 'svg') return element
+const preloadMedia = async (element: FinalAssetData, assetType: AssetType): Promise<AssetData> => {
+    if (element.fileType === 'svg')
+        return {
+            assetName: element.name,
+            assetType: assetType,
+            original: {
+                source: element.path,
+                mime: 'svg'
+            },
+            custom: {}
+        }
 
     const res = await fetch(element.path)
     const blob = await res.blob()
     const blobUrl = URL.createObjectURL(blob)
 
-    return { ...element, blobUrl }
+    return {
+        assetName: element.name,
+        assetType: assetType,
+        original: {
+            source: blobUrl
+        },
+        custom: {}
+    }
 }
 
 export const preloadThemeMedia = async (theme: ThemeConfig): Promise<ThemeConfig> => {
@@ -63,10 +80,10 @@ export const preloadThemeMedia = async (theme: ThemeConfig): Promise<ThemeConfig
     return { ...theme, background: { ...theme.background, blobUrl } }
 }
 
-type AllAssetType = AssetType | 'svg'
-type AssetType = 'image' | 'audio' | 'video'
+type __AllAssetType = __AssetType | 'svg'
+type __AssetType = 'image' | 'audio' | 'video'
 
-const loaders: Record<AssetType, (url: string) => Promise<void>> = {
+const loaders: Record<__AssetType, (url: string) => Promise<void>> = {
     image: preloadImage,
     audio: preloadAudio,
     video: preloadVideo
@@ -88,62 +105,74 @@ export const preloadAssets = async (
 
         let assetsQuantity = 0
 
-        if (method === 'httpCache') {
-            //: HTTP CACHE
+        if (method === 'httpCache') { //: HTTP CACHE
             const aux = [
                 ...config.icon,
+                ...config.image,
                 ...config.background,
                 ...config.thirdscreen.assets,
                 ...config.audio
             ].map((e) => ({
                 url: e.path,
                 name: e.name,
-                type: e.fileType as AllAssetType
+                type: e.fileType as __AllAssetType
             }))
 
-            const assets: { url: string; type: AllAssetType; name: string }[] = aux.filter(
+            const assets: { url: string; type: __AllAssetType; name: string }[] = aux.filter(
                 (e) => e.type !== 'svg'
             )
             assetsQuantity += assets.length
 
             await Promise.all(assets.map(({ type, url }) => loaders[type as AssetType](url)))
-        } else {
-            //: BLOB URL CACHE
+        } else { //: BLOB URL CACHE
             console.log(' - Generating blobs for icons')
-            const loadedIcons = await Promise.all(config.icon.map((e) => preloadMedia(e)))
+            const loadedIcons = await Promise.all(
+                config.icon.map((e) => preloadMedia(e, 'icon'))
+            )
             assetsQuantity += loadedIcons.length
 
+            console.log(' - Generating blobs for images')
+            const loadedImages = await Promise.all(
+                config.image.map((e) => preloadMedia(e, 'image'))
+            )
+            assetsQuantity += loadedImages.length
+
             console.log(' - Generating blobs for backgrounds')
-            const loadedBgs = await Promise.all(config.background.map((e) => preloadMedia(e)))
+            const loadedBgs = await Promise.all(
+                config.background.map((e) => preloadMedia(e, 'background'))
+            )
             assetsQuantity += loadedBgs.length
 
             console.log(' - Generating blobs for third screen assets')
             const loadedThirds = await Promise.all(
-                config.thirdscreen.assets.map((e) => preloadMedia(e))
+                config.thirdscreen.assets.map((e) => preloadMedia(e, 'thirdscreen'))
             )
             assetsQuantity += loadedThirds.length
 
             console.log(' - Generating blobs for audios')
-            const loadedAudios = await Promise.all(config.audio.map((e) => preloadMedia(e)))
+            const loadedAudios = await Promise.all(
+                config.audio.map((e) => preloadMedia(e, 'audio'))
+            )
             assetsQuantity += loadedAudios.length
 
-            const _config: CustomConfig = {
+            const _config: TemplateConfig = {
                 ...config,
                 icon: loadedIcons,
+                image: loadedImages,
                 background: loadedBgs,
-                thirdscreen: { config: config.thirdscreen.config, assets: loadedThirds },
+                thirdscreen: loadedThirds,
                 audio: loadedAudios
             }
-            store.set(DefaultConfigAtom, _config)
+            store.set(ThemeConfigAtom, _config)
         }
 
-        console.log(' - Generating svg files cache...')
-        const svgAssets: { url: string; type: AllAssetType; name: string }[] = [...config.icon]
+        console.log(' - Generating svg cache...')
+        const svgAssets: { url: string; type: __AllAssetType; name: string }[] = [...config.icon, ...config.image]
             .filter((e) => e.fileType === 'svg')
             .map((e) => ({
                 url: e.path,
                 name: e.name,
-                type: e.fileType as AllAssetType
+                type: e.fileType as __AllAssetType
             }))
         const svgListTemp = await Promise.all(
             svgAssets.map((asset) => preloadSvg(asset.url, asset.name))
@@ -173,7 +202,7 @@ export const clearMediaCache = (): void => {
         ...(config?.background || []),
         ...(config?.thirdscreen.assets || []),
         ...(config?.audio || []),
-        ...themes.map((t) => t.background || null).filter(e => e)
+        ...(themes?.map((t) => t.background || null)?.filter((e) => e) || [])
     ]
     aux.forEach(({ blobUrl }) => {
         if (blobUrl) URL.revokeObjectURL(blobUrl)

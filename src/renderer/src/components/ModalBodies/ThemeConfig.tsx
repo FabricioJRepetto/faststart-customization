@@ -11,20 +11,26 @@ import AsyncOption from './theme-config-components/AsyncOption'
 import mediaServiceController from '@renderer/utils/controllers/mediaServer/mediaServiceController'
 import Modal from '../Modal'
 import { useState } from 'react'
-import { loadThemesCollection, parseAssets, validateFiles } from '@renderer/utils/bootSequence'
+import { loadThemesCollection, loadThemesStylesLanguageData, parseThemeToEdit } from '@renderer/utils/bootSequence'
 import Tooltip from '../Tooltip'
 import { DEFAULT_THEME } from '@shared/CONSTANTS'
-import { DefaultConfigAtom, TerminalsStatusAtom } from '@renderer/utils/context/context'
+import {
+    DefaultConfigAtom,
+    EditingThemeAtom,
+    store,
+    TerminalsStatusAtom
+} from '@renderer/utils/context/context'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { softReset } from '@renderer/utils/reset'
+import { resetEditions } from '@renderer/utils/reset'
 import { preloadAssets } from '@renderer/utils/AssetsPreLoader'
 
 interface Props {
     themeData: ThemeConfig
+    setLoading: (v: boolean) => void
     closeModal: () => void
 }
 
-const ThemeModalSettings = ({ themeData, closeModal }: Props): React.JSX.Element => {
+const ThemeModalSettings = ({ themeData, closeModal, setLoading }: Props): React.JSX.Element => {
     const originalTheme = themeData.themeName === DEFAULT_THEME
     const terminals = useAtomValue(TerminalsStatusAtom)
 
@@ -34,15 +40,18 @@ const ThemeModalSettings = ({ themeData, closeModal }: Props): React.JSX.Element
 
     const [deleteModal, setDeleteModal] = useState<boolean>(false)
     const [modalRes, setModalRes] = useState<{ r: (v: unknown) => void }>()
-    const [loading, setLoading] = useState<boolean>(false)
+    const [loading, _setLoading] = useState<boolean>(false)
 
-    const exit = (): void => {
-        closeModal()
+    const exit = (): void => closeModal()    
+
+    const changeLoading = (v: boolean): void => {
+        _setLoading(v)
+        setLoading(v)
     }
 
     const setAsDefault = async (): Promise<void> => {
         try {
-            setLoading(true)
+            changeLoading(true)
 
             const res = await mediaServiceController.setDefaultTheme(themeData.themeName)
             if (!res) {
@@ -53,13 +62,13 @@ const ThemeModalSettings = ({ themeData, closeModal }: Props): React.JSX.Element
         } catch (error) {
             console.error(error)
         } finally {
-            setLoading(false)
+            changeLoading(false)
         }
     }
 
     const deleteTheme = async (): Promise<void> => {
         //? Modal promise, esperar interacción del usuario para continuar
-        setLoading(true)
+        changeLoading(true)
 
         const res = await new Promise((res) => {
             setModalRes({ r: res })
@@ -73,46 +82,45 @@ const ThemeModalSettings = ({ themeData, closeModal }: Props): React.JSX.Element
             const res = await mediaServiceController.deleteTheme(themeData.themeName)
             if (res) {
                 await loadThemesCollection()
-                setLoading(false)
+                changeLoading(false)
 
                 exit()
             }
         }
-        setLoading(false)
+        changeLoading(false)
     }
 
     const modifyTheme = async (): Promise<void> => {
         try {
-            setLoading(true)
-            softReset()
-
-            const config = await mediaServiceController.getThemeConfig(themeData.themeName)
-            if (!config) {
-                throw new Error('Configuración no encontrada')
-            }
+            changeLoading(true)
+            resetEditions()
 
             //* LOAD : Config
+            const config = await mediaServiceController.getThemeConfig(themeData.themeName)
+            if (!config) throw new Error('Configuración de tema no encontrada')
+            store.set(EditingThemeAtom, true)
             setDefaultConfig(config)
-            //* LOAD : Styles & Languages
-            validateFiles()
-            //* PRE-LOAD : Assets
+
+            //* PRE-LOAD : Assets Cache
             await preloadAssets('blobUrl')
-            //* LOAD : Assets
-            parseAssets()
-            //* LOAD : Themes
-            await loadThemesCollection()
+
+            //* PARSE : Assets - Adapta el tema a los assets indicados en el template actual
+            parseThemeToEdit()
+  
+            //* LOAD : Styles & Language
+            loadThemesStylesLanguageData()
 
             setInfoModal(true)
         } catch (error) {
             console.error(error)
         } finally {
-            setLoading(false)
+            changeLoading(false)
         }
     }
 
     const toggleActive = async (): Promise<void> => {
         try {
-            setLoading(true)
+            changeLoading(true)
 
             const config = await mediaServiceController.getThemeConfig(themeData.themeName)
             if (!config) {
@@ -128,7 +136,7 @@ const ThemeModalSettings = ({ themeData, closeModal }: Props): React.JSX.Element
         } catch (error) {
             console.error(error)
         } finally {
-            setLoading(false)
+            changeLoading(false)
         }
     }
 
@@ -214,22 +222,22 @@ const ThemeModalSettings = ({ themeData, closeModal }: Props): React.JSX.Element
 
             <div className="theme-config-modal-terminals">
                 <h3>Terminales</h3>
-                    
-                <div className='scrollable'>
-                {terminals?.length ? (
-                    terminals.map((t) => (
-                        <div key={t.id} className='terminal-container'>
-                            <p>{t.name}</p>
-                            <code>{t.ip}</code>
-                            <p>[Tema asignado]</p>
-                            <label onClick={() => console.log(t.id)}>
-                                <OptionsSvg />
-                            </label>
-                        </div>
-                    ))
-                ) : (
-                    <p style={{ color: '#bebebe41' }}>Sin terminales registradas</p>
-                )}
+
+                <div className="scrollable">
+                    {terminals?.length ? (
+                        terminals.map((t) => (
+                            <div key={t.id} className="terminal-container">
+                                <p>{t.name}</p>
+                                <code>{t.ip}</code>
+                                <p>[Tema asignado]</p>
+                                <label onClick={() => console.log(t.id)}>
+                                    <OptionsSvg />
+                                </label>
+                            </div>
+                        ))
+                    ) : (
+                        <p style={{ color: '#bebebe41' }}>Sin terminales registradas</p>
+                    )}
                 </div>
             </div>
 

@@ -1,4 +1,4 @@
-import { EdgesById, FlowNode, ScreenType } from '../types'
+import { ActionType, EdgesById, FlowNode, ScreenType } from '../types'
 import { store } from '@renderer/utils/context/context'
 import { FlowNodes, newNodeID } from '../FlowStorage'
 
@@ -19,7 +19,7 @@ export const initialNodes: FlowNode[] = [
             storage: [],
             actions: [
                 {
-                    type: 'userInput',
+                    type: ActionType.user,
                     actionID: 'click',
                     reactions: [
                         {
@@ -27,10 +27,14 @@ export const initialNodes: FlowNode[] = [
                             id: '1.userInput.click.start',
                             label: 'start'
                         }
-                    ]
+                    ],
+                    trigger: {
+                        type: 'user'
+                    },
+                    steps: []
                 },
                 {
-                    type: 'service',
+                    type: ActionType.service,
                     actionID: 'login',
                     reactions: [
                         {
@@ -38,10 +42,14 @@ export const initialNodes: FlowNode[] = [
                             id: '1.service.login.ok',
                             label: 'ok'
                         }
-                    ]
+                    ],
+                    trigger: {
+                        type: 'user'
+                    },
+                    steps: []
                 },
                 {
-                    type: 'terminal',
+                    type: ActionType.terminal,
                     actionID: 'status',
                     reactions: [
                         {
@@ -54,10 +62,14 @@ export const initialNodes: FlowNode[] = [
                             id: '1.terminal.status.error',
                             label: 'error'
                         }
-                    ]
+                    ],
+                    trigger: {
+                        type: 'user'
+                    },
+                    steps: []
                 },
                 {
-                    type: 'terminal',
+                    type: ActionType.terminal,
                     actionID: 'start',
                     reactions: [
                         {
@@ -70,10 +82,14 @@ export const initialNodes: FlowNode[] = [
                             id: '1.terminal.start.error',
                             label: 'error'
                         }
-                    ]
+                    ],
+                    trigger: {
+                        type: 'user'
+                    },
+                    steps: []
                 },
                 {
-                    type: 'timeout',
+                    type: ActionType.timeout,
                     actionID: 'timeout',
                     reactions: [
                         {
@@ -81,11 +97,14 @@ export const initialNodes: FlowNode[] = [
                             id: '1.timeout.timeout.timeout',
                             label: 'timeout'
                         }
-                    ]
+                    ],
+                    trigger: {
+                        type: 'user'
+                    },
+                    steps: []
                 }
             ],
-            logicalFlow: '',
-            ui: []
+            UIElement: []
         }
     },
     {
@@ -103,8 +122,7 @@ export const initialNodes: FlowNode[] = [
             timeout: false,
             storage: [],
             actions: [],
-            logicalFlow: '',
-            ui: []
+            UIElement: []
         }
     },
     {
@@ -122,8 +140,7 @@ export const initialNodes: FlowNode[] = [
             timeout: false,
             storage: [],
             actions: [],
-            logicalFlow: '',
-            ui: []
+            UIElement: []
         }
     }
 ]
@@ -176,7 +193,7 @@ export const newNode = (type: ScreenType, name?: string): void => {
                 storage: [],
                 actions: [
                     {
-                        type: 'userInput',
+                        type: ActionType.user,
                         actionID: 'click',
                         reactions: [
                             {
@@ -184,10 +201,14 @@ export const newNode = (type: ScreenType, name?: string): void => {
                                 id: id + '.userInput.click.start',
                                 label: 'Click start'
                             }
-                        ]
+                        ],
+                        trigger: {
+                            type: 'user'
+                        },
+                        steps: []
                     },
                     {
-                        type: 'service',
+                        type: ActionType.service,
                         actionID: 'QR',
                         reactions: [
                             {
@@ -195,11 +216,14 @@ export const newNode = (type: ScreenType, name?: string): void => {
                                 id: id + '.service.QR.ok',
                                 label: 'QR scan'
                             }
-                        ]
+                        ],
+                        trigger: {
+                            type: 'user'
+                        },
+                        steps: []
                     }
                 ],
-                logicalFlow: '',
-                ui: []
+                UIElement: []
             }
         },
         [ScreenType.userAction]: {
@@ -218,7 +242,7 @@ export const newNode = (type: ScreenType, name?: string): void => {
                 storage: [],
                 actions: [
                     {
-                        type: 'userInput',
+                        type: ActionType.user,
                         actionID: 'click_button',
                         reactions: [
                             {
@@ -236,10 +260,14 @@ export const newNode = (type: ScreenType, name?: string): void => {
                                 id: id + '.userInput.click_button.exit',
                                 label: 'Click exit'
                             }
-                        ]
+                        ],
+                        trigger: {
+                            type: 'user'
+                        },
+                        steps: []
                     },
                     {
-                        type: 'timeout',
+                        type: ActionType.timeout,
                         actionID: 'timeout',
                         reactions: [
                             {
@@ -247,11 +275,14 @@ export const newNode = (type: ScreenType, name?: string): void => {
                                 id: id + '.timeout.timeout.timeout',
                                 label: 'timeout'
                             }
-                        ]
+                        ],
+                        trigger: {
+                            type: 'user'
+                        },
+                        steps: []
                     }
                 ],
-                logicalFlow: '',
-                ui: []
+                UIElement: []
             }
         },
         [ScreenType.infoScreen]: {
@@ -270,7 +301,7 @@ export const newNode = (type: ScreenType, name?: string): void => {
                 storage: [],
                 actions: [
                     {
-                        type: 'service',
+                        type: ActionType.service,
                         actionID: 'login',
                         reactions: [
                             {
@@ -293,11 +324,14 @@ export const newNode = (type: ScreenType, name?: string): void => {
                                 id: id + '.service.login.timeout',
                                 label: 'timeout'
                             }
-                        ]
+                        ],
+                        trigger: {
+                            type: 'user'
+                        },
+                        steps: []
                     }
                 ],
-                logicalFlow: '',
-                ui: []
+                UIElement: []
             }
         },
         [ScreenType.successScreen]: {
@@ -316,7 +350,7 @@ export const newNode = (type: ScreenType, name?: string): void => {
                 storage: [],
                 actions: [
                     {
-                        type: 'timeout',
+                        type: ActionType.timeout,
                         actionID: 'timeout',
                         reactions: [
                             {
@@ -324,11 +358,14 @@ export const newNode = (type: ScreenType, name?: string): void => {
                                 id: id + '.timeout.timeout.timeout',
                                 label: 'timeout'
                             }
-                        ]
+                        ],
+                        trigger: {
+                            type: 'user'
+                        },
+                        steps: []
                     }
                 ],
-                logicalFlow: '',
-                ui: []
+                UIElement: []
             }
         },
         [ScreenType.errorScreen]: {
@@ -347,7 +384,7 @@ export const newNode = (type: ScreenType, name?: string): void => {
                 storage: [],
                 actions: [
                     {
-                        type: 'timeout',
+                        type: ActionType.timeout,
                         actionID: 'timeout',
                         reactions: [
                             {
@@ -355,11 +392,14 @@ export const newNode = (type: ScreenType, name?: string): void => {
                                 id: id + '.timeout.timeout.timeout',
                                 label: 'timeout'
                             }
-                        ]
+                        ],
+                        trigger: {
+                            type: 'user'
+                        },
+                        steps: []
                     }
                 ],
-                logicalFlow: '',
-                ui: []
+                UIElement: []
             }
         },
         [ScreenType.config]: {
@@ -378,7 +418,7 @@ export const newNode = (type: ScreenType, name?: string): void => {
                 storage: [],
                 actions: [
                     {
-                        type: 'service',
+                        type: ActionType.service,
                         actionID: 'bootup',
                         reactions: [
                             {
@@ -391,11 +431,14 @@ export const newNode = (type: ScreenType, name?: string): void => {
                                 id: id + '.service.bootup.error',
                                 label: 'error'
                             }
-                        ]
+                        ],
+                        trigger: {
+                            type: 'user'
+                        },
+                        steps: []
                     }
                 ],
-                logicalFlow: '',
-                ui: []
+                UIElement: []
             }
         },
         [ScreenType.close]: {
@@ -414,7 +457,7 @@ export const newNode = (type: ScreenType, name?: string): void => {
                 storage: [],
                 actions: [
                     {
-                        type: 'terminal',
+                        type: ActionType.terminal,
                         actionID: 'closeSession',
                         reactions: [
                             {
@@ -422,11 +465,14 @@ export const newNode = (type: ScreenType, name?: string): void => {
                                 id: id + '.terminal.closeSession.sessionClosed',
                                 label: 'ok'
                             }
-                        ]
+                        ],
+                        trigger: {
+                            type: 'user'
+                        },
+                        steps: []
                     }
                 ],
-                logicalFlow: '',
-                ui: []
+                UIElement: []
             }
         }
     }

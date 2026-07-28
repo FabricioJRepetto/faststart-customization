@@ -3,7 +3,7 @@ import HomeSvg from '../assets/home.svg?react'
 import { useSetAtom } from 'jotai'
 import { CurrentScreenAtom } from '@renderer/utils/context/context'
 import { Screens } from '@shared/types'
-import FlowMenu from '@renderer/components/Architect/FlowMenu'
+import CanvasOverlay from '@renderer/components/Architect/CanvasOverlay'
 import Canvas from '@renderer/components/Architect/Canvas'
 
 const FlowArchitect = (): React.JSX.Element => {
@@ -22,13 +22,13 @@ const FlowArchitect = (): React.JSX.Element => {
 
                 <h1>Arquitecto de flujos</h1>
 
-                <code className="architect-key-shortcuts">[wheel] zoom, [supr] borra conexión</code>
+                <code className="architect-key-shortcuts">[wheel] zoom, [supr]/[backspace]borra conexión</code>
             </div>
 
             <div className="architect-blueprint-container">
                 <Canvas />
 
-                <FlowMenu />
+                <CanvasOverlay />
             </div>
         </div>
     )

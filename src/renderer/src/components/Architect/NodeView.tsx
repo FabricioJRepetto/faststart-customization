@@ -1,6 +1,5 @@
 import type { ActionType, FlowNode } from './types'
 import OptionsSvg from '../../assets/options.svg?react'
-import { useEffect } from 'react'
 
 interface Props {
     node: FlowNode
@@ -47,9 +46,10 @@ export function NodeView({
                 return '#6262e5'
             case 'terminal':
                 return '#53b653'
-            case 'userInput':
+            case 'user':
                 return '#c07a1f'
             case 'timeout':
+            default:
                 return '#999'
         }
     }
@@ -61,11 +61,6 @@ export function NodeView({
             (node.data.actions.flatMap((a) => a.reactions).length ?? 1) * 32
         return Math.max(64, height)
     }
-
-    useEffect(() => {
-        console.log('[ASD] connection', connections)
-    }, [connections])
-    
 
     return (
         <div
@@ -98,7 +93,7 @@ export function NodeView({
                 data-flow-handle="target"
                 data-node-id={node.id}
                 data-handle-id={'in'}
-                className={`flow-node-handle-base flow-node-handle-in ${connections ? 'connected':''}`}
+                className={`flow-node-handle-base flow-node-handle-in ${connections ? 'connected' : ''}`}
             />
 
             {/* Handles de salida: acá arranca el drag de una conexión nueva */}
@@ -112,7 +107,7 @@ export function NodeView({
                         height: action.reactions.length * 32 + 'px'
                     }}
                 >
-                    <p>{action.type}</p>
+                    <p>{action.actionID}</p>
                     {action.reactions.map((h, i) => (
                         <div
                             key={h.id}

@@ -31,6 +31,7 @@ import {
 } from './context/context'
 import { clearMediaCache } from './AssetsPreLoader'
 import WSService from './controllers/WebSocketService/WebSocketServiceController'
+import { objectFullStructure } from './LangStructureBuilder'
 
 /** Resetea todos los valores del contexto */
 export const reset = (): void => {
@@ -108,7 +109,7 @@ export const resetEditions = (): void => {
 
     store.set(DefaultConfigAtom, undefined)
 
-    const config = store.get(TemplateConfigAtom)!
+    const config = store.get(TemplateConfigAtom)!    
 
     store.set(EditedIconsDataAtom, [...config.icon])
     store.set(EditedImagesDataAtom, [...config.image])
@@ -116,5 +117,11 @@ export const resetEditions = (): void => {
     store.set(EditedAudiosDataAtom, [...config.audio])
     store.set(EditedThirdScreenAssetsDataAtom, [])
 
+    store.set(DefaultStylesDataAtom, undefined)
+    store.set(EditedStylesDataAtom, DefaultStylesData)
+
+    store.set(DefaultLanguageDataAtom, config.language)
+    store.set(EditedLanguageDataAtom, objectFullStructure(config.language))
+    
     store.set(EditedThirdScreenConfigDataAtom, DefaultThirdConfigData)
 }

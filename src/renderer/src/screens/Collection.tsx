@@ -115,14 +115,15 @@ const Collections = (): React.JSX.Element => {
 
             {settingsModal && (
                 <Modal
-                    confirm={() => setSettingsModal(false)}
-                    close={() => setSettingsModal(false)}
+                    confirm={() => !loading && setSettingsModal(false)}
+                    close={() => !loading && setSettingsModal(false)}
                 >
                     <ThemeModalSettings
                         themeData={
                             collection!.find((t) => t.themeName === settingsModal.themeName)!
                         }
-                        closeModal={() => setSettingsModal(false)}
+                        closeModal={() => !loading && setSettingsModal(false)}
+                        setLoading={(v: boolean) => setLoading(v)}
                     />
                 </Modal>
             )}

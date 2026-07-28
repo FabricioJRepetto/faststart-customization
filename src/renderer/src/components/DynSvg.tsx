@@ -10,7 +10,7 @@ type config =
           assetName: string
           path?: never
       }
-type Props = { config: config, color?: string }
+type Props = { config: config; color?: string }
 
 const DynamicSvg = ({ config: { path, assetName }, color }: Props): React.JSX.Element | null => {
     const [svgContent, setSvgContent] = useState<string | null>(null)
@@ -22,7 +22,9 @@ const DynamicSvg = ({ config: { path, assetName }, color }: Props): React.JSX.El
                 text = await fetch(path).then((res) => res.text())
             }
             if (assetName) {
-                text = store.get(svgCache)?.[assetName]
+                const cache = store.get(svgCache)?.[assetName]
+                if (!cache) console.error('SVG Cache for [', assetName, '] not found')
+                text = cache || ''
             }
             const content = text
                 .replace(/fill="[^"]*"/g, `fill="currentColor"`)

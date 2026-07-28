@@ -1,7 +1,8 @@
-import { TASK, WSConnectedClient } from '@shared/types'
+import { TASK, WSClientStatus, WSConnectedClient } from '@shared/types'
 import AsyncOption from './theme-config-components/AsyncOption'
 import { stateStyle, terminalLongState } from '@renderer/utils/stringUtils'
 import DeleteSvg from '../../assets/trash.svg?react'
+import { useState } from 'react'
 
 interface Props {
     terminal: WSConnectedClient
@@ -10,13 +11,13 @@ interface Props {
 }
 
 const TerminalModalConfig = ({ terminal, fireTask, closeModal }: Props): React.JSX.Element => {
-    // const [loading, setLoading] = useState(false)
+    const [loading] = useState(terminal.status === WSClientStatus.RUNNING_TASK ? null : true)
 
     return (
         <div className="terminal-modal-container">
             <div>
                 <h1>{terminal.name}</h1>
-                <p className={stateStyle(terminal.status)}>{terminalLongState(terminal.status)}</p>
+                <p className={stateStyle(terminal.status)}>{terminalLongState(terminal.status)} {terminal.description ?? ''}</p>
                 <code>{terminal.ip}</code>
             </div>
 
@@ -24,37 +25,37 @@ const TerminalModalConfig = ({ terminal, fireTask, closeModal }: Props): React.J
                 <AsyncOption
                     title={'Sync Theme'}
                     action={() => fireTask(TASK.SYNC_THEME, [terminal.id])}
-                    status={null}
+                    status={loading}
                     disabled={terminal.status === 2}
                 />
                 <AsyncOption
                     title={'Sync Ads'}
                     action={() => fireTask(TASK.SYNC_ADS, [terminal.id])}
-                    status={null}
+                    status={loading}
                     disabled={true}
                 />
                 <AsyncOption
                     title={'OOS'}
                     action={() => fireTask(TASK.OOS, [terminal.id])}
-                    status={null}
+                    status={loading}
                     disabled={terminal.status === 2}
                 />
                 <AsyncOption
                     title={'Alert'}
                     action={() => fireTask(TASK.ALERT, [terminal.id])}
-                    status={null}
+                    status={loading}
                     disabled={terminal.status === 2}
                 />
                 <AsyncOption
                     title={'Reboot'}
                     action={() => fireTask(TASK.REBOOT, [terminal.id])}
-                    status={null}
+                    status={loading}
                     disabled={terminal.status === 2}
                 />
                 <AsyncOption
                     title={'Eliminar'}
                     action={async () => {}}
-                    status={null}
+                    status={loading}
                     Icon={<DeleteSvg />}
                     disabled={true}
                     style="tertiary"

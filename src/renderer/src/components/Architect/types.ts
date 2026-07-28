@@ -74,10 +74,8 @@ export interface NodeData {
     storage: string[]
     actions: NodeAction[]
 
-    // TODO - Flujo logico dentro de cada nodo
-    logicalFlow: string
     //TODO - Components Registry
-    ui: string[]
+    UIElement: UIElement[]
 }
 
 export interface NodeAction {
@@ -88,10 +86,20 @@ export interface NodeAction {
      * @example Service: Login.Qr - Login.Bio - etc
      * */
     actionID: string
+    /** Forma en la que se dispara la acción. Auto: al entrar al nodo, User: cuando el usuario toca un botón, por ejemplo, 'continuar' */
+    trigger: { type: 'auto' | 'user' }
+    // TODO - Flujo logico
+    /** Flujo lógico */
+    steps: []
     /** Posibles outcomes */
     reactions: ReactionType[]
 }
-export type ActionType = 'userInput' | 'timeout' | 'terminal' | 'service'
+export enum ActionType {
+    user = 'user',
+    timeout = 'timeout',
+    terminal = 'terminal',
+    service = 'service'
+}
 /** Mantener ID sincronizada con flogConfig.salidas */
 export interface ReactionType extends HandleDef {
     /** Este CODE identifica la respuesta que devuelve el registry involucrado.
@@ -102,3 +110,79 @@ export interface ReactionType extends HandleDef {
     /** ID del Nodo objetivo */
     target?: string
 }
+
+export enum UIElementType {
+    NavigationButton = 'NavigationButton',
+    NumericInput = 'NumericInput',
+    TextInput = 'TextInput',
+    OptionsList = 'OptionsList',
+    Table = 'Table',
+    Information = 'Information'
+}
+interface UIElementNavigationButton {
+    type: UIElementType.NavigationButton
+    config: {
+        buttons: {
+            /** Referencia a un actionID */
+            onAction: string
+            text: string
+            position: 'left' | 'center' | 'right' | 'auto'
+        }[]
+    }
+    style?: string
+}
+
+interface UIElementNumericInput {
+    type: UIElementType.NumericInput
+    config: {
+        obfuscate?: boolean
+        minimum?: number
+        maximum?: number
+        length?: number
+        validator?: (v: number) => boolean
+    }
+    style?: string
+}
+interface UIElementTextInput {
+    type: UIElementType.TextInput
+    config: {
+        obfuscate?: boolean
+        length?: number
+        validator?: (v: string) => boolean
+    }
+    style?: string
+}
+interface UIElementOptionsList {
+    type: UIElementType.OptionsList
+    config: {
+        /** Referencia a un actionID */
+        onAction: string
+        data: string
+        overflow?: 'scroll' | 'pagination'
+    }
+    style?: string
+}
+interface UIElementTable {
+    type: UIElementType.Table
+    config: {
+        data: string
+    }
+    style?: string
+}
+interface UIElementInformation {
+    type: UIElementType.Information
+    config: {
+        title?: string
+        subtitle?: string
+        text?: string
+        illustration?: string
+    }
+    style?: string
+}
+export type UIElement =
+    | UIElementNavigationButton
+    | UIElementNumericInput
+    | UIElementTextInput
+    | UIElementOptionsList
+    | UIElementTable
+    | UIElementInformation

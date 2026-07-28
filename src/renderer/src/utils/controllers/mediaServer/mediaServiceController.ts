@@ -61,9 +61,12 @@ class MediaService {
 
     private simplifyTheme(e: CustomConfig): ThemeConfig {
         try {
+            console.log('SimplifyTheme');
+            console.log(e);
             const bgPath = e.background.find((e) => e.name === 'background_Idle')!.path
             const logo = e.icon.find((b) => b.name === 'icon_logo')!
-            return {
+            
+            const aux = {
                 themeName: e.themeName,
                 color: e.styles.userAction,
                 background: {
@@ -79,6 +82,8 @@ class MediaService {
                 isActive: e.isActive,
                 isDefaultTheme: e.isDefaultTheme
             }
+            console.log(aux);
+            return aux
         } catch (error) {
             console.error(error)
             return {
@@ -158,6 +163,9 @@ class MediaService {
             store.set(UploadStageAtom, UPLOAD_STAGE.FINISHING)
 
             const res = await this.service.getThemesList()
+            console.log('getThemesList');
+            console.log(res);
+            
             if (!res) return []
             return res.map((e) => this.simplifyTheme(e))
         } catch (error) {
@@ -226,6 +234,12 @@ class MediaService {
                 this.setFile = el.file.name
                 console.log(el.file.name, '-', el.assetName)
                 this.updateUploadProgress()
+
+                // TODO - Borrar archivo original si existe
+                if (el.deleteOld) {
+                    console.warn('DELETE OLD FILE -->', el.deleteOld)                    
+                    // await this.service.delete(el.deleteOld)
+                }
 
                 const res = await this.service.uploadFile(
                     el.file,

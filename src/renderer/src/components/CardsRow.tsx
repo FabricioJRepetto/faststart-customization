@@ -31,7 +31,7 @@ export const TerminalsCardRow = ({ cardClick }: Props): React.JSX.Element => {
                         >
                             <p>{e.name}</p>
                             <p className="terminal-ip">{e.ip}</p>
-                            <p className={stateStyle(e.status)}>{terminalSmallState(e.status)}</p>
+                            <p className={stateStyle(e.status)}>{`${terminalSmallState(e.status)} ${e.description ?? ''}`}</p>
                             <p className="terminal-small-date">{smallDate(e.lastUpdate)}</p>
                         </div>
                     ))

@@ -39,6 +39,8 @@ export const AssetsDataAtom = atom<AssetList>()
 export const TemplateConfigAtom = atom<TemplateConfig>()
 /** Archivo de configuración por defecto encontrado en el directorio de la aplicación cliente */
 export const DefaultConfigAtom = atom<CustomConfig>()
+/** Archivo de configuración (PARSEADO a TemplateConfig) del tema seleccionado para utilizarse en la edición */
+export const ThemeConfigAtom = atom<TemplateConfig>()
 
 /** Datos del archivo language por default */
 export const DefaultLanguageDataAtom = atom<LanguageData>({})

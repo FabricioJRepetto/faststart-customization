@@ -24,11 +24,11 @@ export const assetName = (fileName: string): string => {
     return fileName.replace(/^[A-Z]*_/i, '').split('.')[0]
 }
 
-type assetType = 'image' | 'svg' | 'video' | 'audio' | 'json' | 'text' | 'unknown'
+export type FinalAssetType = 'image' | 'svg' | 'video' | 'audio' | 'json' | 'text' | 'unknown'
 /** Retorna el tipo de archivo.
  * @returns
  */
-export const assetExtention = (fileName: string): assetType => {
+export const assetExtention = (fileName: string): FinalAssetType => {
     const mimeTypes: Record<string, string> = {
         png: 'image',
         jpg: 'image',
@@ -47,21 +47,27 @@ export const assetExtention = (fileName: string): assetType => {
     const ext = fileName.split('.').pop() || ''
     const mime = mimeTypes[ext] ?? 'unknown'
     mime === 'unknown' && console.warn('El tipo de archivo', fileName, 'no está contemplado')
-    return mime as assetType
+    return mime as FinalAssetType
 }
 
 export const assetsToFiles = async (
     originalDataList: AssetData[],
-    newDataList: AssetData[]
+    newDataList: AssetData[],
+    themeConfig?: FinalAssetData[]
 ): Promise<FileForUpload[]> => {
     const aux: FileForUpload[] = []
 
     for await (const e of originalDataList) {
-        const custom = newDataList.find((c) => c.assetName === e.assetName)
-        if (custom?.custom.source) {
-            // const _fileName = custom.customPath.replaceAll('\\', '/').split('/').pop()!
-            const file = await b64ToFile(custom.custom.source, custom.custom.fileName!)
-            aux.push({ file, assetName: e.assetName })
+        const asset = newDataList.find((c) => c.assetName === e.assetName)
+        if (asset?.custom.source) {
+            const file = await b64ToFile(asset.custom.source, asset.custom.fileName!)
+
+            let oldPath: string | undefined = undefined
+            if (asset.original?.source) {
+                oldPath = themeConfig?.find((a) => a.name === e.assetName)?.path
+            }
+
+            aux.push({ file, assetName: e.assetName, deleteOld: oldPath })
         }
     }
 
@@ -87,37 +93,46 @@ export async function b64ToFile(dataUrl: string, filename: string): Promise<File
     return new File([blob], filename, { type: blob.type })
 }
 
+/**  */
 export const dataParser = (
     originalDataList: AssetData[],
-    newDataList: AssetDataBase[]
+    newDataList: AssetDataBase[],
+    originalConfig?: FinalAssetData[]
 ): FinalAssetData[] => {
-    return originalDataList.map((e) => {
-        const custom = newDataList.find((c) => c.assetName === e.assetName)
-        if (!custom) return null
+    return originalDataList
+        .map((e) => {
+            const original = originalConfig?.find((o) => o.name === e.assetName)
+            const custom = newDataList.find((c) => c.assetName === e.assetName)
 
-        const _path = custom.custom.source!
-        return {
-            name: e.assetName,
-            path: _path,
-            fileType: assetExtention(_path)
-        }
-    }).filter(e => e !== null)
+            const _path = custom ? custom.custom.source : original?.path
+            if (!_path) return null
+
+            return {
+                name: e.assetName,
+                path: _path,
+                fileType: assetExtention(_path)
+            }
+        })
+        .filter((e) => e !== null)
 }
 
 export const thirdDataParser = (remotePaths: AssetDataBase[]): ThirdScreendata => {
     const config = store.get(EditedThirdScreenConfigDataAtom)
     const newThirdAssets = store.get(EditedThirdScreenAssetsDataAtom)
 
-    const assets = newThirdAssets?.map((e) => {
-        const remote = remotePaths.find((e) => e.assetName)
-        if (!remote) return null
-        const _path = remote.custom.source!
-        return {
-            name: e.assetName,
-            path: _path,
-            fileType: assetExtention(_path)
-        }
-    }).filter(e => e !== null) || []
+    const assets =
+        newThirdAssets
+            ?.map((e) => {
+                const remote = remotePaths.find((t) => t.assetName === e.assetName)
+                if (!remote) return null
+                const _path = remote.custom.source!
+                return {
+                    name: e.assetName,
+                    path: _path,
+                    fileType: assetExtention(_path)
+                }
+            })
+            .filter((e) => e !== null) || []
 
     return { config, assets }
 }

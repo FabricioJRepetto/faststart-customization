@@ -1,6 +1,6 @@
 import ClearSvg from '../assets/clear.svg?react'
 import { useSetAtom } from 'jotai'
-import { EditedStylesDataAtom, store, TemplateConfigAtom } from '@renderer/utils/context/context'
+import { EditedStylesDataAtom, EditingThemeAtom, store, TemplateConfigAtom, ThemeConfigAtom } from '@renderer/utils/context/context'
 import {
     ColorStyleCard,
     BorderStyleCard,
@@ -11,7 +11,9 @@ import Tooltip from '@renderer/components/Tooltip'
 import { STYLES } from '@renderer/utils/navigate'
 
 const Styles = (): React.JSX.Element => {
-    const ogStyles = store.get(TemplateConfigAtom)?.styles
+    const editing = store.get(EditingThemeAtom)
+    const ogStyles = store.get(editing ? ThemeConfigAtom : TemplateConfigAtom)?.styles
+
     const setCustomStyles = useSetAtom(EditedStylesDataAtom)
 
     const updateCustom = (key: string, parent: string, value: string): void => {

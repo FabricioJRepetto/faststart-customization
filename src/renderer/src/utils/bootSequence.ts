@@ -25,6 +25,7 @@ import {
     EditedThirdScreenConfigDataAtom,
     store,
     TemplateConfigAtom,
+    ThemeConfigAtom,
     ThemesLibraryDataAtom
 } from './context/context'
 import { objectFullStructure } from './LangStructureBuilder'
@@ -118,17 +119,63 @@ export const loadThemesCollection = async (): Promise<void> => {
 /** Carga assets basandose en la configuración por defecto actual */
 export const parseAssets = (): void => {
     try {
-        console.log('-----------------------------\n', '- Parsing remote assets...\n')
+        console.log('-----------------------------\n', '- Setting Template...\n')
 
         const data = store.get(TemplateConfigAtom)
         if (data) {
-            // const data = parseConfigToAssetList(config)
             store.set(AssetsDataAtom, data)
             store.set(EditedIconsDataAtom, [...data.icon])
             store.set(EditedImagesDataAtom, [...data.image])
             store.set(EditedBackgroundsDataAtom, [...data.background])
             store.set(EditedAudiosDataAtom, [...data.audio])
             store.set(EditedThirdScreenAssetsDataAtom, [...data.thirdscreen])
+        } else {
+            throw new Error('No template found')
+        }
+    } catch (error) {
+        console.error(`- Error al parsear template:\n`, error)
+    }
+}
+
+/** Carga assets basandose en la configuración por defecto actual */
+export const parseThemeToEdit = (): void => {
+    try {
+        console.log('-----------------------------\n', '- Parsing theme assets...\n')
+
+        const templateData = store.get(TemplateConfigAtom)!
+        const themeData = store.get(ThemeConfigAtom)!
+
+        const dataUnion = (template: AssetData[], theme: AssetData[]): AssetData[] => {
+            const aux: AssetData[] = []
+            try {
+                for (const asset of template) {
+                    const themeAsset = theme.find((e) => e.assetName === asset.assetName)
+                    aux.push(themeAsset || asset)
+                }
+
+                return aux
+            } catch (error) {
+                console.error(error)
+                return aux
+            }
+        }
+
+
+        if (themeData) {
+            const updatedThemeData: TemplateConfig = {
+                ...themeData,
+                icon: dataUnion(templateData.icon, themeData.icon),
+                image: dataUnion(templateData.image, themeData.image),
+                background: dataUnion(templateData.background, themeData.background),
+                audio: dataUnion(templateData.audio, themeData.audio),
+                thirdscreen: [...themeData.thirdscreen]
+            }
+            store.set(AssetsDataAtom, updatedThemeData)
+            store.set(EditedIconsDataAtom, updatedThemeData.icon)
+            store.set(EditedImagesDataAtom, updatedThemeData.image)
+            store.set(EditedBackgroundsDataAtom, updatedThemeData.background)
+            store.set(EditedAudiosDataAtom, updatedThemeData.audio)
+            store.set(EditedThirdScreenAssetsDataAtom, updatedThemeData.thirdscreen)
         } else {
             throw new Error('No config found')
         }
@@ -158,7 +205,7 @@ export const remoteBootSequence = async (): Promise<void> => {
     try {
         //* LOAD : template_assets.json
         await loadTemplate()
-        validateFiles()
+        loadStylesLanguageData()
         //* LOAD : customConfig.json
         // await loadCustomConfig()
 
@@ -175,7 +222,7 @@ export const remoteBootSequence = async (): Promise<void> => {
 }
 
 /** Valída que no falten archivos necesarios. Ejecutar LUEGO de obtener el template */
-export const validateFiles = (): void => {
+export const loadStylesLanguageData = (): void => {
     const languages = !!Object.keys(store.get(DefaultLanguageDataAtom)).length
     const styles = store.get(DefaultStylesDataAtom)
 
@@ -207,4 +254,28 @@ export const validateFiles = (): void => {
             })
         }
     }
+}
+
+/** Valída que no falten archivos necesarios. Ejecutar LUEGO de obtener el template */
+export const loadThemesStylesLanguageData = (): void => {
+    // TODO - Adaptar a los datos del template
+    const config = store.get(ThemeConfigAtom)!
+
+    store.set(DefaultLanguageDataAtom, config.language)
+    store.set(EditedLanguageDataAtom, objectFullStructure(config.language))
+    store.set(DefaultStylesDataAtom, {
+        ...config.styles,
+        button: {
+            ...config.styles.button,
+            border: config.styles.button?.border.toString()
+        },
+        secondaryButton: {
+            ...config.styles.secondaryButton,
+            border: config.styles.secondaryButton?.border.toString()
+        },
+        inputButton: {
+            ...config.styles.inputButton,
+            border: config.styles.inputButton?.border.toString()
+        }
+    })
 }
