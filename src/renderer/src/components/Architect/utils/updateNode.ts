@@ -1,6 +1,7 @@
 import { store } from '@renderer/utils/context/context'
 import { FlowEdges, FlowNodes } from '../FlowStorage'
-import { ActionType, FlowNode, NodeAction, UIElement, UIElementType } from '../types'
+import { ActionType, FlowNode, NodeAction, ScreenType, UIElement, UIElementType } from '../types'
+import TerminalActions, { TSService } from '../Actions/Terminal/TerminalActions'
 
 /** Agrega un target al Nodo indicado
  * @param source Nodo de origen
@@ -128,11 +129,19 @@ export const deleteNode = (nodeID: string): void => {
         console.error(error)
     }
 }
-
-export const addNodeAction = (nodeID: string, action: ActionType): void => {
+export function addNodeAction(
+    nodeID: string,
+    action: ActionType.user | ActionType.service | ActionType.timeout
+): void
+export function addNodeAction(
+    nodeID: string,
+    action: ActionType.terminal,
+    serviceID: TSService
+): void
+export function addNodeAction(nodeID: string, action: ActionType, serviceID?: TSService): void {
     try {
         // TODO - modal para crear actions
-        const presetAct: Record<ActionType, NodeAction> = {
+        const presetAct: Record<string, NodeAction> = {
             [ActionType.user]: {
                 type: ActionType.user,
                 actionID: 'click',
@@ -164,24 +173,6 @@ export const addNodeAction = (nodeID: string, action: ActionType): void => {
                     }
                 ]
             },
-            [ActionType.terminal]: {
-                type: ActionType.terminal,
-                actionID: 'CDMisAvailable',
-                trigger: { type: 'auto' },
-                steps: [],
-                reactions: [
-                    {
-                        reactionCode: 'available',
-                        id: `${nodeID}.${action}.CDMisAvailable.available`,
-                        label: 'available'
-                    },
-                    {
-                        reactionCode: 'notAvailable',
-                        id: `${nodeID}.${action}.CDMisAvailable.notAvailable`,
-                        label: 'notAvailable'
-                    }
-                ]
-            },
             [ActionType.timeout]: {
                 type: ActionType.timeout,
                 actionID: 'timeout',
@@ -197,6 +188,23 @@ export const addNodeAction = (nodeID: string, action: ActionType): void => {
             }
         }
 
+        let _action: NodeAction
+        switch (action) {
+            case ActionType.terminal:
+                _action = TerminalActions[serviceID!](nodeID)
+                break
+
+            case ActionType.user:
+                _action = presetAct[action]
+                break
+            case ActionType.service:
+                _action = presetAct[action]
+                break
+            case ActionType.timeout:
+                _action = presetAct[action]
+                break
+        }
+
         store.set(FlowNodes, (nodes) => {
             return [...nodes]?.map((n) => {
                 if (n.id === nodeID) {
@@ -204,7 +212,7 @@ export const addNodeAction = (nodeID: string, action: ActionType): void => {
                         ...n,
                         data: {
                             ...n.data,
-                            actions: [...n.data.actions, presetAct[action]]
+                            actions: [...n.data.actions, _action]
                         }
                     }
                 } else return n
@@ -257,26 +265,42 @@ export const deleteNodeAction = (nodeID: string, actionType: string, actionId: s
 export const addNodeUI = (nodeID: string, element: UIElementType): void => {
     try {
         const presetUI: Record<UIElementType, UIElement> = {
-            [UIElementType.NavigationButton]: {
-                type: UIElementType.NavigationButton,
+            NavigationButton: {
+                type: 'NavigationButton',
                 config: {
-                    buttons: [{ onAction: '', text: 'Continue', position: 'right' }]
+                    buttons: [{ onAction: '', text: 'Continue', position: 'right' }],
+                    region: 'footer',
+                    order: 0
                 }
             },
-            [UIElementType.NumericInput]: { type: UIElementType.NumericInput, config: {} },
-            [UIElementType.TextInput]: { type: UIElementType.TextInput, config: {} },
-            [UIElementType.OptionsList]: {
-                type: UIElementType.OptionsList,
-                config: { onAction: '', data: '' }
+            NumericInput: {
+                type: 'NumericInput',
+                config: {
+                    region: 'body',
+                    order: 0
+                }
             },
-            [UIElementType.Table]: { type: UIElementType.Table, config: { data: '' } },
-            [UIElementType.Information]: {
-                type: UIElementType.Information,
+            TextInput: {
+                type: 'TextInput',
+                config: {
+                    region: 'body',
+                    order: 0
+                }
+            },
+            OptionsList: {
+                type: 'OptionsList',
+                config: { onAction: '', data: '', region: 'body', order: 0 }
+            },
+            Table: { type: 'Table', config: { data: '', region: 'body', order: 0 } },
+            Information: {
+                type: 'Information',
                 config: {
                     title: 'Titulo informativo',
                     subtitle: 'Subtitulo informativo',
                     text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                    illustration: 'image_thankyou'
+                    illustration: 'image_thankyou',
+                    region: 'body',
+                    order: 0
                 }
             }
         }
@@ -288,7 +312,7 @@ export const addNodeUI = (nodeID: string, element: UIElementType): void => {
                         ...n,
                         data: {
                             ...n.data,
-                            UIElement: [...n.data.UIElement, presetUI[element]]
+                            UIElement: [...n.data.uiElements, presetUI[element]]
                         }
                     }
                 } else return n
@@ -308,7 +332,34 @@ export const deleteNodeUI = (nodeID: string, element: UIElementType): void => {
                         ...n,
                         data: {
                             ...n.data,
-                            UIElement: [...n.data.UIElement].filter((e) => !(e.type === element))
+                            UIElement: [...n.data.uiElements].filter((e) => !(e.type === element))
+                        }
+                    }
+                } else return n
+            })
+        })
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export const updateNodeProps = (
+    nodeID: string,
+    name: string,
+    type: ScreenType,
+    to: boolean
+): void => {
+    try {
+        store.set(FlowNodes, (nodes) => {
+            return [...nodes]?.map((n) => {
+                if (n.id === nodeID) {
+                    return {
+                        ...n,
+                        data: {
+                            ...n.data,
+                            screenName: name,
+                            screenType: type,
+                            timeout: to
                         }
                     }
                 } else return n

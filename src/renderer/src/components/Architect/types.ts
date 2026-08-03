@@ -16,7 +16,6 @@ export interface FlowNode {
         y: number
         width: number
         height: number
-        titulo: string
         color?: string
         /** @deprecated */
         entradas?: HandleDef[]
@@ -68,14 +67,14 @@ export enum ScreenType {
 
 export interface NodeData {
     screenType: ScreenType
+    screenName: string
     flow?: string
+    /** Timeout de cierre automatico */
     timeout: boolean
     /** Variables que necesita del storage */
     storage: string[]
     actions: NodeAction[]
-
-    //TODO - Components Registry
-    UIElement: UIElement[]
+    uiElements: UIElement[]
 }
 
 export interface NodeAction {
@@ -111,74 +110,109 @@ export interface ReactionType extends HandleDef {
     target?: string
 }
 
-export enum UIElementType {
-    NavigationButton = 'NavigationButton',
-    NumericInput = 'NumericInput',
-    TextInput = 'TextInput',
-    OptionsList = 'OptionsList',
-    Table = 'Table',
-    Information = 'Information'
-}
-interface UIElementNavigationButton {
-    type: UIElementType.NavigationButton
-    config: {
-        buttons: {
-            /** Referencia a un actionID */
-            onAction: string
-            text: string
-            position: 'left' | 'center' | 'right' | 'auto'
-        }[]
-    }
+export type UIElementType =
+    | 'NavigationButton'
+    | 'NumericInput'
+    | 'TextInput'
+    | 'OptionsList'
+    | 'Table'
+    | 'Information'
+
+interface UIElementBase {
+    type: UIElementType
+    config: UIElementBaseConfig
     style?: string
+}
+interface UIElementBaseConfig {
+    onAction?: string
+    order?: number
+    region?: 'header' | 'body' | 'footer'
 }
 
-interface UIElementNumericInput {
-    type: UIElementType.NumericInput
-    config: {
-        obfuscate?: boolean
-        minimum?: number
-        maximum?: number
-        length?: number
-        validator?: (v: number) => boolean
-    }
+interface UIElementNavigationButton extends UIElementBase {
+    type: 'NavigationButton'
+    config: NavigationButtonConfig
     style?: string
 }
-interface UIElementTextInput {
-    type: UIElementType.TextInput
-    config: {
-        obfuscate?: boolean
-        length?: number
-        validator?: (v: string) => boolean
-    }
+export interface NavigationButtonButtonConfig {
+    /** Referencia a un reactionCode (el actionID siempre va a ser 'click') */
+    onAction: string
+    text: string
+    position: 'left' | 'center' | 'right' | 'auto'
+}
+export interface NavigationButtonConfig {
+    buttons: NavigationButtonButtonConfig[]
+    region: 'footer'
+    order: number
+}
+
+interface UIElementNumericInput extends UIElementBase {
+    type: 'NumericInput'
+    config: NumericInputConfig
     style?: string
 }
-interface UIElementOptionsList {
-    type: UIElementType.OptionsList
-    config: {
-        /** Referencia a un actionID */
-        onAction: string
-        data: string
-        overflow?: 'scroll' | 'pagination'
-    }
+export interface NumericInputConfig {
+    obfuscate?: boolean
+    minimum?: number
+    maximum?: number
+    length?: number
+    direction?: 'column' | 'row'
+    region: 'body'
+    order: number
+}
+
+interface UIElementTextInput extends UIElementBase {
+    type: 'TextInput'
+    config: TextInputConfig
     style?: string
 }
-interface UIElementTable {
-    type: UIElementType.Table
-    config: {
-        data: string
-    }
+export interface TextInputConfig {
+    obfuscate?: boolean
+    length?: number
+    validator?: string
+    region: 'body'
+    order: number
+}
+
+interface UIElementOptionsList extends UIElementBase {
+    type: 'OptionsList'
+    config: OptionsListConfig
     style?: string
 }
-interface UIElementInformation {
-    type: UIElementType.Information
-    config: {
-        title?: string
-        subtitle?: string
-        text?: string
-        illustration?: string
-    }
+export interface OptionsListConfig {
+    /** Referencia a un actionID */
+    onAction: string
+    data: string
+    overflow?: 'scroll' | 'pagination'
+    region: 'body'
+    order: number
+}
+
+interface UIElementTable extends UIElementBase {
+    type: 'Table'
+    config: TableConfig
     style?: string
 }
+export interface TableConfig {
+    data: string
+    region: 'body'
+    order: number
+}
+
+interface UIElementInformation extends UIElementBase {
+    type: 'Information'
+    config: InformationConfig
+    style?: string
+}
+export interface InformationConfig {
+    title?: string
+    subtitle?: string
+    text?: string
+    illustration?: string
+    region: 'body'
+    order: number
+}
+
 export type UIElement =
     | UIElementNavigationButton
     | UIElementNumericInput

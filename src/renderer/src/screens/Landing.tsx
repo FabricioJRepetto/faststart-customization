@@ -93,9 +93,20 @@ const Landing = (): React.JSX.Element => {
             <NATL className={`logo ${loading ? 'logo-loading logo-loading-position' : ''}`} />
             <div className={`creator ${loading ? 'fade-out' : ''}`}>Versión de escritorio</div>
             <div className={`text ${loading ? 'fade-out' : ''}`}>
-                Administración Rápida de Customizaciones
+                <h1 style={{display: 'flex', justifyContent: 'center'}}>
+                    <code style={{ background: 'none', fontSize: '4rem' }}>ƒ</code>
+                    <p
+                        style={{
+                            fontSize: '3.25rem',
+                            marginTop: '3px',
+                            fontWeight: '550'
+                        }}
+                    >
+                        luid✦
+                    </p>
+                </h1>
                 <div className="text">
-                    para <span className="gradient-text">FastStart</span>
+                    <span className="gradient-text">Flow Logic UI Designer</span>
                 </div>
             </div>
 

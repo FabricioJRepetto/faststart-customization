@@ -1,5 +1,6 @@
 import type { ActionType, FlowNode } from './types'
 import OptionsSvg from '../../assets/options.svg?react'
+import { NodeColors } from './utils/presets'
 
 interface Props {
     node: FlowNode
@@ -78,10 +79,10 @@ export function NodeView({
             <div
                 className="flow-node-header"
                 style={{
-                    background: node.flowConfig.color ?? '#2a2a2a'
+                    background: NodeColors[node.data.screenType]
                 }}
             >
-                <p>{node.flowConfig.titulo}</p>
+                <p>{node.data.screenName}</p>
                 {node.data.flow && <p>- {node.data.flow}</p>}
             </div>
 

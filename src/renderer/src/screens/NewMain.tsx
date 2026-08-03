@@ -65,8 +65,12 @@ const NewMain = (): React.JSX.Element => {
         <div className={`screen-content new-main-screen-container ${firstLoad ? 'fade-in' : ''}`}>
             <div className="screen-header">
                 <h1>
-                    <code style={{ color: '#ececec', background: 'none', fontSize: '3rem' }}>ƒ✦Start</code>
+                    <code style={{ background: 'none', fontSize: '3rem' }}>
+                        ƒ
+                    </code>
+                    <p style={{ fontSize: '2.75rem', marginLeft: '-10px', marginTop: '6px', fontWeight: '550' }}>luid✦</p>
                 </h1>
+                <p style={{ background: 'none' }}>Flow Logic UI Designer</p>
 
                 <div className="header-group">
                     <div className="header-server-status">

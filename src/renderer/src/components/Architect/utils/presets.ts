@@ -10,10 +10,10 @@ export const initialNodes: FlowNode[] = [
             y: 0,
             width: 200,
             height: 32,
-            titulo: 'Login',
             color: '#3d5a80'
         },
         data: {
+            screenName: 'Login',
             screenType: ScreenType.idle,
             timeout: false,
             storage: [],
@@ -24,7 +24,7 @@ export const initialNodes: FlowNode[] = [
                     reactions: [
                         {
                             reactionCode: 'start',
-                            id: '1.userInput.click.start',
+                            id: '1.user.click.start',
                             label: 'start'
                         }
                     ],
@@ -104,7 +104,7 @@ export const initialNodes: FlowNode[] = [
                     steps: []
                 }
             ],
-            UIElement: []
+            uiElements: []
         }
     },
     {
@@ -114,15 +114,15 @@ export const initialNodes: FlowNode[] = [
             y: -80,
             width: 200,
             height: 32,
-            titulo: 'Dashboard',
             color: '#588157'
         },
         data: {
+            screenName: 'Dashboard',
             screenType: ScreenType.userAction,
             timeout: false,
             storage: [],
             actions: [],
-            UIElement: []
+            uiElements: []
         }
     },
     {
@@ -132,15 +132,15 @@ export const initialNodes: FlowNode[] = [
             y: 100,
             width: 200,
             height: 32,
-            titulo: 'Error',
             color: '#bc4749'
         },
         data: {
+            screenName: 'Error',
             screenType: ScreenType.errorScreen,
             timeout: false,
             storage: [],
             actions: [],
-            UIElement: []
+            uiElements: []
         }
     }
 ]
@@ -150,7 +150,7 @@ export const initialEdges: EdgesById = {
     e1: {
         id: 'e1',
         source: '1',
-        sourceHandle: '1.userInput.click.start',
+        sourceHandle: '1.user.click.start',
         target: '2',
         targetHandle: 'in'
     },
@@ -163,7 +163,7 @@ export const initialEdges: EdgesById = {
     }
 }
 
-const NodeColors: Record<ScreenType, string> = {
+export const NodeColors: Record<ScreenType, string> = {
     [ScreenType.idle]: '#588157',
     [ScreenType.userAction]: '#8a7e39',
     [ScreenType.infoScreen]: '#3d5a80',
@@ -184,10 +184,10 @@ export const newNode = (type: ScreenType, name?: string): void => {
                 y: -70,
                 width: 200,
                 height: 32,
-                titulo: name || 'Idle',
                 color: NodeColors.idle
             },
             data: {
+                screenName: name || 'Idle',
                 screenType: ScreenType.idle,
                 timeout: false,
                 storage: [],
@@ -223,7 +223,7 @@ export const newNode = (type: ScreenType, name?: string): void => {
                         steps: []
                     }
                 ],
-                UIElement: []
+                uiElements: []
             }
         },
         [ScreenType.userAction]: {
@@ -233,10 +233,10 @@ export const newNode = (type: ScreenType, name?: string): void => {
                 y: -70,
                 width: 200,
                 height: 32,
-                titulo: name || 'Confirmation',
                 color: NodeColors.userAction
             },
             data: {
+                screenName: name || 'Confirmation',
                 screenType: ScreenType.userAction,
                 timeout: true,
                 storage: [],
@@ -282,7 +282,7 @@ export const newNode = (type: ScreenType, name?: string): void => {
                         steps: []
                     }
                 ],
-                UIElement: []
+                uiElements: []
             }
         },
         [ScreenType.infoScreen]: {
@@ -292,10 +292,10 @@ export const newNode = (type: ScreenType, name?: string): void => {
                 y: -70,
                 width: 200,
                 height: 32,
-                titulo: name || 'Info',
                 color: NodeColors.infoScreen
             },
             data: {
+                screenName: name || 'Info',
                 screenType: ScreenType.infoScreen,
                 timeout: false,
                 storage: [],
@@ -331,7 +331,7 @@ export const newNode = (type: ScreenType, name?: string): void => {
                         steps: []
                     }
                 ],
-                UIElement: []
+                uiElements: []
             }
         },
         [ScreenType.successScreen]: {
@@ -341,10 +341,10 @@ export const newNode = (type: ScreenType, name?: string): void => {
                 y: -70,
                 width: 200,
                 height: 32,
-                titulo: name || 'Success',
                 color: NodeColors.successScreen
             },
             data: {
+                screenName: name || 'Success',
                 screenType: ScreenType.successScreen,
                 timeout: true,
                 storage: [],
@@ -365,7 +365,7 @@ export const newNode = (type: ScreenType, name?: string): void => {
                         steps: []
                     }
                 ],
-                UIElement: []
+                uiElements: []
             }
         },
         [ScreenType.errorScreen]: {
@@ -375,10 +375,10 @@ export const newNode = (type: ScreenType, name?: string): void => {
                 y: -70,
                 width: 200,
                 height: 32,
-                titulo: name || 'Error',
                 color: NodeColors.errorScreen
             },
             data: {
+                screenName: name || 'Error',
                 screenType: ScreenType.errorScreen,
                 timeout: true,
                 storage: [],
@@ -399,7 +399,7 @@ export const newNode = (type: ScreenType, name?: string): void => {
                         steps: []
                     }
                 ],
-                UIElement: []
+                uiElements: []
             }
         },
         [ScreenType.config]: {
@@ -409,10 +409,10 @@ export const newNode = (type: ScreenType, name?: string): void => {
                 y: -70,
                 width: 200,
                 height: 32,
-                titulo: name || 'Configuration',
                 color: NodeColors.config
             },
             data: {
+                screenName: name || 'Configuration',
                 screenType: ScreenType.config,
                 timeout: false,
                 storage: [],
@@ -438,7 +438,7 @@ export const newNode = (type: ScreenType, name?: string): void => {
                         steps: []
                     }
                 ],
-                UIElement: []
+                uiElements: []
             }
         },
         [ScreenType.close]: {
@@ -448,10 +448,10 @@ export const newNode = (type: ScreenType, name?: string): void => {
                 y: -70,
                 width: 200,
                 height: 32,
-                titulo: name || 'Close',
                 color: NodeColors.close
             },
             data: {
+                screenName: name || 'Close',
                 screenType: ScreenType.close,
                 timeout: false,
                 storage: [],
@@ -472,7 +472,7 @@ export const newNode = (type: ScreenType, name?: string): void => {
                         steps: []
                     }
                 ],
-                UIElement: []
+                uiElements: []
             }
         }
     }

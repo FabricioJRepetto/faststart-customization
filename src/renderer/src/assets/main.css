@@ -2579,21 +2579,21 @@ input[type='number'] {
     color: orange;
 }
 .service {
-    color: skyblue;
+    color: grey;
+    /* color: skyblue; */
 }
 .terminal {
     color: lightgreen;
 }
 .timeout {
-    color: whitesmoke;
+    color: grey;
+    /* color: whitesmoke; */
 }
 
 .properties-menu-content {
     height: 93%;
     overflow-y: scroll;
     overflow-x: clip;
-    /* border: 1px solid #bebebe13; */
-    /* border-radius: 7px; */
 
     &::-webkit-scrollbar {
         display: none;
@@ -2601,9 +2601,6 @@ input[type='number'] {
 
     .actions {
         margin: 10px 10px 10px auto;
-        /* position: absolute;
-        right: 5%;
-        bottom: 2%; */
     }
 }
 
@@ -2662,6 +2659,45 @@ input[type='number'] {
     text-overflow: clip;
     white-space: nowrap;
     font-size: 12px;
+}
+
+.node-prop-editor {
+    display: flex;
+    flex-direction: column;
+
+    > div {
+        display: flex;
+        justify-content: space-between;
+        gap: 5px;
+        margin: 2px 0;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    select,
+    input {
+        background-color: #00000000;
+        border: 1px solid #bebebe13;
+        border-radius: 0;
+        height: 20px;
+        color: var(--ev-c-text-1);
+        width: 60%;
+        padding: 0 5px;
+    }
+
+    select {
+        cursor: pointer;
+        &:focus {
+            outline: none;
+        }
+    }
+    option {
+        color: var(--ev-c-text-1);
+        background-color: var(--color-background);
+        &:hover {
+            background-color: lime;
+        }
+    }
 }
 
 /*_______ Nodes _______*/
