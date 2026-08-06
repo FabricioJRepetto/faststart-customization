@@ -53,24 +53,29 @@ export const assetExtention = (fileName: string): FinalAssetType => {
 export const assetsToFiles = async (
     originalDataList: AssetData[],
     newDataList: AssetData[],
-    themeConfig?: FinalAssetData[]
+    uploadEverything: boolean,
 ): Promise<FileForUpload[]> => {
     const aux: FileForUpload[] = []
 
+    // Itera la lista "template" de assets requeridos
     for await (const e of originalDataList) {
         const asset = newDataList.find((c) => c.assetName === e.assetName)
+        console.error("asset")
+        console.log(asset)
+        
+        // Hay archivo nuevo?
         if (asset?.custom.source) {
             const file = await b64ToFile(asset.custom.source, asset.custom.fileName!)
+            aux.push({ file, assetName: e.assetName })
 
-            let oldPath: string | undefined = undefined
-            if (asset.original?.source) {
-                oldPath = themeConfig?.find((a) => a.name === e.assetName)?.path
-            }
-
-            aux.push({ file, assetName: e.assetName, deleteOld: oldPath })
+            // Subir original si existe?
+        } else if (uploadEverything && asset?.original?.source && asset?.original?.fileName) {
+            // oldPath = themeConfig?.find((a) => a.name === e.assetName)?.path
+            const ogFile = await b64ToFile(asset.original.source, asset.original.fileName)
+            aux.push({ file: ogFile, assetName: e.assetName })
         }
     }
-
+    
     return aux
 }
 

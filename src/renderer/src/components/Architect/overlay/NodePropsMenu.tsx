@@ -15,7 +15,7 @@ import {
     deleteNodeUI,
     updateNodeProps
 } from '../utils/updateNode'
-import { ActionType, FlowNode, ScreenType, UIElementType } from '../types'
+import { ActionType, FlowNode, ScreenType, UIElementType } from '../../../../../../shared/fluid_types'
 import UIElementEditor from './components/UIElementEditor'
 import { NodeColors } from '../utils/presets'
 

@@ -117,7 +117,12 @@ export const Preview = (): React.JSX.Element => {
                             confirm={() => !loadingUpload && setModalUpload(false)}
                             close={() => !loadingUpload && setModalUpload(false)}
                         >
-                            <UploadDialog closeModal={() => setModalUpload(false)} />
+                            <UploadDialog
+                                closeModal={() => {
+                                    setModalUpload(false)
+                                    setLoadingUpload(false)
+                                }}
+                            />
                         </Modal>
                     )}
                 </div>

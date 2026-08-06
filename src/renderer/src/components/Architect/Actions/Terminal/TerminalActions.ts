@@ -1,6 +1,6 @@
 import { ICashDispenseHandler } from '@terminal-services/cash-dispenser-service'
 import { allKeysOf } from '../../utils/typeAssertion'
-import { ActionType, NodeAction, ReactionType } from '../../types'
+import { ActionType, NodeAction, ReactionType } from '../../../../../../../shared/fluid_types'
 
 export type TSService = 'dispenser'
 

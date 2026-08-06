@@ -1,14 +1,14 @@
 import { CustomConfig, FileForUpload, UploadedFile } from '@shared/types'
 import {
     AssetsDataAtom,
-    DefaultConfigAtom,
+    DefaultThemeConfigAtom,
     EditedAudiosDataAtom,
     EditedBackgroundsDataAtom,
     EditedIconsDataAtom,
     EditedImagesDataAtom,
     EditedThirdScreenAssetsDataAtom,
-    store,
-    UploadSetAsDefaultThemeAtom
+    EditingThemeAtom,
+    store
 } from './context/context'
 import {
     dataParser,
@@ -22,12 +22,15 @@ import { CUSTOM_FILE_VERSION } from '@shared/CONSTANTS'
 import { getID } from './IdGen'
 
 /** Genera una lista FileForUpload combinando los assets originales y los modificados */
-export const getUploadList = async (): Promise<FileForUpload[]> => {
+export const getUploadList = async (themeName: string): Promise<FileForUpload[]> => {
     try {
         console.log('Starting File conversion...')
 
         const ogData = store.get(AssetsDataAtom)!
-        const ThemeConfig = store.get(DefaultConfigAtom)
+        const ThemeConfig = store.get(DefaultThemeConfigAtom)
+
+        const edition = store.get(EditingThemeAtom)
+        const newTheme = themeName !== ThemeConfig?.themeName
 
         const newIcons = store.get(EditedIconsDataAtom)
         const newImages = store.get(EditedImagesDataAtom)
@@ -35,13 +38,13 @@ export const getUploadList = async (): Promise<FileForUpload[]> => {
         const newAudios = store.get(EditedAudiosDataAtom)
         const newThirds = store.get(EditedThirdScreenAssetsDataAtom)
 
-        const iconsList = await assetsToFiles(ogData.icon, newIcons!, ThemeConfig?.icon)
+        const iconsList = await assetsToFiles(ogData.icon, newIcons!, edition && newTheme)
         console.log(iconsList.length, 'icons converted')
-        const imagesList = await assetsToFiles(ogData.image, newImages!, ThemeConfig?.image)
+        const imagesList = await assetsToFiles(ogData.image, newImages!, edition && newTheme)
         console.log(imagesList.length, 'images converted')
-        const bgsList = await assetsToFiles(ogData.background, newBgs!, ThemeConfig?.background)
+        const bgsList = await assetsToFiles(ogData.background, newBgs!, edition && newTheme)
         console.log(bgsList.length, 'backgrounds converted')
-        const audiosList = await assetsToFiles(ogData.audio, newAudios!, ThemeConfig?.audio)
+        const audiosList = await assetsToFiles(ogData.audio, newAudios!, edition && newTheme)
         console.log(audiosList.length, 'audios converted')
         const thirdList = await thirdAssetsToFiles(newThirds!)
         console.log(thirdList.length, 'third screen assets converted')
@@ -67,9 +70,8 @@ export const getUploadList = async (): Promise<FileForUpload[]> => {
 
 export const getThemeConfig = (files: UploadedFile[], themeName: string): CustomConfig => {
     try {
-        const ogConfig = store.get(DefaultConfigAtom)
+        const ogConfig = store.get(DefaultThemeConfigAtom)
         const ogData = store.get(AssetsDataAtom)!
-        const asDefault = store.get(UploadSetAsDefaultThemeAtom)
 
         console.log('getThemeConfig')
         console.log(ogConfig)
@@ -80,7 +82,6 @@ export const getThemeConfig = (files: UploadedFile[], themeName: string): Custom
             themeName: themeName,
             ID: getID(),
             customEnabled: true,
-            isDefaultTheme: asDefault,
             isActive: true,
             language: languageParser(),
             styles: stylesDataParser(),

@@ -872,6 +872,27 @@ input[type='number'] {
     );
     border-image-slice: 1;
 }
+.card-row-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 10px;
+    border-radius: 5px 5px 0 0;
+    border: 1px solid #00000000;
+    cursor: pointer;
+
+    div {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--ev-c-orange-2);
+    }
+
+    &:hover {
+        border: 1px solid #bebebe13;
+        background-color: #72727213;
+    }
+}
 .card-row-card {
     margin: 5px 0;
     padding: 10px;
@@ -980,6 +1001,11 @@ input[type='number'] {
 .terminal-state-offline {
     color: rgb(0, 0, 0) !important;
 }
+.highlighted-theme-card {
+    outline: 2px solid var(--ev-c-orange-3);
+    margin-left: 2px;
+}
+
 .shortcuts-container {
     width: 80vw;
     margin-top: auto;

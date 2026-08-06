@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import type { ConnectionDraft, FlowEdge, FlowNode } from '../types'
+import type { ConnectionDraft, FlowEdge, FlowNode } from '../../../../../../shared/fluid_types'
 
 type Return = {
     draft: ConnectionDraft | null

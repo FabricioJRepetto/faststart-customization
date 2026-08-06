@@ -1,4 +1,5 @@
 import {
+    BACKEND_DEFAULT_CONFIG_PATH,
     BACKEND_THEMES_CONFIGS_PATH,
     DEFAULT_CONFIG_FILENAME,
     TEMPLATE_CONFIG_FILENAME
@@ -7,13 +8,15 @@ import {
     AssetData,
     AssetType,
     FinalAssetData,
+    FinalStylesData,
+    StylesData,
     TemplateConfig,
     TemplateRawConfig
 } from '@shared/types'
 import {
     AssetsDataAtom,
     CustomEnabledAtom,
-    DefaultConfigAtom,
+    DefaultThemeConfigAtom,
     DefaultLanguageDataAtom,
     DefaultStylesDataAtom,
     EditedAudiosDataAtom,
@@ -26,7 +29,8 @@ import {
     store,
     TemplateConfigAtom,
     ThemeConfigAtom,
-    ThemesLibraryDataAtom
+    ThemesLibraryDataAtom,
+    DefaultConfigurationsAtom
 } from './context/context'
 import { objectFullStructure } from './LangStructureBuilder'
 import mediaServiceController from './controllers/mediaServer/mediaServiceController'
@@ -67,18 +71,44 @@ export const applyTemplate = (data: TemplateRawConfig): void => {
         styles: objectFullStructure(data.styles),
         language: data.language
     }
+    
     store.set(TemplateConfigAtom, aux)
 }
 
-export const loadCustomConfig = async (): Promise<void> => {
+export const loadDefaultConfigurations = async (): Promise<void> => {
+    try {
+        console.log(
+            '-----------------------------\n',
+            `- fetching ${BACKEND_DEFAULT_CONFIG_PATH}/${DEFAULT_CONFIG_FILENAME}...\n`
+        )
+        const res = await mediaServiceController.getDefaultConfigurations()
+
+        if (res) {
+            console.log(
+                `- fetching ${BACKEND_DEFAULT_CONFIG_PATH}/${DEFAULT_CONFIG_FILENAME}. data OK\n`,
+                '- Saving data'
+            )
+            console.log(res)
+            store.set(DefaultConfigurationsAtom, res)
+        } else {
+            throw new Error(
+                `Error al cargar archivo ${BACKEND_DEFAULT_CONFIG_PATH}/${DEFAULT_CONFIG_FILENAME}`
+            )
+        }
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export const loadDefaultThemeConfig = async (): Promise<void> => {
     try {
         console.log('-----------------------------\n', `- fetching ${DEFAULT_CONFIG_FILENAME}...\n`)
-        const res = await mediaServiceController.getDefaultConfigFile()
+        const res = await mediaServiceController.getDefaultThemeConfigFile()
 
         if (res) {
             console.log(`- fetching ${DEFAULT_CONFIG_FILENAME}. data OK\n`, '- Saving data')
             console.log(res)
-            store.set(DefaultConfigAtom, res)
+            store.set(DefaultThemeConfigAtom, res)
             store.set(CustomEnabledAtom, res.customEnabled)
 
             if (res.thirdscreen?.config) {
@@ -144,7 +174,8 @@ export const parseThemeToEdit = (): void => {
 
         const templateData = store.get(TemplateConfigAtom)!
         const themeData = store.get(ThemeConfigAtom)!
-
+        
+        // Adapta la configuración del tema para que tenga la mismos assets que indica el template
         const dataUnion = (template: AssetData[], theme: AssetData[]): AssetData[] => {
             const aux: AssetData[] = []
             try {
@@ -194,20 +225,25 @@ const parseToAssetData = (
             assetType: assetType,
             original: {
                 source: e?.blobUrl || e?.path || '',
-                mime: getMime(e?.path)
+                mime: getMime(e?.path),
+                fileName: e?.fileName
             },
             custom: {}
         })) || []
     )
 }
 
-export const remoteBootSequence = async (): Promise<void> => {
+export const BootSequence = async (): Promise<void> => {
     try {
         //* LOAD : template_assets.json
         await loadTemplate()
         loadStylesLanguageData()
-        //* LOAD : customConfig.json
-        // await loadCustomConfig()
+
+        //* LOAD: default Configurations */
+        await loadDefaultConfigurations()
+
+        //* LOAD : default *_themeConfig.json
+        // await loadDefaultThemeConfig()
 
         //* PRE-LOAD : Assets
         // await preloadAssets('blobUrl')
@@ -220,6 +256,25 @@ export const remoteBootSequence = async (): Promise<void> => {
         throw error
     }
 }
+
+/** Parsea {@link FinalStylesData} (como viene del template) a {@link StylesData} (formateado para edición). Modifica algunos valores, principalmente Booleans a Strings*/
+export const defaultStylesParser = (styles: FinalStylesData): StylesData => { 
+    return {
+        ...styles,
+        button: {
+            ...styles.button,
+            border: styles.button?.border.toString()
+        },
+        secondaryButton: {
+            ...styles.secondaryButton,
+            border: styles.secondaryButton?.border.toString()
+        },
+        inputButton: {
+            ...styles.inputButton,
+            border: styles.inputButton?.border.toString()
+        }
+    }
+ }
 
 /** Valída que no falten archivos necesarios. Ejecutar LUEGO de obtener el template */
 export const loadStylesLanguageData = (): void => {
@@ -237,21 +292,7 @@ export const loadStylesLanguageData = (): void => {
             store.set(EditedLanguageDataAtom, objectFullStructure(config.language))
         }
         if (!styles) {
-            store.set(DefaultStylesDataAtom, {
-                ...config.styles,
-                button: {
-                    ...config.styles.button,
-                    border: config.styles.button?.border.toString()
-                },
-                secondaryButton: {
-                    ...config.styles.secondaryButton,
-                    border: config.styles.secondaryButton?.border.toString()
-                },
-                inputButton: {
-                    ...config.styles.inputButton,
-                    border: config.styles.inputButton?.border.toString()
-                }
-            })
+            store.set(DefaultStylesDataAtom, defaultStylesParser(config.styles))
         }
     }
 }
@@ -263,19 +304,5 @@ export const loadThemesStylesLanguageData = (): void => {
 
     store.set(DefaultLanguageDataAtom, config.language)
     store.set(EditedLanguageDataAtom, objectFullStructure(config.language))
-    store.set(DefaultStylesDataAtom, {
-        ...config.styles,
-        button: {
-            ...config.styles.button,
-            border: config.styles.button?.border.toString()
-        },
-        secondaryButton: {
-            ...config.styles.secondaryButton,
-            border: config.styles.secondaryButton?.border.toString()
-        },
-        inputButton: {
-            ...config.styles.inputButton,
-            border: config.styles.inputButton?.border.toString()
-        }
-    })
+    store.set(DefaultStylesDataAtom, defaultStylesParser(config.styles))
 }

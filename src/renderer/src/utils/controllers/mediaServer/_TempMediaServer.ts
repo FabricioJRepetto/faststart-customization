@@ -1,16 +1,19 @@
 import {
     BACKEND_BASE_TEMPLATE_PATH,
-    BACKEND_DEFAULT_CONFIG_PATH,
+    BACKEND_GET_CONFIGURATIONS,
     BACKEND_DELETE,
     BACKEND_GET_FILE,
     BACKEND_GET_FILELIST,
     BACKEND_POST_UPLOAD,
-    DEFAULT_CONFIG_FILENAME,
-    TEMPLATE_CONFIG_FILENAME
+    TEMPLATE_CONFIG_FILENAME,
+    BACKEND_DEFAULT_CONFIG_PATH,
+    DEFAULT_CONFIG_FILENAME
 } from '@shared/CONSTANTS'
 import {
     CustomConfig,
     DBFile,
+    DefaultConfigurations,
+    DefaultConfigurationsFile,
     MediaServiceBase,
     RawDBFilesListRes,
     RawDBUploadFileRes,
@@ -33,6 +36,18 @@ export default class _TempMediaServer implements MediaServiceBase {
     private async getFile<T>(filePath: string): Promise<T | null> {
         try {
             const res = await fetch(`${BACKEND_GET_FILE}/${filePath}`)
+                .then((r) => r.json())
+                .then((r) => r)
+            return res as T
+        } catch (error) {
+            console.error(error)
+            return null
+        }
+    }
+
+    private async get<T>(endpoint: string): Promise<T | null> {
+        try {
+            const res = await fetch(endpoint)
                 .then((r) => r.json())
                 .then((r) => r)
             return res as T
@@ -113,11 +128,26 @@ export default class _TempMediaServer implements MediaServiceBase {
         }
     }
 
-    async getDefaultConfig(): Promise<CustomConfig | null> {
+    /** Le pega al endpoint del backend que arma el {@link DefaultConfigurations} */
+    async getDefaultConfigs(): Promise<DefaultConfigurations | null> {
         try {
-            const res = await this.getFile<CustomConfig>(
-                `${BACKEND_DEFAULT_CONFIG_PATH}/${DEFAULT_CONFIG_FILENAME}`
-            )
+            const res = await this.get<DefaultConfigurations>(`${BACKEND_GET_CONFIGURATIONS}`)
+            return res
+        } catch (error) {
+            console.error(error)
+            return null
+        }
+    }
+
+    /** Trae el directamente el archivo {@link DefaultConfigurationsFile} */
+    async getDefaultConfigsFile(): Promise<DefaultConfigurationsFile | null> {
+        try {
+            const res = await this.getFile<DefaultConfigurationsFile>(`${BACKEND_DEFAULT_CONFIG_PATH}/${DEFAULT_CONFIG_FILENAME}`)
+            if (!res || res?.error) {
+                console.warn(res?.error || 'Error fetching Default configs')
+                return null
+            }
+            console.log(res);            
             return res
         } catch (error) {
             console.error(error)

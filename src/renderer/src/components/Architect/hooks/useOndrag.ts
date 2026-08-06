@@ -1,5 +1,5 @@
 import { useCallback, useRef } from 'react'
-import type { FlowNode } from '../types'
+import type { FlowNode } from '../../../../../../shared/fluid_types'
 import { snapToGrid } from '../Geometry'
 
 type Return = {

@@ -1,5 +1,5 @@
 import {
-    DefaultConfigAtom,
+    DefaultThemeConfigAtom,
     store,
     svgCache,
     svgCacheElement,
@@ -48,7 +48,8 @@ const preloadMedia = async (element: FinalAssetData, assetType: AssetType): Prom
             assetType: assetType,
             original: {
                 source: element.path,
-                mime: 'svg'
+                mime: 'svg',
+                fileName: element.path.split('/').pop()
             },
             custom: {}
         }
@@ -61,7 +62,8 @@ const preloadMedia = async (element: FinalAssetData, assetType: AssetType): Prom
         assetName: element.name,
         assetType: assetType,
         original: {
-            source: blobUrl
+            source: blobUrl,
+            fileName: element.path.split('/').pop()
         },
         custom: {}
     }
@@ -96,7 +98,7 @@ export const preloadAssets = async (
     try {
         console.log('Caching Assets with method:', method)
         const start = performance.now()
-        const config = store.get(DefaultConfigAtom)
+        const config = store.get(DefaultThemeConfigAtom)
 
         if (!config) {
             console.warn('Trying to preload assets but there is no default config')
@@ -105,7 +107,8 @@ export const preloadAssets = async (
 
         let assetsQuantity = 0
 
-        if (method === 'httpCache') { //: HTTP CACHE
+        if (method === 'httpCache') {
+            //: HTTP CACHE
             const aux = [
                 ...config.icon,
                 ...config.image,
@@ -124,11 +127,10 @@ export const preloadAssets = async (
             assetsQuantity += assets.length
 
             await Promise.all(assets.map(({ type, url }) => loaders[type as AssetType](url)))
-        } else { //: BLOB URL CACHE
+        } else {
+            //: BLOB URL CACHE
             console.log(' - Generating blobs for icons')
-            const loadedIcons = await Promise.all(
-                config.icon.map((e) => preloadMedia(e, 'icon'))
-            )
+            const loadedIcons = await Promise.all(config.icon.map((e) => preloadMedia(e, 'icon')))
             assetsQuantity += loadedIcons.length
 
             console.log(' - Generating blobs for images')
@@ -163,11 +165,15 @@ export const preloadAssets = async (
                 thirdscreen: loadedThirds,
                 audio: loadedAudios
             }
+
             store.set(ThemeConfigAtom, _config)
         }
 
         console.log(' - Generating svg cache...')
-        const svgAssets: { url: string; type: __AllAssetType; name: string }[] = [...config.icon, ...config.image]
+        const svgAssets: { url: string; type: __AllAssetType; name: string }[] = [
+            ...config.icon,
+            ...config.image
+        ]
             .filter((e) => e.fileType === 'svg')
             .map((e) => ({
                 url: e.path,
@@ -179,7 +185,7 @@ export const preloadAssets = async (
         )
         assetsQuantity += svgListTemp.length
 
-        const svgList: svgCacheElement = {}
+        const svgList: svgCacheElement = {...store.get(svgCache)}
         for (const e of svgListTemp) {
             svgList[e.name] = e.value
         }
@@ -195,7 +201,7 @@ export const preloadAssets = async (
 
 /** Limpia todos los blobs cacheados (incluidos los de la libreria de temas) */
 export const clearMediaCache = (): void => {
-    const config = store.get(DefaultConfigAtom)!
+    const config = store.get(DefaultThemeConfigAtom)!
     const themes = store.get(ThemesLibraryDataAtom)!
     const aux = [
         ...(config?.icon || []),

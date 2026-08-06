@@ -13,7 +13,8 @@ import {
     DefaultThirdConfigData,
     UPLOAD_STAGE,
     TemplateConfig,
-    WSConnectedClient
+    WSConnectedClient,
+    DefaultConfigurations
 } from '@shared/types'
 
 export const store = createStore()
@@ -33,12 +34,15 @@ export const ThirdAppVersionDirAtom = atom<string>('')
 /** Activar o desactivar la configuración customizada */
 export const CustomEnabledAtom = atom<boolean>(true)
 
-/** Lista de Assets actuales en la versión indicada */
+/** Lista de Assets actuales, basado en el template y el tema seleccionado si se está editando uno. */
 export const AssetsDataAtom = atom<AssetList>()
 /** Archivo template. Contiene una lista de assets utilizados por la app cliente */
 export const TemplateConfigAtom = atom<TemplateConfig>()
+/** Configuraciones seteadas por defecto (theme, diagram) en el servidor */
+export const DefaultConfigurationsAtom = atom<DefaultConfigurations>()
+
 /** Archivo de configuración por defecto encontrado en el directorio de la aplicación cliente */
-export const DefaultConfigAtom = atom<CustomConfig>()
+export const DefaultThemeConfigAtom = atom<CustomConfig>()
 /** Archivo de configuración (PARSEADO a TemplateConfig) del tema seleccionado para utilizarse en la edición */
 export const ThemeConfigAtom = atom<TemplateConfig>()
 
@@ -100,7 +104,8 @@ export const UploadStageAtom = atom<UPLOAD_STAGE>(UPLOAD_STAGE.NAME)
 
 /** Pantalla activa en la previsualización */
 export const PreviewScreenIndexAtom = atom<number>(0)
-/** Indica si se está llevando a cabo una edición */
+/** True si se cargó un tema para editar.
+ * False si se parte la creación desde cero. */
 export const EditingThemeAtom = atom<boolean>(false)
 
 export type svgCacheElement = Record<string, string>

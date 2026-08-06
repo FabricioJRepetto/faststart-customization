@@ -11,11 +11,12 @@ import AsyncOption from './theme-config-components/AsyncOption'
 import mediaServiceController from '@renderer/utils/controllers/mediaServer/mediaServiceController'
 import Modal from '../Modal'
 import { useState } from 'react'
-import { loadThemesCollection, loadThemesStylesLanguageData, parseThemeToEdit } from '@renderer/utils/bootSequence'
+import { loadDefaultConfigurations, loadThemesCollection, loadThemesStylesLanguageData, parseThemeToEdit } from '@renderer/utils/bootSequence'
 import Tooltip from '../Tooltip'
 import { DEFAULT_THEME } from '@shared/CONSTANTS'
 import {
-    DefaultConfigAtom,
+    DefaultConfigurationsAtom,
+    DefaultThemeConfigAtom,
     EditingThemeAtom,
     store,
     TerminalsStatusAtom
@@ -32,10 +33,10 @@ interface Props {
 
 const ThemeModalSettings = ({ themeData, closeModal, setLoading }: Props): React.JSX.Element => {
     const originalTheme = themeData.themeName === DEFAULT_THEME
+    const defaultTheme = useAtomValue(DefaultConfigurationsAtom)?.theme?.name === themeData.themeName
     const terminals = useAtomValue(TerminalsStatusAtom)
 
-    const setDefaultConfig = useSetAtom(DefaultConfigAtom)
-    const defaultTheme = themeData.isDefaultTheme
+    const setDefaultConfig = useSetAtom(DefaultThemeConfigAtom)
     const [infoModal, setInfoModal] = useState<boolean>(false)
 
     const [deleteModal, setDeleteModal] = useState<boolean>(false)
@@ -54,11 +55,9 @@ const ThemeModalSettings = ({ themeData, closeModal, setLoading }: Props): React
             changeLoading(true)
 
             const res = await mediaServiceController.setDefaultTheme(themeData.themeName)
-            if (!res) {
-                throw new Error('Error al definir tema como predefinido')
-            }
+            if (!res) throw new Error('Error al definir tema como predefinido')
 
-            await loadThemesCollection()
+            await loadDefaultConfigurations()
         } catch (error) {
             console.error(error)
         } finally {
@@ -87,6 +86,7 @@ const ThemeModalSettings = ({ themeData, closeModal, setLoading }: Props): React
                 exit()
             }
         }
+        await loadDefaultConfigurations()
         changeLoading(false)
     }
 

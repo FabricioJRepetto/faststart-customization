@@ -1,6 +1,7 @@
 import {
     CurrentScreenAtom,
     CustomEnabledAtom,
+    DefaultConfigurationsAtom,
     EditingThemeAtom,
     FirstLoadAtom,
     ServerStatusAtom,
@@ -23,6 +24,7 @@ import { TerminalsCardRow, ThemesCardRow } from '@renderer/components/CardsRow'
 import Modal from '@renderer/components/Modal'
 import TerminalModalConfig from '@renderer/components/ModalBodies/TerminalConfig'
 import WSService from '@renderer/utils/controllers/WebSocketService/WebSocketServiceController'
+import { loadDefaultConfigurations } from '@renderer/utils/bootSequence'
 
 const NewMain = (): React.JSX.Element => {
     const ServerStatus = useAtomValue(ServerStatusAtom, { store })
@@ -30,6 +32,7 @@ const NewMain = (): React.JSX.Element => {
     const setScreen = useSetAtom(CurrentScreenAtom)
 
     const [customEnabled, setCustomEnabled] = useAtom(CustomEnabledAtom)
+    const defaultTheme = useAtomValue(DefaultConfigurationsAtom)?.theme?.name
 
     const [loadingApply, setLoadingApply] = useState<boolean>(false)
     const [firstLoad, setFirstLoad] = useAtom(FirstLoadAtom)
@@ -49,7 +52,8 @@ const NewMain = (): React.JSX.Element => {
             console.log('Customization toggled')
             setCustomEnabled(!customEnabled)
         } else console.log('Error toggling customizations')
-
+        
+        await loadDefaultConfigurations()
         setLoadingApply(false)
     }
 
@@ -64,13 +68,20 @@ const NewMain = (): React.JSX.Element => {
     return (
         <div className={`screen-content new-main-screen-container ${firstLoad ? 'fade-in' : ''}`}>
             <div className="screen-header">
-                <h1>
-                    <code style={{ background: 'none', fontSize: '3rem' }}>
-                        ƒ
-                    </code>
-                    <p style={{ fontSize: '2.75rem', marginLeft: '-10px', marginTop: '6px', fontWeight: '550' }}>luid✦</p>
+                <h1 style={{transform: 'skew(350deg)'}}>
+                    <code style={{ background: 'none', fontSize: '3rem' }}>ƒ</code>
+                    <p
+                        style={{
+                            fontSize: '2.75rem',
+                            marginLeft: '-10px',
+                            marginTop: '6px',
+                            fontWeight: '550'
+                        }}
+                    >
+                        luid✦
+                    </p>
                 </h1>
-                <p style={{ background: 'none' }}>Flow Logic UI Designer</p>
+                {/* <p style={{ background: 'none' }}>Flow Logic UI Designer</p> */}
 
                 <div className="header-group">
                     <div className="header-server-status">
@@ -109,7 +120,10 @@ const NewMain = (): React.JSX.Element => {
                 <div className="shortcuts-container">
                     <div
                         className={customEnabled ? 'custom-enabled' : ''}
-                        onClick={() => !loadingApply && toggleCustomEnabled()}
+                        onClick={() => !loadingApply && defaultTheme && toggleCustomEnabled()}
+                        style={{
+                            pointerEvents: defaultTheme ? 'all' : 'none'
+                        }}
                     >
                         <p>Customización</p>
                         <div className={customEnabled ? '' : 'power-off'}>

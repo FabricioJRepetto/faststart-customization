@@ -1,3 +1,9 @@
+export interface FlowDiagram {
+    version: string
+    entry: string
+    nodes: Record<string, FlowNode>
+}
+
 // Un handle es un punto de conexión con id propio (único dentro del nodo).
 // El label es opcional, útil cuando una salida representa una acción
 // concreta (ej: "Guardar", "Cancelar").

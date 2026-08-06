@@ -1,6 +1,6 @@
 import { store } from '@renderer/utils/context/context'
 import { FlowEdges, FlowNodes } from '../FlowStorage'
-import { ActionType, FlowNode, NodeAction, ScreenType, UIElement, UIElementType } from '../types'
+import { ActionType, FlowNode, NodeAction, ScreenType, UIElement, UIElementType } from '../../../../../../shared/fluid_types'
 import TerminalActions, { TSService } from '../Actions/Terminal/TerminalActions'
 
 /** Agrega un target al Nodo indicado

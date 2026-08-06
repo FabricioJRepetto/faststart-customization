@@ -1,4 +1,4 @@
-import type { FlowNode, HandleDef } from './types'
+import type { FlowNode, HandleDef } from '../../../../../shared/fluid_types'
 
 export function clamp(value: number, min: number, max: number): number {
     return Math.min(max, Math.max(min, value))

@@ -1,4 +1,4 @@
-import { ScreenType } from '../types'
+import { ScreenType } from '../../../../../../shared/fluid_types'
 import { newNode } from '../utils/presets'
 import CloseSvg from '../../../assets/close_small.svg?react'
 

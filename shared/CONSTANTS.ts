@@ -22,18 +22,25 @@ export const THEMES_LIBRARY_DIR = 'library'
 
 export const DEFAULT_THEME = 'FastStart'
 
-export const BACKEND_BASE_URL = 'https://153.81.238.232:4005' // 'https://153.81.238.232:4005' - 'https://localhost:4005' - 'https://192.168.1.36:4005'
-export const WS_BASE_URL = 'wss://153.81.238.232:5500' // 'wss://153.81.238.232:5500' - 'wss://localhost:5500' - 'wss://192.168.1.36:5500'
+export const BACKEND_BASE_URL = 'https://192.168.1.36:4005' // 'https://153.81.238.232:4005' - 'https://localhost:4005' - 'https://192.168.1.36:4005'
+export const WS_BASE_URL = 'wss://192.168.1.36:5500' // 'wss://153.81.238.232:5500' - 'wss://localhost:5500' - 'wss://192.168.1.36:5500'
 export const BACKEND_GET_FILELIST = `${BACKEND_BASE_URL}/files-list`
 export const BACKEND_GET_FILE = `${BACKEND_BASE_URL}/files`
+export const BACKEND_GET_CONFIGURATIONS = `${BACKEND_BASE_URL}/configurations`
 export const BACKEND_POST_UPLOAD = `${BACKEND_BASE_URL}/upload`
 export const BACKEND_DELETE = `${BACKEND_BASE_URL}/files`
+/** themes/{theme_name}/{asset_file} */
 export const BACKEND_THEMES_ASSETS_PATH = `themes`
+/** themes/configurations/{theme_name}_themeConfig.json */
 export const BACKEND_THEMES_CONFIGS_PATH = `themes/configurations`
 export const BACKEND_BASE_THEME_CONFIG_PATH = `base_theme/configuration`
 export const BACKEND_BASE_THEME_ASSETS_PATH = `base_theme/assets`
 export const BACKEND_BASE_TEMPLATE_PATH = `base_theme/template`
 export const BACKEND_DEFAULT_CONFIG_PATH = `default/configuration`
-export const DEFAULT_CONFIG_FILENAME = CUSTOM_CONFIG_FILE_NAME
+export const DEFAULT_CONFIG_FILENAME = 'default_configs.json'
 export const TEMPLATE_CONFIG_FILENAME = 'assets_template.json'
 export const THEME_CONFIG_FILENAME = '_themeConfig.json'
+/** diagrams/{diagram_name}/{diagram_name}_diagram.json */
+export const BACKEND_DIAGRAM_PATH = 'diagrams'
+export const DIAGRAM_FILENAME = '_diagram.json'
+export const DEFAULT_DIAGRAM_FILENAME = 'defaultDiagram.json'

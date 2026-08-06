@@ -9,7 +9,7 @@ import {
 import { Screens } from '@shared/types'
 import { BACKEND_BASE_URL, WS_BASE_URL } from '../../../../shared/CONSTANTS'
 import SpinnerSvg from '../assets/spinner.svg?react'
-import { remoteBootSequence } from '@renderer/utils/bootSequence'
+import { BootSequence } from '@renderer/utils/bootSequence'
 import RemoteSvg from '../assets/wifi.svg?react'
 import { delay } from '@renderer/utils/delays'
 import WSService from '@renderer/utils/controllers/WebSocketService/WebSocketServiceController'
@@ -70,7 +70,7 @@ const Landing = (): React.JSX.Element => {
 
         const start = performance.now()
         try {
-            await remoteBootSequence()
+            await BootSequence()
 
             setFadeout(true)
             await delay(500)
@@ -93,7 +93,7 @@ const Landing = (): React.JSX.Element => {
             <NATL className={`logo ${loading ? 'logo-loading logo-loading-position' : ''}`} />
             <div className={`creator ${loading ? 'fade-out' : ''}`}>Versión de escritorio</div>
             <div className={`text ${loading ? 'fade-out' : ''}`}>
-                <h1 style={{display: 'flex', justifyContent: 'center'}}>
+                <h1 style={{display: 'flex', justifyContent: 'center', transform: 'skew(350deg)'}}>
                     <code style={{ background: 'none', fontSize: '4rem' }}>ƒ</code>
                     <p
                         style={{

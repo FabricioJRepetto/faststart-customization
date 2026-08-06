@@ -1,4 +1,4 @@
-import { ActionType, EdgesById, FlowNode, ScreenType } from '../types'
+import { ActionType, EdgesById, FlowNode, ScreenType } from '../../../../../../shared/fluid_types'
 import { store } from '@renderer/utils/context/context'
 import { FlowNodes, newNodeID } from '../FlowStorage'
 

@@ -12,6 +12,8 @@ import _TempMediaServer from './_TempMediaServer'
 import {
     CustomConfig,
     DBFile,
+    DefaultConfigurations,
+    DefaultConfigurationsFile,
     MediaServiceBase,
     TemplateRawConfig,
     ThemeConfig,
@@ -61,11 +63,11 @@ class MediaService {
 
     private simplifyTheme(e: CustomConfig): ThemeConfig {
         try {
-            console.log('SimplifyTheme');
-            console.log(e);
+            console.log('SimplifyTheme')
+            console.log(e)
             const bgPath = e.background.find((e) => e.name === 'background_Idle')!.path
             const logo = e.icon.find((b) => b.name === 'icon_logo')!
-            
+
             const aux = {
                 themeName: e.themeName,
                 color: e.styles.userAction,
@@ -79,10 +81,9 @@ class MediaService {
                     mime: getMime(logo.path)
                 },
                 customEnabled: e.customEnabled,
-                isActive: e.isActive,
-                isDefaultTheme: e.isDefaultTheme
+                isActive: e.isActive
             }
-            console.log(aux);
+            console.log(aux)
             return aux
         } catch (error) {
             console.error(error)
@@ -103,8 +104,7 @@ class MediaService {
                     mime: ''
                 },
                 customEnabled: false,
-                isActive: false,
-                isDefaultTheme: false
+                isActive: false
             }
         }
     }
@@ -163,9 +163,9 @@ class MediaService {
             store.set(UploadStageAtom, UPLOAD_STAGE.FINISHING)
 
             const res = await this.service.getThemesList()
-            console.log('getThemesList');
-            console.log(res);
-            
+            console.log('getThemesList')
+            console.log(res)
+
             if (!res) return []
             return res.map((e) => this.simplifyTheme(e))
         } catch (error) {
@@ -198,11 +198,33 @@ class MediaService {
         }
     }
 
-    public async getDefaultConfigFile(): Promise<CustomConfig | null> {
+    public async getDefaultConfigurations(): Promise<DefaultConfigurations | null> {
         try {
-            const res = await this.service.getDefaultConfig()
+            const res = await this.service.getDefaultConfigs()
             if (!res) return null
             return res
+        } catch (error) {
+            console.error(error)
+            return null
+        }
+    }
+
+    private async getDefaultConfigurationsFile(): Promise<DefaultConfigurationsFile | null> {
+        try {
+            const res = await this.service.getDefaultConfigsFile()
+            if (!res) return null
+            return res
+        } catch (error) {
+            console.error(error)
+            return null
+        }
+    }
+
+    public async getDefaultThemeConfigFile(): Promise<CustomConfig | null> {
+        try {
+            const res = await this.service.getDefaultConfigs()
+            if (!res || !res.theme?.data) return null
+            return res.theme.data
         } catch (error) {
             console.error(error)
             return null
@@ -217,7 +239,7 @@ class MediaService {
             const asDefault = store.get(UploadSetAsDefaultThemeAtom)
 
             store.set(UploadStageAtom, UPLOAD_STAGE.PROCESSING)
-            const files = await getUploadList()
+            const files = await getUploadList(themeName)
             console.log('Starting Upload for', files.length, 'files...')
 
             if (!files.length) {
@@ -235,11 +257,7 @@ class MediaService {
                 console.log(el.file.name, '-', el.assetName)
                 this.updateUploadProgress()
 
-                // TODO - Borrar archivo original si existe
-                if (el.deleteOld) {
-                    console.warn('DELETE OLD FILE -->', el.deleteOld)                    
-                    // await this.service.delete(el.deleteOld)
-                }
+                // TODO - Agregar limpieza de archivos en desuso en el servidor
 
                 const res = await this.service.uploadFile(
                     el.file,
@@ -289,13 +307,13 @@ class MediaService {
             this.updateUploadProgress()
 
             const jsonFile = this.objectToJsonFile(config, fileName)
-            const res = await this.service.uploadFile(
+            const configRes = await this.service.uploadFile(
                 jsonFile,
                 BACKEND_THEMES_CONFIGS_PATH,
                 fileName
             )
 
-            if (!res) {
+            if (!configRes) {
                 this.addFail = 1
                 console.error('Error al subir archivo de configuración')
 
@@ -307,16 +325,23 @@ class MediaService {
                 this.setFile = DEFAULT_CONFIG_FILENAME
                 this.updateUploadProgress()
 
-                const res = await this.uploadDefaultConfig(config)
+                const oldConfig =
+                    (await this.getDefaultConfigurationsFile()) ||
+                    ({ diagram: {} } as DefaultConfigurationsFile)
+                const newConfig: DefaultConfigurationsFile = {
+                    ...oldConfig,
+                    theme: { available: true, name: themeName, path: configRes.url }
+                }
+                const res = await this.uploadDefaultConfig(newConfig, true)
                 if (!res) {
-                    console.error('Error al setear tema como predeterminado')
+                    console.error('Error al definir tema como predeterminado')
                     this.addFail = 1
                 } else {
                     this.addOk = 1
                 }
             }
 
-            return res as DBFile
+            return configRes
         } catch (error) {
             console.error(error)
             this.addFail = 1
@@ -343,9 +368,22 @@ class MediaService {
         }
     }
 
-    public async uploadDefaultConfig(config: CustomConfig): Promise<DBFile | null> {
+    uploadDefaultConfig(
+        config: DefaultConfigurationsFile,
+        convertToFile: true
+    ): Promise<DBFile | null>
+    uploadDefaultConfig(config: File): Promise<DBFile | null>
+    public async uploadDefaultConfig(
+        config: File | DefaultConfigurationsFile,
+        convertToFile?: boolean
+    ): Promise<DBFile | null> {
         try {
-            const jsonFile = this.objectToJsonFile(config, DEFAULT_CONFIG_FILENAME)
+            let jsonFile = config as File
+            if (convertToFile) {
+                jsonFile = this.objectToJsonFile(config, DEFAULT_CONFIG_FILENAME)
+            } else {
+                //TODO Si es un File checkear estructura
+            }
             const res = await this.service.uploadFile(
                 jsonFile,
                 BACKEND_DEFAULT_CONFIG_PATH,
@@ -362,13 +400,22 @@ class MediaService {
 
     public async toggleCustomization(): Promise<DBFile | null> {
         try {
-            const config = await this.getDefaultConfigFile()
-            if (!config) return null
-            config.customEnabled = !config.customEnabled
+            const config = await this.getDefaultConfigurationsFile()
 
-            const res = await this.uploadDefaultConfig(config)
+            const newConfig =
+                config && !config?.error
+                    ? { ...config, theme: { ...config.theme, available: !config.theme?.available } }
+                    : {
+                          theme: { available: false, name: '', path: '' },
+                          diagram: null
+                      }
 
-            if (!res) return null
+            const res = await this.uploadDefaultConfig(newConfig as DefaultConfigurationsFile, true)
+
+            if (!res) {
+                console.error('Error al definir tema como predeterminado')
+                return null
+            }
             return res
         } catch (error) {
             console.error(error)
@@ -378,19 +425,26 @@ class MediaService {
 
     public async setDefaultTheme(themeName: string): Promise<DBFile | null> {
         try {
-            const theme = await this.getThemeConfig(themeName)
-            if (!theme) {
-                console.error('Configuración no encontrada')
-                return null
+            const config = await this.getDefaultConfigurationsFile()
+
+            const baseConfig =
+                config && !config?.error
+                    ? { ...config }
+                    : {
+                          theme: { available: false, name: '', path: '' },
+                          diagram: null
+                      }
+
+            const newConfig: DefaultConfigurationsFile = {
+                ...baseConfig,
+                theme: {
+                    available: true,
+                    name: themeName,
+                    path: `/files/${BACKEND_THEMES_CONFIGS_PATH}/${themeName}${THEME_CONFIG_FILENAME}` //! CUIDADO HARDCODEADO
+                }
             }
 
-            theme.isDefaultTheme = true
-            const updateRes = await this.uploadThemeConfig(theme, themeName)
-            if (!updateRes) {
-                console.error('Error al actualizar configuración')
-            }
-
-            const res = await this.uploadDefaultConfig(theme)
+            const res = await this.uploadDefaultConfig(newConfig, true)
             if (!res) {
                 console.error('Error al establecer configuración como predeterminada')
                 return null
@@ -418,6 +472,16 @@ class MediaService {
                 )
                 return false
             }
+
+            const config = await this.service.getDefaultConfigsFile()
+            if (!config) return true
+
+            if (config.theme?.name === themeName) {
+                const newConfig = {...config, theme: null}
+                const res = await this.uploadDefaultConfig(newConfig, true)
+                if (!res) console.warn('Error al actualizar configuraciones por defecto');
+            }
+
             return true
         } catch (error) {
             console.error(error)

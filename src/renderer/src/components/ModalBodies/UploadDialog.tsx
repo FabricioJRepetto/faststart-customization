@@ -1,5 +1,5 @@
 import {
-    DefaultConfigAtom,
+    DefaultThemeConfigAtom,
     UploadProgressAtom,
     UploadSetAsDefaultThemeAtom,
     UploadStageAtom
@@ -13,14 +13,14 @@ import mediaServiceController from '@renderer/utils/controllers/mediaServer/medi
 import { getThemeConfig } from '@renderer/utils/getRawConfig'
 import { Screens, UPLOAD_STAGE } from '@shared/types'
 import { navigate } from '@renderer/utils/navigate'
-import { loadThemesCollection } from '@renderer/utils/bootSequence'
+import { loadDefaultConfigurations, loadThemesCollection } from '@renderer/utils/bootSequence'
 
 interface Props {
     closeModal: () => void
 }
 
 const UploadDialog = ({ closeModal }: Props): React.JSX.Element => {
-    const defaultConfig = useAtomValue(DefaultConfigAtom)
+    const defaultConfig = useAtomValue(DefaultThemeConfigAtom)
     const [themeName, setThemeName] = useState<string>(defaultConfig?.themeName || '')
     const setAsDefault = useSetAtom(UploadSetAsDefaultThemeAtom)
 
@@ -108,6 +108,8 @@ const UploadDialog = ({ closeModal }: Props): React.JSX.Element => {
 
             // //* Actualizar Collection
             await loadThemesCollection()
+            // //* Actualizar Default Configs
+            await loadDefaultConfigurations()
 
             setStage(UPLOAD_STAGE.DONE)
         } catch (error) {

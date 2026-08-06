@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import type { FlowEdge, FlowNode } from './types'
+import type { FlowEdge, FlowNode } from '../../../../../shared/fluid_types'
 import { useConnection } from './hooks/useConnection'
 import { NodeView } from './NodeView'
 import { EdgeView } from './EdgeView'

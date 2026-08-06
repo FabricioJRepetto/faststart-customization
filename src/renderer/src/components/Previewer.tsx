@@ -1,5 +1,5 @@
 import {
-    DefaultConfigAtom,
+    DefaultThemeConfigAtom,
     DefaultLanguageDataAtom,
     DefaultStylesDataAtom,
     EditedBackgroundsDataAtom,
@@ -32,7 +32,7 @@ export const Previewer = (): React.JSX.Element => {
     const [screen, setScreen] = useAtom(PreviewScreenIndexAtom)
     const editing = useAtomValue(EditingThemeAtom)
 
-    const themeName = useAtomValue(DefaultConfigAtom)?.themeName
+    const themeName = useAtomValue(DefaultThemeConfigAtom)?.themeName
     const [OgStyleData] = useAtom(DefaultStylesDataAtom)
 
     const [bgData] = useAtom(EditedBackgroundsDataAtom)

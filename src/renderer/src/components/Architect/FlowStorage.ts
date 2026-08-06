@@ -1,5 +1,5 @@
 import { atom } from 'jotai'
-import { EdgesById, FlowNode } from './types'
+import { EdgesById, FlowNode } from '../../../../../shared/fluid_types'
 import { initialEdges, initialNodes } from './utils/presets'
 
 // - Estructura del flujo

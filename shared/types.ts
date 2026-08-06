@@ -1,3 +1,5 @@
+import { FlowDiagram } from "./fluid_types"
+
 export type IpcResponse<T> = Promise<
     | {
           success: true
@@ -137,6 +139,7 @@ export interface AssetData extends AssetDataBase {
     original: {
         source?: string
         mime?: string
+        fileName?: string
     }
     custom: {
         source?: string
@@ -347,7 +350,6 @@ export interface CustomConfig {
     ID: string
     themeName: string
     customEnabled: boolean
-    isDefaultTheme: boolean
     isActive: boolean
     icon: FinalAssetData[]
     image: FinalAssetData[]
@@ -373,7 +375,6 @@ interface ThemeLogo {
 export interface ThemeConfig {
     themeName: string
     customEnabled: boolean
-    isDefaultTheme: boolean
     isActive: boolean
     color: {
         primaryColor: string
@@ -396,7 +397,8 @@ export interface MediaServiceBase {
     getFiles: () => Promise<DBFile[] | null>
     getThemesList: () => Promise<CustomConfig[] | null>
     getTemplateConfig: () => Promise<TemplateConfig | null>
-    getDefaultConfig: () => Promise<CustomConfig | null>
+    getDefaultConfigs: () => Promise<DefaultConfigurations | null>
+    getDefaultConfigsFile: () => Promise<DefaultConfigurationsFile | null>
     uploadFile: (file: File | Blob, themeName: string, fileName?: string) => Promise<DBFile | null>
     delete: (path: string) => Promise<boolean>
 }
@@ -404,7 +406,6 @@ export interface MediaServiceBase {
 export interface FileForUpload {
     file: File
     assetName: string
-    deleteOld?: string
 }
 export interface UploadedFile extends AssetDataBase {
     assetName: string
@@ -546,3 +547,29 @@ export type WSMessagePayload =
     | { type: WSMessageType.login; data: WSClientData }
     | { type: WSMessageType.fire_task; data: WSTaskData }
     | { type: WSMessageType.update_status; data: { status: WSClientStatus; description?: string } }
+
+export interface DefaultConfigurations {
+    theme: {
+        available: boolean
+        name: string
+        data: CustomConfig
+    } | null
+    diagram: {
+        available: boolean
+        name: string
+        data: FlowDiagram
+    } | null
+}
+export interface DefaultConfigurationsFile {
+    error?: string
+    theme: {
+        available: boolean
+        name: string
+        path: string
+    } | null
+    diagram: {
+        available: boolean
+        name: string
+        path: string
+    } | null
+}

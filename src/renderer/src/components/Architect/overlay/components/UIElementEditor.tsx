@@ -7,7 +7,7 @@ import {
     TableConfig,
     TextInputConfig,
     UIElementType
-} from '../../types'
+} from '../../../../../../../shared/fluid_types'
 import { allKeysOf } from '../../utils/typeAssertion'
 
 interface Props {

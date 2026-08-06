@@ -3,12 +3,14 @@ import ThemeModalSettings from '@renderer/components/ModalBodies/ThemeConfig'
 import ThemeCard from '@renderer/components/AssetsCards/ThemeCard'
 import Tooltip from '@renderer/components/Tooltip'
 import { loadThemesCollection } from '@renderer/utils/bootSequence'
-import { ThemesLibraryDataAtom } from '@renderer/utils/context/context'
+import { DefaultConfigurationsAtom, ThemesLibraryDataAtom } from '@renderer/utils/context/context'
 import mediaServiceController from '@renderer/utils/controllers/mediaServer/mediaServiceController'
-import { useAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import { useState } from 'react'
+import InfoSvg from '../assets/info.svg?react'
 
 const Collections = (): React.JSX.Element => {
+    const defaultTheme = useAtomValue(DefaultConfigurationsAtom)?.theme?.name
     const [collection] = useAtom(ThemesLibraryDataAtom)
 
     const [loading, setLoading] = useState(false)
@@ -30,7 +32,7 @@ const Collections = (): React.JSX.Element => {
         await deleteRemoteTheme(themeName)
         setLoading(false)
     }
-    
+
     const [settingsModal, setSettingsModal] = useState<{ themeName: string } | false>(false)
 
     const deleteRemoteTheme = async (themeName: string): Promise<void> => {
@@ -63,6 +65,12 @@ const Collections = (): React.JSX.Element => {
                         }
                     />
                 </h1>
+                {!defaultTheme && (
+                    <div className="header-group" style={{color: "orange", alignItems: 'center'}}>
+                        <InfoSvg />
+                        <p>No hay un tema definido por defecto</p>
+                    </div>
+                )}
             </div>
 
             <div
@@ -74,7 +82,7 @@ const Collections = (): React.JSX.Element => {
                         <ThemeCard
                             key={i}
                             theme={t}
-                            isDefault={t.isDefaultTheme}
+                            isDefault={t.themeName === defaultTheme}
                             deleteCb={(v: string) => !loading && openDeleteModal(v)}
                             openSettings={(v: string) =>
                                 !loading && setSettingsModal({ themeName: v })

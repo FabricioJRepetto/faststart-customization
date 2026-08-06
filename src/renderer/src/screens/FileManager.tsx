@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react'
 import OptionsSvg from '../assets/options.svg?react'
 import UploadSvg from '../assets/upload.svg?react'
 import DropZone from '@renderer/components/DropZone'
-import { TEMPLATE_CONFIG_FILENAME } from '@shared/CONSTANTS'
-import { loadTemplate } from '@renderer/utils/bootSequence'
+import { DEFAULT_CONFIG_FILENAME, TEMPLATE_CONFIG_FILENAME } from '@shared/CONSTANTS'
+import { loadDefaultConfigurations, loadTemplate } from '@renderer/utils/bootSequence'
 
 const FileManager = (): React.JSX.Element => {
     const [list, setlist] = useState<object | null>(null)
@@ -54,6 +54,25 @@ const FileManager = (): React.JSX.Element => {
         }
     }
 
+    const uploadDefaultConfig = async (f: File): Promise<void> => {
+        try {
+            if (f.name !== DEFAULT_CONFIG_FILENAME) {
+                console.error('nombre de archivo malo', f.name)
+                return
+            }
+            const res = await mediaServiceController.uploadDefaultConfig(f)
+            if (!res) {
+                console.error('respondio mal el server')
+                return
+            }
+
+            console.log(res)
+            await loadDefaultConfigurations()
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     return (
         <div className="screen-content">
             <div className="screen-header">
@@ -69,6 +88,20 @@ const FileManager = (): React.JSX.Element => {
                                 <a>
                                     <UploadSvg />
                                     Subir Template
+                                </a>
+                            </div>
+                        </div>
+                    </DropZone>
+
+                    <DropZone
+                        fileHandler={uploadDefaultConfig}
+                        configuration={{ allowedExtensions: ['.json'] }}
+                    >
+                        <div className="actions">
+                            <div className="action primary">
+                                <a>
+                                    <UploadSvg />
+                                    Subir Default Config
                                 </a>
                             </div>
                         </div>

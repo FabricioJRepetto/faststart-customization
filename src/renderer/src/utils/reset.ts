@@ -2,7 +2,7 @@ import { DefaultStylesData, DefaultThirdConfigData, Screens, UPLOAD_STAGE } from
 import {
     ClientAppVersionDirAtom,
     CurrentScreenAtom,
-    DefaultConfigAtom,
+    DefaultThemeConfigAtom,
     DefaultLanguageDataAtom,
     DefaultStylesDataAtom,
     EditedAudiosDataAtom,
@@ -32,6 +32,7 @@ import {
 import { clearMediaCache } from './AssetsPreLoader'
 import WSService from './controllers/WebSocketService/WebSocketServiceController'
 import { objectFullStructure } from './LangStructureBuilder'
+import { defaultStylesParser } from './bootSequence'
 
 /** Resetea todos los valores del contexto */
 export const reset = (): void => {
@@ -44,7 +45,7 @@ export const reset = (): void => {
 
     //_ Data
     store.set(TemplateConfigAtom, undefined)
-    store.set(DefaultConfigAtom, undefined)
+    store.set(DefaultThemeConfigAtom, undefined)
     store.set(ThemesLibraryDataAtom, undefined)
 
     store.set(DefaultLanguageDataAtom, {})
@@ -84,7 +85,7 @@ export const reset = (): void => {
 export const softReset = (): void => {
     clearMediaCache()
 
-    store.set(DefaultConfigAtom, undefined)
+    store.set(DefaultThemeConfigAtom, undefined)
 
     store.set(DefaultLanguageDataAtom, {})
     store.set(EditedLanguageDataAtom, {})
@@ -107,7 +108,7 @@ export const softReset = (): void => {
 export const resetEditions = (): void => {
     clearMediaCache()
 
-    store.set(DefaultConfigAtom, undefined)
+    store.set(DefaultThemeConfigAtom, undefined)
 
     const config = store.get(TemplateConfigAtom)!    
 
@@ -117,7 +118,7 @@ export const resetEditions = (): void => {
     store.set(EditedAudiosDataAtom, [...config.audio])
     store.set(EditedThirdScreenAssetsDataAtom, [])
 
-    store.set(DefaultStylesDataAtom, undefined)
+    store.set(DefaultStylesDataAtom, defaultStylesParser(config.styles))
     store.set(EditedStylesDataAtom, DefaultStylesData)
 
     store.set(DefaultLanguageDataAtom, config.language)
