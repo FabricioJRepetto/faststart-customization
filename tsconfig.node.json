@@ -1,6 +1,6 @@
 {
   "extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
-  "include": ["electron.vite.config.*", "src/main/**/*", "src/preload/**/*","shared/**/*"],
+  "include": ["electron.vite.config.*", "src/main/**/*", "src/preload/**/*","shared/**/*", "src/renderer/src/CONSTANTS.ts", "src/renderer/src/types/fluid_types.ts", "src/renderer/src/types/types.D.ts"],
   "compilerOptions": {
     "composite": true,
     "types": ["electron-vite/node"]

@@ -6,7 +6,7 @@ import {
     ThemeConfigAtom,
     ThemesLibraryDataAtom
 } from './context/context'
-import { AssetData, AssetType, FinalAssetData, TemplateConfig, ThemeConfig } from '@shared/types'
+import { AssetData, AssetType, FinalAssetData, TemplateConfig, ThemeConfig } from '@renderer/types/types.d'
 
 const preloadImage = (url: string): Promise<void> => {
     return new Promise((resolve, reject) => {

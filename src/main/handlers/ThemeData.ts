@@ -1,8 +1,8 @@
 import { copyFileSync, readFileSync, rmSync, writeFileSync } from 'fs'
-import { CustomConfig, IpcResponse } from '../../../shared/types'
+import { CustomConfig, IpcResponse } from '../../renderer/src/types/types'
 import { libraryDir, moveFilesToLibrary, moveThemeToApps, parseCustomConfig } from '../utils'
 import { basename, join } from 'path'
-import { CUSTOM_CONFIG_FILE_NAME } from '../../../shared/CONSTANTS'
+import { CUSTOM_CONFIG_FILE_NAME } from '../../renderer/src/CONSTANTS'
 
 export const saveThemeData = async (
     _event,

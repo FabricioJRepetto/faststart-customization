@@ -1,4 +1,4 @@
-import { CUSTOM_CONFIG_FILE_NAME } from '@shared/CONSTANTS'
+import { CUSTOM_CONFIG_FILE_NAME } from '@renderer/CONSTANTS'
 
 export async function extractFilesFromDataTransfer(dataTransfer: DataTransfer): Promise<File[]> {
     const items = Array.from(dataTransfer.items)

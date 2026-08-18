@@ -1,4 +1,4 @@
-import { Screens, StylesParentKeys } from '@shared/types'
+import { Screens, StylesParentKeys } from '@renderer/types/types.d'
 import { PreviewScreenProps } from '../Previewer'
 import { IMAGES, navigate, TEXT } from '@renderer/utils/navigate'
 import Logo from './components/Logo'

@@ -6,7 +6,7 @@ import {
     BorderStyleCard,
     PreviewStyleCard
 } from '@renderer/components/AssetsCards/StyleCard'
-import { DefaultStylesData, StylesParentKeys } from '@shared/types'
+import { DefaultStylesData, StylesParentKeys } from '@renderer/types/types.d'
 import Tooltip from '@renderer/components/Tooltip'
 import { STYLES } from '@renderer/utils/navigate'
 

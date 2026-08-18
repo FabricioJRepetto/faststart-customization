@@ -1,7 +1,7 @@
 import { writeFileSync } from 'fs'
-import { CustomConfig, IpcResponse } from '../../../shared/types'
+import { CustomConfig, IpcResponse } from '../../renderer/src/types/types'
 import { moveFilesToApps, parseCustomConfig } from '../utils'
-import { CUSTOM_CONFIG_FILE_NAME } from '../../../shared/CONSTANTS'
+import { CUSTOM_CONFIG_FILE_NAME } from '../../renderer/src/CONSTANTS'
 import { join } from 'path'
 
 export const applyCurrentConfig = async (

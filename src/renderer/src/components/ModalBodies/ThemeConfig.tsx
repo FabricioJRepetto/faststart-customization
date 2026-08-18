@@ -1,4 +1,4 @@
-import { ThemeConfig } from '@shared/types'
+import { ThemeConfig } from '@renderer/types/types.d'
 import DynamicSvg from '../DynSvg'
 import DownloadSvg from '../../assets/download.svg?react'
 import DeleteSvg from '../../assets/trash.svg?react'
@@ -13,7 +13,7 @@ import Modal from '../Modal'
 import { useState } from 'react'
 import { loadDefaultConfigurations, loadThemesCollection, loadThemesStylesLanguageData, parseThemeToEdit } from '@renderer/utils/bootSequence'
 import Tooltip from '../Tooltip'
-import { DEFAULT_THEME } from '@shared/CONSTANTS'
+import { DEFAULT_THEME } from '@renderer/CONSTANTS'
 import {
     DefaultConfigurationsAtom,
     DefaultThemeConfigAtom,

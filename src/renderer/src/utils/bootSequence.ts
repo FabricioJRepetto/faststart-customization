@@ -3,7 +3,7 @@ import {
     BACKEND_THEMES_CONFIGS_PATH,
     DEFAULT_CONFIG_FILENAME,
     TEMPLATE_CONFIG_FILENAME
-} from '@shared/CONSTANTS'
+} from '@renderer/CONSTANTS'
 import {
     AssetData,
     AssetType,
@@ -12,7 +12,7 @@ import {
     StylesData,
     TemplateConfig,
     TemplateRawConfig
-} from '@shared/types'
+} from '@renderer/types/types.d'
 import {
     AssetsDataAtom,
     CustomEnabledAtom,

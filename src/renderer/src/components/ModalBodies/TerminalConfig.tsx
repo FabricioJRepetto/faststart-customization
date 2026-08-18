@@ -1,4 +1,4 @@
-import { TASK, WSClientStatus, WSConnectedClient } from '@shared/types'
+import { TASK, WSClientStatus, WSConnectedClient } from '@renderer/types/types.d'
 import AsyncOption from './theme-config-components/AsyncOption'
 import { stateStyle, terminalLongState } from '@renderer/utils/stringUtils'
 import DeleteSvg from '../../assets/trash.svg?react'

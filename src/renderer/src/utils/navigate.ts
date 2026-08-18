@@ -1,4 +1,4 @@
-import { Screens } from '@shared/types'
+import { Screens } from '@renderer/types/types.d'
 import { CurrentScreenAtom, store } from './context/context'
 import { delay } from './delays'
 

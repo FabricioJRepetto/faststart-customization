@@ -1,4 +1,4 @@
-import { CustomConfig, FileForUpload, UploadedFile } from '@shared/types'
+import { CustomConfig, FileForUpload, UploadedFile } from '@renderer/types/types.d'
 import {
     AssetsDataAtom,
     DefaultThemeConfigAtom,
@@ -18,7 +18,7 @@ import {
     assetsToFiles,
     thirdAssetsToFiles
 } from './assetsUtils'
-import { CUSTOM_FILE_VERSION } from '@shared/CONSTANTS'
+import { CUSTOM_FILE_VERSION } from '@renderer/CONSTANTS'
 import { getID } from './IdGen'
 
 /** Genera una lista FileForUpload combinando los assets originales y los modificados */

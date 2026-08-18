@@ -5,7 +5,7 @@ import CancelSvg from '../../assets/cancel.svg?react'
 import UndoSvg from '../../assets/undo.svg?react'
 import Tooltip from '../Tooltip'
 import React, { useEffect, useRef, useState } from 'react'
-import { StylesParentKeys } from '@shared/types'
+import { StylesParentKeys } from '@renderer/types/types.d'
 
 const DICT = {
     dark: 'Oscuro',

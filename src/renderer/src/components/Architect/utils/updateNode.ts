@@ -1,6 +1,21 @@
 import { store } from '@renderer/utils/context/context'
 import { FlowEdges, FlowNodes } from '../FlowStorage'
-import { ActionType, FlowNode, NodeAction, ScreenType, UIElement, UIElementType } from '../../../../../../shared/fluid_types'
+import {
+    ActionType,
+    FlowNode,
+    NodeAction,
+    OptionsListConfig,
+    ScreenType,
+    TableConfig,
+    UIElement,
+    UIElementType,
+    InformationConfig,
+    LogicalStep,
+    NavigationButtonConfig,
+    NumericInputConfig,
+    TextInputConfig,
+    FlowEdge
+} from '@renderer/types/types.d'
 import TerminalActions, { TSService } from '../Actions/Terminal/TerminalActions'
 
 /** Agrega un target al Nodo indicado
@@ -129,6 +144,7 @@ export const deleteNode = (nodeID: string): void => {
         console.error(error)
     }
 }
+
 export function addNodeAction(
     nodeID: string,
     action: ActionType.user | ActionType.service | ActionType.timeout
@@ -149,9 +165,9 @@ export function addNodeAction(nodeID: string, action: ActionType, serviceID?: TS
                 steps: [],
                 reactions: [
                     {
-                        reactionCode: 'coninue',
+                        reactionCode: '',
                         id: `${nodeID}.${action}.click.coninue`,
-                        label: 'continue'
+                        label: ''
                     }
                 ]
             },
@@ -223,6 +239,33 @@ export function addNodeAction(nodeID: string, action: ActionType, serviceID?: TS
     }
 }
 
+export const updateNodeAction = (
+    nodeID: string,
+    actionID: string,
+    props: Record<string, string>
+): void => {
+    store.set(FlowNodes, (nodes) => {
+        return [...nodes]?.map((n) => {
+            if (n.id === nodeID) {
+                return {
+                    ...n,
+                    data: {
+                        ...n.data,
+                        actions: [...n.data.actions].map((a) => {
+                            if (a.actionID === actionID) {
+                                return {
+                                    ...a,
+                                    ...props
+                                }
+                            } else return a
+                        })
+                    }
+                }
+            } else return n
+        })
+    })
+}
+
 /** Elimina una accion del nodo y sus conexiones */
 export const deleteNodeAction = (nodeID: string, actionType: string, actionId: string): void => {
     try {
@@ -262,13 +305,143 @@ export const deleteNodeAction = (nodeID: string, actionType: string, actionId: s
     }
 }
 
+export const addNodeReaction = (nodeID: string, actionID: string): void => {
+    store.set(FlowNodes, (nodes) => {
+        return [...nodes]?.map((n) => {
+            if (n.id === nodeID) {
+                return {
+                    ...n,
+                    data: {
+                        ...n.data,
+                        actions: [...n.data.actions].map((a) => {
+                            if (a.actionID === actionID) {
+                                return {
+                                    ...a,
+                                    reactions: [
+                                        ...a.reactions,
+                                        {
+                                            id: `${nodeID}.${a.type}.${a.actionID}.${new Date().getTime()}`,
+                                            reactionCode: '',
+                                            target: ''
+                                        }
+                                    ]
+                                }
+                            } else return a
+                        })
+                    }
+                }
+            } else return n
+        })
+    })
+}
+
+export const updateNodeReaction = (
+    nodeID: string,
+    actionID: string,
+    reactionID: string,
+    props: Record<string, string>
+): void => {
+    let new_r_id = reactionID
+    if (props?.reactionCode) {
+        new_r_id = reactionID.split('.').slice(0, -1).join('.') + '.' + props.reactionCode
+
+        const edgesList = store.get(FlowEdges)
+        Object.values(edgesList).map((e) => {
+            if (e.sourceHandle === reactionID) {
+                const new_edge_id = e.id.replace(reactionID, new_r_id)
+
+                store.set(FlowEdges, (eds) => {
+                    // eslint-disable-next-line
+                    const { [e.id]: _removed, ...rest } = eds
+
+                    const aux = {
+                        ...rest,
+                        [new_edge_id]: { ...e, id: new_edge_id, sourceHandle: new_r_id }
+                    }
+                    return aux
+                })
+            }
+        })
+    }
+
+    store.set(FlowNodes, (nodes) => {
+        return [...nodes]?.map((n) => {
+            if (n.id === nodeID) {
+                return {
+                    ...n,
+                    data: {
+                        ...n.data,
+                        actions: [...n.data.actions].map((a) => {
+                            if (a.actionID === actionID) {
+                                return {
+                                    ...a,
+                                    reactions: [...a.reactions].map((r) => {
+                                        if (r.id === reactionID) {
+                                            return { ...r, ...props, id: new_r_id }
+                                        } else return r
+                                    })
+                                }
+                            } else return a
+                        })
+                    }
+                }
+            } else return n
+        })
+    })
+}
+
+export const deleteNodeReaction = (nodeID: string, actionID: string, reactionID: string): void => {
+    const edgesList = store.get(FlowEdges)
+    Object.values(edgesList).map((e: FlowEdge) => {
+        if (e.sourceHandle === reactionID) {
+            store.set(FlowEdges, (eds) => {
+                // eslint-disable-next-line
+                const { [e.id]: _removed, ...rest } = eds
+                return rest
+            })
+        }
+    })
+
+    store.set(FlowNodes, (nodes) => {
+        return [...nodes]?.map((n) => {
+            if (n.id === nodeID) {
+                return {
+                    ...n,
+                    data: {
+                        ...n.data,
+                        actions: [...n.data.actions].map((a) => {
+                            if (a.actionID === actionID) {
+                                return {
+                                    ...a,
+                                    reactions: [...a.reactions].filter((r) => r.id !== reactionID)
+                                }
+                            } else return a
+                        })
+                    }
+                }
+            } else return n
+        })
+    })
+
+    //TODO UPDATE EDGES
+}
+
 export const addNodeUI = (nodeID: string, element: UIElementType): void => {
     try {
+        console.log(`add ui element, node:`, nodeID, 'element:', element)
+
         const presetUI: Record<UIElementType, UIElement> = {
             NavigationButton: {
                 type: 'NavigationButton',
                 config: {
-                    buttons: [{ onAction: '', text: 'Continue', position: 'right' }],
+                    buttons: [
+                        {
+                            onAction: '',
+                            text: 'Continue',
+                            position: 'right',
+                            id: 'default_nav_btn_id'
+                        }
+                    ],
                     region: 'footer',
                     order: 0
                 }
@@ -277,14 +450,16 @@ export const addNodeUI = (nodeID: string, element: UIElementType): void => {
                 type: 'NumericInput',
                 config: {
                     region: 'body',
-                    order: 0
+                    order: 0,
+                    storageAlias: ''
                 }
             },
             TextInput: {
                 type: 'TextInput',
                 config: {
                     region: 'body',
-                    order: 0
+                    order: 0,
+                    storageAlias: ''
                 }
             },
             OptionsList: {
@@ -312,7 +487,149 @@ export const addNodeUI = (nodeID: string, element: UIElementType): void => {
                         ...n,
                         data: {
                             ...n.data,
-                            UIElement: [...n.data.uiElements, presetUI[element]]
+                            uiElements: [...n.data.uiElements, presetUI[element]]
+                        }
+                    }
+                } else return n
+            })
+        })
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export function updateNodeUI(
+    nodeID: string,
+    elementType: UIElementType,
+    // props: Record<string, string>
+    props:
+        | NavigationButtonConfig
+        | NumericInputConfig
+        | TextInputConfig
+        | OptionsListConfig
+        | TableConfig
+        | InformationConfig
+): void {
+    store.set(FlowNodes, (nodes) => {
+        return [...nodes].map((n) => {
+            if (n.id === nodeID) {
+                return {
+                    ...n,
+                    data: {
+                        ...n.data,
+                        uiElements: [...n.data.uiElements].map((e) => {
+                            if ((e.type as UIElementType) === elementType) {
+                                return {
+                                    ...e,
+                                    config: {
+                                        ...props
+                                    }
+                                }
+                            } else return e
+                        })
+                    }
+                }
+            } else return n
+        })
+    })
+}
+
+export function updateNavButton(
+    nodeID: string,
+    buttonID: string,
+    props: Record<string, string>
+): void {
+    store.set(FlowNodes, (nodes) => {
+        return [...nodes]?.map((n) => {
+            if (n.id === nodeID) {
+                return {
+                    ...n,
+                    data: {
+                        ...n.data,
+                        uiElements: [...n.data.uiElements].map((e) => {
+                            if (e.type === 'NavigationButton') {
+                                return {
+                                    ...e,
+                                    config: {
+                                        ...e.config,
+                                        buttons: [...e.config.buttons].map((b) => {
+                                            if (b.id === buttonID) {
+                                                return {
+                                                    ...b,
+                                                    ...props
+                                                }
+                                            } else return b
+                                        })
+                                    }
+                                }
+                            } else return e
+                        })
+                    }
+                }
+            } else return n
+        })
+    })
+}
+
+export const addExtraNavButton = (nodeID: string, buttonID: string): void => {
+    try {
+        store.set(FlowNodes, (nodes) => {
+            return [...nodes]?.map((n) => {
+                if (n.id === nodeID) {
+                    return {
+                        ...n,
+                        data: {
+                            ...n.data,
+                            uiElements: [...n.data.uiElements].map((e: UIElement) => {
+                                if (e.type === 'NavigationButton') {
+                                    return {
+                                        ...e,
+                                        config: {
+                                            ...e.config,
+                                            buttons: [
+                                                ...e.config.buttons,
+                                                {
+                                                    text: '',
+                                                    onAction: '',
+                                                    position: 'left',
+                                                    id: buttonID
+                                                }
+                                            ]
+                                        }
+                                    }
+                                } else return e
+                            })
+                        }
+                    }
+                } else return n
+            })
+        })
+    } catch (error) {
+        console.error(error)
+    }
+}
+export const deleteNavButton = (nodeID: string, buttonID: string): void => {
+    try {
+        store.set(FlowNodes, (nodes) => {
+            return [...nodes]?.map((n) => {
+                if (n.id === nodeID) {
+                    return {
+                        ...n,
+                        data: {
+                            ...n.data,
+                            uiElements: [...n.data.uiElements].map((e) => {
+                                if (e.type === 'NavigationButton') {
+                                    return {
+                                        ...e,
+                                        config: {
+                                            ...e.config,
+                                            buttons: [...e.config.buttons].filter(
+                                                (b) => b.id !== buttonID
+                                            )
+                                        }
+                                    }
+                                } else return e
+                            })
                         }
                     }
                 } else return n
@@ -332,7 +649,7 @@ export const deleteNodeUI = (nodeID: string, element: UIElementType): void => {
                         ...n,
                         data: {
                             ...n.data,
-                            UIElement: [...n.data.uiElements].filter((e) => !(e.type === element))
+                            uiElements: [...n.data.uiElements].filter((e) => !(e.type === element))
                         }
                     }
                 } else return n
@@ -360,6 +677,147 @@ export const updateNodeProps = (
                             screenName: name,
                             screenType: type,
                             timeout: to
+                        }
+                    }
+                } else return n
+            })
+        })
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export const addLogicStep = (nodeID: string, actionID: string, newStep: LogicalStep): void => {
+    try {
+        store.set(FlowNodes, (nodes) => {
+            return [...nodes]?.map((n) => {
+                if (n.id === nodeID) {
+                    return {
+                        ...n,
+                        data: {
+                            ...n.data,
+                            actions: [...n.data.actions].map((a) => {
+                                if (a.actionID === actionID) {
+                                    return {
+                                        ...a,
+                                        steps: [
+                                            ...a.steps,
+                                            { ...newStep, id: new Date().getTime(), order: a.steps.length }
+                                        ] as LogicalStep[]
+                                    }
+                                } else return a
+                            })
+                        }
+                    }
+                } else return n
+            })
+        })
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export const updateLogicStep = (
+    nodeID: string,
+    actionID: string,
+    stepID: string,
+    props: unknown[]
+): void => {
+    try {
+        store.set(FlowNodes, (nodes) => {
+            return [...nodes]?.map((n) => {
+                if (n.id === nodeID) {
+                    return {
+                        ...n,
+                        data: {
+                            ...n.data,
+                            actions: [...n.data.actions].map((a) => {
+                                if (a.actionID === actionID) {
+                                    return {
+                                        ...a,
+                                        steps: [...a.steps].map((s) => {
+                                            if (s.id === stepID) {
+                                                return { ...s, ...props }
+                                            } else return s
+                                        }) as LogicalStep[]
+                                    }
+                                } else return a
+                            })
+                        }
+                    }
+                } else return n
+            })
+        })
+    } catch (error) {
+        console.error(error)
+    }
+}
+export const sortLogicSteps = (
+    nodeID: string,
+    actionID: string,
+    stepID: string,
+    order: number,
+    movement: 'up' | 'down'
+): void => {
+    try {
+        store.set(FlowNodes, (nodes) => {
+            return [...nodes]?.map((n) => {
+                if (n.id === nodeID) {
+                    return {
+                        ...n,
+                        data: {
+                            ...n.data,
+                            actions: [...n.data.actions].map((a) => {
+                                if (a.actionID === actionID) {
+                                    return {
+                                        ...a,
+                                        steps: [...a.steps]
+                                            .map((s) => {
+                                                if (s.id === stepID) {
+                                                    return { ...s, order }
+                                                } else if (s.order === order) {
+                                                    return {
+                                                        ...s,
+                                                        order:
+                                                            movement === 'up'
+                                                                ? order + 1
+                                                                : order - 1
+                                                    }
+                                                } else return s
+                                            })
+                                            .sort((a, b) => a.order - b.order) as LogicalStep[]
+                                    }
+                                } else return a
+                            })
+                        }
+                    }
+                } else return n
+            })
+        })
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export const removeLogicStep = (nodeID: string, actionID: string, stepID: string): void => {
+    try {
+        store.set(FlowNodes, (nodes) => {
+            return [...nodes]?.map((n) => {
+                if (n.id === nodeID) {
+                    return {
+                        ...n,
+                        data: {
+                            ...n.data,
+                            actions: [...n.data.actions].map((a) => {
+                                if (a.actionID === actionID) {
+                                    return {
+                                        ...a,
+                                        steps: [...a.steps].filter(
+                                            (s) => s.id !== stepID
+                                        ) as LogicalStep[]
+                                    }
+                                } else return a
+                            })
                         }
                     }
                 } else return n

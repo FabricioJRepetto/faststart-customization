@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { assetName } from '@renderer/utils/assetsUtils'
-import { AssetData } from '@shared/types'
+import { AssetData } from '@renderer/types/types.d'
 import UploadSvg from '../../assets/upload.svg?react'
 import ResetSvg from '../../assets/undo.svg?react'
 import EyeSvg from '../../assets/eye.svg?react'

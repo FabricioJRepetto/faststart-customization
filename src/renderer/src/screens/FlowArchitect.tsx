@@ -2,7 +2,7 @@ import Tooltip from '@renderer/components/Tooltip'
 import HomeSvg from '../assets/home.svg?react'
 import { useSetAtom } from 'jotai'
 import { CurrentScreenAtom } from '@renderer/utils/context/context'
-import { Screens } from '@shared/types'
+import { Screens } from '@renderer/types/types.d'
 import CanvasOverlay from '@renderer/components/Architect/CanvasOverlay'
 import Canvas from '@renderer/components/Architect/Canvas'
 

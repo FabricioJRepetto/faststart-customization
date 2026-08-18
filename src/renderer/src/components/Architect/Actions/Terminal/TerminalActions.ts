@@ -1,6 +1,6 @@
 import { ICashDispenseHandler } from '@terminal-services/cash-dispenser-service'
 import { allKeysOf } from '../../utils/typeAssertion'
-import { ActionType, NodeAction, ReactionType } from '../../../../../../../shared/fluid_types'
+import { ActionType, NodeAction, ReactionType } from '@renderer/types/types.d'
 
 export type TSService = 'dispenser'
 
@@ -12,7 +12,7 @@ interface TerminalAction extends NodeAction {
 const dispenser = (nodeID: string | number): TerminalAction => {
     const actionID: TSService = 'dispenser'
     const reactions: ReactionType[] = [
-        ...allKeysOf<ICashDispenseHandler>()([
+        ...allKeysOf<keyof ICashDispenseHandler>()([
             'cashPresented',
             'cashTaken',
             'cashNotTaken',

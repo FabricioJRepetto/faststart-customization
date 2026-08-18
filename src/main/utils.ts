@@ -1,9 +1,9 @@
 import { copyFileSync, mkdirSync, readFileSync, renameSync, rmSync } from 'fs'
 import { basename, dirname, extname, join } from 'path'
-import { CustomConfig, CustomConfigKey } from '../../shared/types'
+import { CustomConfig, CustomConfigKey } from '../renderer/src/types/types'
 import { is } from '@electron-toolkit/utils'
 import { app } from 'electron'
-import { CUSTOMS_FOLDER_NAME, TEMP_FOLDER, THEMES_LIBRARY_DIR } from '../../shared/CONSTANTS'
+import { CUSTOMS_FOLDER_NAME, TEMP_FOLDER, THEMES_LIBRARY_DIR } from '../renderer/src/CONSTANTS'
 
 const getLibraryDir = (): string => {
     if (is.dev) {

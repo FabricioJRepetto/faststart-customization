@@ -1,4 +1,4 @@
-import { AssetData } from '@shared/types'
+import { AssetData } from '@renderer/types/types.d'
 import ResetSvg from '../../assets/undo.svg?react'
 import UploadSvg from '../../assets/upload.svg?react'
 import Tooltip from '../Tooltip'

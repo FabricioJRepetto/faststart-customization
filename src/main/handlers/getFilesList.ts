@@ -1,7 +1,7 @@
 import { readdirSync } from 'fs'
 import { getBase64 } from '../utils'
 import { join } from 'path'
-import { DEFAULT_ASSETS_DIR } from '../../../shared/CONSTANTS'
+import { DEFAULT_ASSETS_DIR } from '../../renderer/src/CONSTANTS'
 
 export const getFilesList = async (_event, dirPaths: string[]): Promise<unknown> => {
     try {

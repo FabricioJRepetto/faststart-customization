@@ -1,5 +1,5 @@
 import { ICONS, navigate } from '@renderer/utils/navigate'
-import { Screens, StylesParentKeys } from '@shared/types'
+import { Screens, StylesParentKeys } from '@renderer/types/types.d'
 import React from 'react'
 
 interface Props {

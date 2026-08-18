@@ -11,7 +11,7 @@ import AudioSvg from '../assets/audio.svg?react'
 import UploadDialog from '@renderer/components/ModalBodies/UploadDialog'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { CurrentScreenAtom, EditingThemeAtom } from '@renderer/utils/context/context'
-import { Screens } from '@shared/types'
+import { Screens } from '@renderer/types/types.d'
 
 export const Preview = (): React.JSX.Element => {
     const setScreen = useSetAtom(CurrentScreenAtom)

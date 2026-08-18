@@ -1,5 +1,5 @@
 import { ICONS, navigate, STYLES } from '@renderer/utils/navigate'
-import { Screens, StylesParentKeys } from '@shared/types'
+import { Screens, StylesParentKeys } from '@renderer/types/types.d'
 
 interface Props {
     currStyle: (parent: StylesParentKeys, key: string) => string

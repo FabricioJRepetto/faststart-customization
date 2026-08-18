@@ -1,4 +1,4 @@
-import { WSClientStatus } from '@shared/types'
+import { WSClientStatus } from '@renderer/types/types.d'
 
 /** Recibe una fecha en string y retorna en formato DD/MM HH:mm */
 export const smallDate = (v: string): string => {

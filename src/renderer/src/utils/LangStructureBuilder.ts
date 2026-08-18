@@ -1,4 +1,4 @@
-import { LanguageData } from '@shared/types'
+import { LanguageData } from '@renderer/types/types.d'
 
 /** Retorna un objeto con las keys de idioma del objeto languages vacias */
 export const langDataShell = (langData: LanguageData): LanguageData => {

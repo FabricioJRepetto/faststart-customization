@@ -5,7 +5,7 @@ import {
 } from '@renderer/utils/context/context'
 import { useAtom, useAtomValue } from 'jotai'
 import ClearSvg from '../assets/clear.svg?react'
-import { filterType } from '@shared/types'
+import { filterType } from '@renderer/types/types.d'
 import Tooltip from '@renderer/components/Tooltip'
 import DropZone from '@renderer/components/DropZone'
 import { fileToBase64 } from '@renderer/utils/filesManager'

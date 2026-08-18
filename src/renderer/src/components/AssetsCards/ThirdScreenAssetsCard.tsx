@@ -1,5 +1,5 @@
 import { assetName } from '@renderer/utils/assetsUtils'
-import { AssetData } from '@shared/types'
+import { AssetData } from '@renderer/types/types.d'
 import { useState } from 'react'
 import ResetSvg from '../../assets/trash.svg?react'
 import AddSvg from '../../assets/add.svg?react'

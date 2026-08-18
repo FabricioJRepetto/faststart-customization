@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs'
-import { IpcResponse } from '../../../shared/types'
+import { IpcResponse } from '../../renderer/src/types/types'
 
 export const getJsonData = async (_event, filePath: string): IpcResponse<unknown> => {
     try {

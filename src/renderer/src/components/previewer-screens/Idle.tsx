@@ -1,4 +1,4 @@
-import { Screens, StylesParentKeys } from '@shared/types'
+import { Screens, StylesParentKeys } from '@renderer/types/types.d'
 import { PreviewScreenProps } from '../Previewer'
 import QrSvg from '../../assets/QR_example.svg?react'
 import { navigate, STYLES, TEXT } from '@renderer/utils/navigate'

@@ -1,5 +1,5 @@
 import { getBezierPath, getHandlePosition } from './Geometry'
-import type { FlowEdge, FlowNode } from '../../../../../shared/fluid_types'
+import type { FlowEdge, FlowNode } from '../../types/fluid_types'
 
 interface Props {
     edge: FlowEdge

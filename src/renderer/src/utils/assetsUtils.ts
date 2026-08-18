@@ -7,7 +7,7 @@ import {
     LanguageData,
     StylesData,
     ThirdScreendata
-} from '@shared/types'
+} from '@renderer/types/types.d'
 import {
     DefaultLanguageDataAtom,
     DefaultStylesDataAtom,

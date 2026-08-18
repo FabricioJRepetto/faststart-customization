@@ -1,6 +1,6 @@
-import { ScreenType } from '../../../../../../shared/fluid_types'
 import { newNode } from '../utils/presets'
 import CloseSvg from '../../../assets/close_small.svg?react'
+import { ScreenType } from '@renderer/types/types.d'
 
 interface Props {
     visible: boolean

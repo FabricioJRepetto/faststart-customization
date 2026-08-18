@@ -6,7 +6,7 @@ import {
     WebSocketStatusAtom
 } from '@renderer/utils/context/context'
 import { smallDate, stateStyle, terminalSmallState } from '@renderer/utils/stringUtils'
-import { Screens, WSConnectedClient } from '@shared/types'
+import { Screens, WSConnectedClient } from '@renderer/types/types.d'
 import { useAtomValue, useSetAtom } from 'jotai'
 import DynamicSvg from './DynSvg'
 import InfoSvg from '../assets/info.svg?react'

@@ -1,5 +1,5 @@
 import { readdirSync } from 'fs'
-import { IpcResponse } from '../../../shared/types'
+import { IpcResponse } from '../../renderer/src/types/types'
 
 export const getFoldersList = async (_event, dirPath: string): Promise<IpcResponse<string[]>> => {
     try {

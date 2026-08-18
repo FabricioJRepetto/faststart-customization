@@ -5,7 +5,7 @@ import {
 } from '@renderer/utils/context/context'
 import { useAtom, useAtomValue } from 'jotai'
 import ClearSvg from '../assets/clear.svg?react'
-import { AssetData, filterType } from '@shared/types'
+import { AssetData, filterType } from '@renderer/types/types.d'
 import {
     ThirdCard,
     AddNewAsset,

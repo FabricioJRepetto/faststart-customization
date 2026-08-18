@@ -7,7 +7,7 @@ import {
     DEFAULT_CONFIG_FILENAME,
     TEMPLATE_CONFIG_FILENAME,
     THEME_CONFIG_FILENAME
-} from '@shared/CONSTANTS'
+} from '@renderer/CONSTANTS'
 import _TempMediaServer from './_TempMediaServer'
 import {
     CustomConfig,
@@ -19,7 +19,7 @@ import {
     ThemeConfig,
     UPLOAD_STAGE,
     UploadedFile
-} from '@shared/types'
+} from '@renderer/types/types.d'
 import {
     store,
     UploadProgressAtom,

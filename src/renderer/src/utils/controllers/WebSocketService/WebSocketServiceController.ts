@@ -5,7 +5,7 @@ import {
     WSIncomingMessageType,
     WSMessagePayload,
     WSMessageType
-} from '@shared/types'
+} from '@renderer/types/types.d'
 
 class Service {
     private inited = false

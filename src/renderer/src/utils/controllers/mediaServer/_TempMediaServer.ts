@@ -8,7 +8,7 @@ import {
     TEMPLATE_CONFIG_FILENAME,
     BACKEND_DEFAULT_CONFIG_PATH,
     DEFAULT_CONFIG_FILENAME
-} from '@shared/CONSTANTS'
+} from '@renderer/CONSTANTS'
 import {
     CustomConfig,
     DBFile,
@@ -18,7 +18,7 @@ import {
     RawDBFilesListRes,
     RawDBUploadFileRes,
     TemplateConfig
-} from '@shared/types'
+} from '@renderer/types/types.d'
 
 export default class _TempMediaServer implements MediaServiceBase {
     private async getFilesList(): Promise<RawDBFilesListRes | null> {

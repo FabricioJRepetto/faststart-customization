@@ -573,3 +573,330 @@ export interface DefaultConfigurationsFile {
         path: string
     } | null
 }
+
+ //______________________________________________________________________
+ //___________________________ FLOW DIAGRAM _____________________________
+ //______________________________________________________________________
+
+export interface FlowDiagram {
+    version: string
+    entry: string
+    nodes: Record<string, FlowNode>
+}
+
+// Un handle es un punto de conexión con id propio (único dentro del nodo).
+// El label es opcional, útil cuando una salida representa una acción
+// concreta (ej: "Guardar", "Cancelar").
+export interface HandleDef {
+    /** @example [NodoID]+[ActionType]+[ActionID]+[ReactionCode] */
+    id: string
+    label?: string
+}
+
+// Un nodo vive en coordenadas del "mundo" (no de pantalla). El viewport
+// (pan+zoom) es lo que después las transforma a coordenadas de pantalla.
+export interface FlowNode {
+    id: string
+    flowConfig: {
+        x: number
+        y: number
+        width: number
+        height: number
+        color?: string
+        /** @deprecated */
+        entradas?: HandleDef[]
+    }
+    data: NodeData
+}
+
+// Un edge conecta un handle de salida puntual con uno de entrada puntual
+// (no solo nodo con nodo), así un nodo con varias salidas puede tener cada
+// una yendo a un destino distinto.
+export interface FlowEdge {
+    id: string
+    source: string
+    sourceHandle: string
+    target: string
+    targetHandle: string
+}
+
+// Diccionario de edges indexado por id. Agregar/editar/borrar un edge
+// puntual es O(1) en vez de recorrer un array con filter/map.
+export type EdgesById = Record<string, FlowEdge>
+
+// Estado de la "cámara": x/y es el desplazamiento en píxeles de pantalla,
+// zoom es el factor de escala.
+export interface Viewport {
+    x: number
+    y: number
+    zoom: number
+}
+
+// Conexión en progreso: se está arrastrando desde un handle de salida
+// hacia donde sea que esté el mouse ahora (en coordenadas del mundo)
+export interface ConnectionDraft {
+    sourceNodeId: string
+    sourceHandleId: string
+    pointer: { x: number; y: number }
+}
+
+// Tipos de Pantalla. Incluye todos los tipo de pantalla
+export enum ScreenType {
+    idle = 'idle',
+    userAction = 'userAction',
+    infoScreen = 'infoScreen',
+    successScreen = 'successScreen',
+    errorScreen = 'errorScreen',
+    config = 'config',
+    close = 'close'
+}
+
+export interface NodeData {
+    screenType: ScreenType
+    screenName: string
+    flow?: string
+    /** Timeout de cierre automatico */
+    timeout: boolean
+    /** Variables que necesita del storage */
+    storage: string[]
+    actions: NodeAction[]
+    uiElements: UIElement[]
+    subFlow?: FlowDiagram
+}
+
+export interface NodeAction {
+    /** Apunta al registry necesario, Terminal, Service, etc. */
+    type: ActionType
+    /** TODO - Esta ID tiene que pegar contra el registry de service, terminal, etc.
+     * @example Terminal: MixedMedia.Start - Dispenser.Start - etc
+     * @example Service: Login.Qr - Login.Bio - etc
+     * */
+    actionID: string
+    /** Forma en la que se dispara la acción. Auto: al entrar al nodo, User: cuando el usuario toca un botón, por ejemplo, 'continuar' */
+    trigger: { type: 'auto' | 'user' }
+    /** Posibles outcomes */
+    reactions: ReactionType[]
+    /** Flujo lógico */
+    steps: LogicalStep[]
+}
+export enum ActionType {
+    user = 'user',
+    timeout = 'timeout',
+    terminal = 'terminal',
+    service = 'service'
+}
+/** Mantener ID sincronizada con flogConfig.salidas */
+export interface ReactionType extends HandleDef {
+    /** Este CODE identifica la respuesta que devuelve el registry involucrado.
+     * @example Terminal: Dispenser.cashDispenseFailed - MixMedia.mediaCollected - etc
+     * @example Service: Login.Error - Login.Ok - etc
+     */
+    reactionCode: string
+    /** ID del Nodo objetivo */
+    target?: string
+}
+
+export type UIElementType =
+    | 'NavigationButton'
+    | 'NumericInput'
+    | 'TextInput'
+    | 'OptionsList'
+    | 'Table'
+    | 'Information'
+
+interface UIElementBase {
+    type: UIElementType
+    config: UIElementBaseConfig
+    style?: string
+}
+interface UIElementBaseConfig {
+    onAction?: string
+    order?: number
+    region?: 'header' | 'body' | 'footer'
+}
+
+interface UIElementNavigationButton extends UIElementBase {
+    type: 'NavigationButton'
+    config: NavigationButtonConfig
+    style?: string
+}
+export interface NavigationButtonButtonConfig {
+    /** Referencia a un reactionCode (el actionID siempre va a ser 'click') */
+    onAction: string
+    text: string
+    position: 'left' | 'center' | 'right' | 'auto'
+    /** Solo necesario para el Architect */
+    id: string
+}
+export interface NavigationButtonConfig {
+    buttons: NavigationButtonButtonConfig[]
+    region: 'footer'
+    order: number
+}
+
+interface UIElementNumericInput extends UIElementBase {
+    type: 'NumericInput'
+    config: NumericInputConfig
+    style?: string
+}
+export interface NumericInputConfig {
+    /** Alias con el que se guarda el valor del input */
+    storageAlias: string
+    obfuscate?: boolean
+    minimum?: number
+    maximum?: number
+    length?: number
+    direction?: 'column' | 'row'
+    region: 'body'
+    order: number
+}
+
+interface UIElementTextInput extends UIElementBase {
+    type: 'TextInput'
+    config: TextInputConfig
+    style?: string
+}
+export interface TextInputConfig {
+    /** Alias con el que se guarda el valor del input */
+    storageAlias: string
+    obfuscate?: boolean
+    length?: number
+    validator?: string
+    region: 'body'
+    order: number
+}
+
+interface UIElementOptionsList extends UIElementBase {
+    type: 'OptionsList'
+    config: OptionsListConfig
+    style?: string
+}
+export interface OptionsListConfig {
+    /** Referencia a un actionID */
+    onAction: string
+    data: string
+    overflow?: 'scroll' | 'pagination'
+    region: 'body'
+    order: number
+}
+
+interface UIElementTable extends UIElementBase {
+    type: 'Table'
+    config: TableConfig
+    style?: string
+}
+export interface TableConfig {
+    data: string
+    region: 'body'
+    order: number
+}
+
+interface UIElementInformation extends UIElementBase {
+    type: 'Information'
+    config: InformationConfig
+    style?: string
+}
+export interface InformationConfig {
+    title?: string
+    subtitle?: string
+    text?: string
+    illustration?: string
+    region: 'body'
+    order: number
+}
+
+export type UIElement =
+    | UIElementNavigationButton
+    | UIElementNumericInput
+    | UIElementTextInput
+    | UIElementOptionsList
+    | UIElementTable
+    | UIElementInformation
+
+
+ //______________________________________________________________________
+ //____________________________ FLOW LOGIC ______________________________
+ //______________________________________________________________________
+
+ type StepType = 'getVar' | 'setVar' | 'callService' | 'runService' | 'math' | 'compare' | 'time'
+
+ interface BaseLogicalStep {
+     id: string
+     order: number
+     type: StepType
+     subtype: string
+     value?: unknown
+     props?: unknown
+ }
+
+ // _- Time -_
+ interface TimeoutStep extends BaseLogicalStep {
+     type: 'time'
+     subtype: 'timeout'
+     value: number
+ }
+ interface DelayStep extends BaseLogicalStep {
+     type: 'time'
+     subtype: 'delay'
+     value: number
+ }
+
+ type TimeStep = TimeoutStep | DelayStep
+ type TimeSubtype = 'timeout' | 'delay'
+
+ // _- Storage -_
+ interface GetVarStep extends BaseLogicalStep {
+     type: 'getVar'
+     subtype: string
+ }
+ interface SetVarStep extends BaseLogicalStep {
+     type: 'setVar'
+     subtype: string
+     value?: unknown
+ }
+
+ type StorageStep = GetVarStep | SetVarStep
+ type StorageSubtype = 'getVar' | 'setVar'
+
+ // _- Math -_
+ interface MathStep extends BaseLogicalStep {
+     type: 'math'
+     subtype: MathSubtype
+ }
+ type MathSubtype = 'max' | 'min' | 'sum' | 'rest'
+
+ // _- Comparation -_
+ interface CompareStep extends BaseLogicalStep {
+     type: 'compare'
+     subtype: CompareSubtype
+ }
+ type CompareSubtype = 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte'
+
+ // _- Service -_
+ interface ServiceStep extends BaseLogicalStep {
+     type: 'callService'
+     subtype: ServiceSubtype
+ }
+ type ServiceSubtype = 'login'
+
+ //
+ interface TerminalDispenseStep extends BaseLogicalStep {
+     type: 'runService'
+     subtype: TerminalSubtype
+     eventHandler: (v: string) => void
+     props?: {
+         amount: number
+         currency: string
+     }
+ }
+ type TerminalSubtype = 'dispense'
+
+ type TerminalStep = TerminalDispenseStep
+
+ export type LogicalStep =
+     | StorageStep
+     | MathStep
+     | CompareStep
+     | TimeStep
+     | TerminalStep
+     | ServiceStep

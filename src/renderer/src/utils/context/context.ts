@@ -15,7 +15,7 @@ import {
     TemplateConfig,
     WSConnectedClient,
     DefaultConfigurations
-} from '@shared/types'
+} from '@renderer/types/types.d'
 
 export const store = createStore()
 

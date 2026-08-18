@@ -11,7 +11,7 @@ import UploadSvg from '../../assets/upload.svg?react'
 import SpinnerSvg from '../../assets/spinner.svg?react'
 import mediaServiceController from '@renderer/utils/controllers/mediaServer/mediaServiceController'
 import { getThemeConfig } from '@renderer/utils/getRawConfig'
-import { Screens, UPLOAD_STAGE } from '@shared/types'
+import { Screens, UPLOAD_STAGE } from '@renderer/types/types.d'
 import { navigate } from '@renderer/utils/navigate'
 import { loadDefaultConfigurations, loadThemesCollection } from '@renderer/utils/bootSequence'
 

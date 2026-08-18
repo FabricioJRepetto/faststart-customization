@@ -6,8 +6,8 @@ import {
     CurrentScreenAtom,
     ServerStatusAtom
 } from '@renderer/utils/context/context'
-import { Screens } from '@shared/types'
-import { BACKEND_BASE_URL, WS_BASE_URL } from '../../../../shared/CONSTANTS'
+import { Screens } from '@renderer/types/types.d'
+import { BACKEND_BASE_URL, WS_BASE_URL } from '../CONSTANTS'
 import SpinnerSvg from '../assets/spinner.svg?react'
 import { BootSequence } from '@renderer/utils/bootSequence'
 import RemoteSvg from '../assets/wifi.svg?react'

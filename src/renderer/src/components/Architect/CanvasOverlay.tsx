@@ -66,6 +66,9 @@ const CanvasOverlay = (): React.JSX.Element => {
             ghostSource.length && console.log('sources ->', ghostSource.concat())
             ghostTarget.length && console.log('targets ->', ghostTarget.concat())
         } else console.log(`✅ No orphan edge found`)
+
+        console.log('@ Main Flow Nodes:', store.get(FlowNodes));
+        console.log('@ Main Flow Edges:', store.get(FlowEdges));        
     }
 
     return (

@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from 'fs'
-import { CustomConfig, IpcResponse } from '../../../shared/types'
-import { CUSTOM_CONFIG_FILE_NAME } from '../../../shared/CONSTANTS'
+import { CustomConfig, IpcResponse } from '../../renderer/src/types/types'
+import { CUSTOM_CONFIG_FILE_NAME } from '../../renderer/src/CONSTANTS'
 import { join } from 'path'
 
 export const toggleCustomEnabled = async (

@@ -1,5 +1,5 @@
 import { RefObject, useCallback, useRef, useState } from 'react'
-import type { Viewport } from '../../../../../../shared/fluid_types'
+import type { Viewport } from '../../../types/fluid_types'
 import { clamp } from '../Geometry'
 
 const MIN_ZOOM = 0.2

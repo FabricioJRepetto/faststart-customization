@@ -1,5 +1,5 @@
 import { dialog } from 'electron'
-import { IpcResponse } from '../../../shared/types'
+import { IpcResponse } from '../../renderer/src/types/types'
 
 export const selectDirectory = async (): Promise<IpcResponse<string>> => {
     try {

@@ -2,12 +2,13 @@ import { CashDispenserService } from '@terminal-services/cash-dispenser-service'
 import { allKeysOf } from '../../utils/typeAssertion'
 import { ServiceBase } from '@terminal-services/core'
 
-type TSService = 'CashDispenserService'
+export type TSService = 'CashDispenserService'
 
-const baseKeys = allKeysOf<ServiceBase<CashDispenserService>>()(['capabilities', 'dispose', 'init', 'serviceId', 'serviceType', 'status', 'version'])
+const baseKeys = allKeysOf<keyof ServiceBase<CashDispenserService>>()(['capabilities', 'dispose', 'init', 'serviceId', 'serviceType', 'status', 'version'])
 
-const _CashDispenserService = (): void => {
-    const keys = allKeysOf<CashDispenserService>()([
+export const _CashDispenserService = (): void => {
+    const keys = allKeysOf<keyof CashDispenserService>()([
+        ...baseKeys,
         'stateName',
         'isAvailable',
         'getDeviceDetail',
@@ -15,4 +16,6 @@ const _CashDispenserService = (): void => {
         'isDispensable',
         'dispense'
     ])
+    console.log(keys);
+    
 }

@@ -8,7 +8,7 @@ import {
     EditingThemeAtom,
     PreviewScreenIndexAtom
 } from '@renderer/utils/context/context'
-import { Screens, StylesParentKeys } from '@shared/types'
+import { Screens, StylesParentKeys } from '@renderer/types/types.d'
 import { useAtom, useAtomValue } from 'jotai'
 import ThemeSvg from '../assets/theme.svg?react'
 import NotDefinedSVG from '../assets/not_defined.svg?react'

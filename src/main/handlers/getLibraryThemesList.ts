@@ -1,8 +1,8 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync } from 'fs'
-import { CustomConfig, IpcResponse, ThemeConfig } from '../../../shared/types'
+import { CustomConfig, IpcResponse, ThemeConfig } from '../../renderer/src/types/types'
 import { getBase64, libraryDir } from '../utils'
 import { join } from 'path'
-import { CUSTOM_CONFIG_FILE_NAME } from '../../../shared/CONSTANTS'
+import { CUSTOM_CONFIG_FILE_NAME } from '../../renderer/src/CONSTANTS'
 
 export const getLibraryThemesList = async (): Promise<IpcResponse<ThemeConfig[]>> => {
     try {

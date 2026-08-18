@@ -1,4 +1,4 @@
-import { DefaultStylesData, DefaultThirdConfigData, Screens, UPLOAD_STAGE } from '@shared/types'
+import { DefaultStylesData, DefaultThirdConfigData, Screens, UPLOAD_STAGE } from '@renderer/types/types.d'
 import {
     ClientAppVersionDirAtom,
     CurrentScreenAtom,

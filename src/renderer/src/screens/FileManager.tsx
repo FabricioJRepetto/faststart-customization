@@ -1,10 +1,10 @@
 import mediaServiceController from '@renderer/utils/controllers/mediaServer/mediaServiceController'
-import { DBFile } from '@shared/types'
+import { DBFile } from '@renderer/types/types.d'
 import { useEffect, useState } from 'react'
 import OptionsSvg from '../assets/options.svg?react'
 import UploadSvg from '../assets/upload.svg?react'
 import DropZone from '@renderer/components/DropZone'
-import { DEFAULT_CONFIG_FILENAME, TEMPLATE_CONFIG_FILENAME } from '@shared/CONSTANTS'
+import { DEFAULT_CONFIG_FILENAME, TEMPLATE_CONFIG_FILENAME } from '@renderer/CONSTANTS'
 import { loadDefaultConfigurations, loadTemplate } from '@renderer/utils/bootSequence'
 
 const FileManager = (): React.JSX.Element => {

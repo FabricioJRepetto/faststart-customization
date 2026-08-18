@@ -1,6 +1,6 @@
 import { dialog } from 'electron'
 import { getBase64 } from '../utils'
-import { IpcResponse, IpcResponseFileData } from '../../../shared/types'
+import { IpcResponse, IpcResponseFileData } from '../../renderer/src/types/types'
 
 const auxFilters = {
     Imagenes: {
