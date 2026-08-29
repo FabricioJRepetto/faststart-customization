@@ -96,11 +96,6 @@ const NodePropsMenu = (): React.JSX.Element => {
                             />
 
                             <div className="actions">
-                                <div className="action">
-                                    <a target="_blank" rel="noreferrer" onClick={() => null}>
-                                        Sub Flujo
-                                    </a>
-                                </div>
                                 <div className="action tertiary">
                                     <a
                                         target="_blank"

@@ -1,4 +1,9 @@
+import { allKeysOf } from '../../utils/typeAssertion'
+import { deleteNavButton, updateNavButton, updateNodeUI } from '../../utils/updateNode'
+import { SelectedNodeId } from '../../FlowStorage'
+import { store } from '@renderer/utils/context/context'
 import {
+    Images,
     InformationConfig,
     NavigationButtonButtonConfig,
     NavigationButtonConfig,
@@ -6,24 +11,25 @@ import {
     OptionsListConfig,
     TableConfig,
     TextInputConfig,
+    UIelementConfigs,
     UIElementType
-} from '../../../../types/fluid_types'
-import { allKeysOf } from '../../utils/typeAssertion'
-import { deleteNavButton, updateNavButton, updateNodeUI } from '../../utils/updateNode'
-import { SelectedNodeId } from '../../FlowStorage'
-import { store } from '@renderer/utils/context/context'
+} from '@renderer/types/types'
 
 type Props =
     | {
+          viewID: string
+          config: UIelementConfigs
           type: Exclude<UIElementType, 'NavigationButton'>
           buttonID?: never
       }
     | {
+          viewID: string
+          config: NavigationButtonButtonConfig
           type: 'NavigationButton'
           buttonID: string
       }
 
-const UIElementEditor = ({ type, buttonID }: Props): React.JSX.Element => {
+const UIElementEditor = ({ viewID, config, type, buttonID }: Props): React.JSX.Element => {
     /** Este elemento contiene todas las keys configurables de cada UIElement.
      * Si se modifica alguna interface/elemento, typescript va a lanzar un error en esta sección.
      */
@@ -71,6 +77,18 @@ const UIElementEditor = ({ type, buttonID }: Props): React.JSX.Element => {
         'id'
     ])
 
+    const illustrations = allKeysOf<Images>()([
+        'image_insert_bills',
+        'image_take_bills',
+        'image_take_ticket',
+        'image_warning',
+        'image_oos',
+        'image_error',
+        'image_success',
+        'image_thankyou',
+        'image_wait'
+    ])
+
     const saveNodeUIProps = (): void => {
         const isNavBtn = type === 'NavigationButton'
         const aux = {}
@@ -93,12 +111,13 @@ const UIElementEditor = ({ type, buttonID }: Props): React.JSX.Element => {
         aux['region'] = isNavBtn ? 'footer' : 'body'
 
         isNavBtn
-            ? updateNavButton(store.get(SelectedNodeId)!, buttonID, aux)
-            : updateNodeUI(store.get(SelectedNodeId)!, type, aux)
+            ? updateNavButton(store.get(SelectedNodeId)!, viewID, buttonID, aux)
+            : updateNodeUI(store.get(SelectedNodeId)!, viewID, type, aux as UIelementConfigs)
     }
 
     if (type === 'NavigationButton') {
-        const delNavButton = (): void => deleteNavButton(store.get(SelectedNodeId)!, buttonID)
+        const delNavButton = (): void =>
+            deleteNavButton(store.get(SelectedNodeId)!, viewID, buttonID)
 
         return (
             <div className="node-prop-editor">
@@ -107,7 +126,19 @@ const UIElementEditor = ({ type, buttonID }: Props): React.JSX.Element => {
                     .map((k, i) => (
                         <div key={type + buttonID + k + i}>
                             <p>{k}</p>
-                            <input id={buttonID + k} type="text"></input>
+                            {k === 'position' ? (
+                                <select id={buttonID + k} defaultValue={config[k]}>
+                                    <option value="left">Left</option>
+                                    <option value="center">Center</option>
+                                    <option value="right">Right</option>
+                                </select>
+                            ) : (
+                                <input
+                                    id={buttonID + k}
+                                    type="text"
+                                    placeholder={config[k]}
+                                ></input>
+                            )}
                         </div>
                     ))}
 
@@ -148,7 +179,17 @@ const UIElementEditor = ({ type, buttonID }: Props): React.JSX.Element => {
                 .map((k, i) => (
                     <div key={type + k + i}>
                         <p>{k === 'storageAlias' ? 'alias' : k}</p>
-                        <input id={k} type="text"></input>
+                        {k === 'illustration' ? (
+                            <select defaultValue={config[k]}>
+                                {illustrations.map((i) => (
+                                    <option key={i} value={i}>
+                                        {i.replace('image_', '')}
+                                    </option>
+                                ))}
+                            </select>
+                        ) : (
+                            <input id={k} type="text" placeholder={config[k]}></input>
+                        )}
                     </div>
                 ))}
             <div

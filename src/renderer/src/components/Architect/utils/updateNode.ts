@@ -4,19 +4,15 @@ import {
     ActionType,
     FlowNode,
     NodeAction,
-    OptionsListConfig,
     ScreenType,
-    TableConfig,
     UIElement,
     UIElementType,
-    InformationConfig,
     LogicalStep,
-    NavigationButtonConfig,
-    NumericInputConfig,
-    TextInputConfig,
-    FlowEdge
+    FlowEdge,
+    UIelementConfigs
 } from '@renderer/types/types.d'
 import TerminalActions, { TSService } from '../Actions/Terminal/TerminalActions'
+import TerminalViews from '../Actions/Terminal/TerminalViews'
 
 /** Agrega un target al Nodo indicado
  * @param source Nodo de origen
@@ -166,7 +162,7 @@ export function addNodeAction(nodeID: string, action: ActionType, serviceID?: TS
                 reactions: [
                     {
                         reactionCode: '',
-                        id: `${nodeID}.${action}.click.coninue`,
+                        id: `${nodeID}.${action}.click.default`,
                         label: ''
                     }
                 ]
@@ -198,24 +194,28 @@ export function addNodeAction(nodeID: string, action: ActionType, serviceID?: TS
                     {
                         reactionCode: 'timeout',
                         id: `${nodeID}.${action}.timeout.timeout`,
-                        label: ''
+                        label: 'timeout'
                     }
                 ]
             }
         }
 
         let _action: NodeAction
+        let _views: Record<string, UIElement[]> = {}
         switch (action) {
-            case ActionType.terminal:
-                _action = TerminalActions[serviceID!](nodeID)
-                break
-
             case ActionType.user:
                 _action = presetAct[action]
                 break
+
+            case ActionType.terminal:
+                _action = TerminalActions[serviceID!](nodeID)
+                _views = TerminalViews[serviceID!]()
+                break
+
             case ActionType.service:
                 _action = presetAct[action]
                 break
+                
             case ActionType.timeout:
                 _action = presetAct[action]
                 break
@@ -228,7 +228,8 @@ export function addNodeAction(nodeID: string, action: ActionType, serviceID?: TS
                         ...n,
                         data: {
                             ...n.data,
-                            actions: [...n.data.actions, _action]
+                            actions: [...n.data.actions, _action],
+                            views: { ...n.data.views, ..._views }
                         }
                     }
                 } else return n
@@ -426,7 +427,58 @@ export const deleteNodeReaction = (nodeID: string, actionID: string, reactionID:
     //TODO UPDATE EDGES
 }
 
-export const addNodeUI = (nodeID: string, element: UIElementType): void => {
+// Views
+
+export const addNodeView = (nodeID: string, viewID: string): void => {
+    try {
+        store.set(FlowNodes, (nodes) => {
+            return [...nodes]?.map((n) => {
+                if (n.id === nodeID) {
+                    return {
+                        ...n,
+                        data: {
+                            ...n.data,
+                            views: {
+                                ...n.data.views,
+                                [viewID]: []
+                            }
+                        }
+                    }
+                }
+                return n
+            })
+        })
+    } catch (error) {
+        console.error(error)
+    }
+}
+export const removeNodeView = (nodeID: string, viewID: string): void => {
+    try {
+        const aux = store.get(FlowNodes).find((n) => n.id === nodeID)!.data.views
+        delete aux[viewID]
+
+        store.set(FlowNodes, (nodes) => {
+            return [...nodes]?.map((n) => {
+                if (n.id === nodeID) {
+                    return {
+                        ...n,
+                        data: {
+                            ...n.data,
+                            views: aux
+                        }
+                    }
+                }
+                return n
+            })
+        })
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+// UI
+
+export const addNodeUI = (nodeID: string, viewID: string, element: UIElementType): void => {
     try {
         console.log(`add ui element, node:`, nodeID, 'element:', element)
 
@@ -487,7 +539,10 @@ export const addNodeUI = (nodeID: string, element: UIElementType): void => {
                         ...n,
                         data: {
                             ...n.data,
-                            uiElements: [...n.data.uiElements, presetUI[element]]
+                            views: {
+                                ...n.data.views,
+                                [viewID]: [...n.data.views[viewID], presetUI[element]]
+                            }
                         }
                     }
                 } else return n
@@ -500,15 +555,9 @@ export const addNodeUI = (nodeID: string, element: UIElementType): void => {
 
 export function updateNodeUI(
     nodeID: string,
+    viewID: string,
     elementType: UIElementType,
-    // props: Record<string, string>
-    props:
-        | NavigationButtonConfig
-        | NumericInputConfig
-        | TextInputConfig
-        | OptionsListConfig
-        | TableConfig
-        | InformationConfig
+    props: UIelementConfigs
 ): void {
     store.set(FlowNodes, (nodes) => {
         return [...nodes].map((n) => {
@@ -517,16 +566,19 @@ export function updateNodeUI(
                     ...n,
                     data: {
                         ...n.data,
-                        uiElements: [...n.data.uiElements].map((e) => {
-                            if ((e.type as UIElementType) === elementType) {
-                                return {
-                                    ...e,
-                                    config: {
-                                        ...props
-                                    }
-                                }
-                            } else return e
-                        })
+                        views: {
+                            ...n.data.views,
+                            [viewID]: [...n.data.views[viewID]].map((e) => {
+                                if ((e.type as UIElementType) === elementType) {
+                                    return {
+                                        ...e,
+                                        config: {
+                                            ...props
+                                        }
+                                    } as UIElement
+                                } else return e
+                            })
+                        }
                     }
                 }
             } else return n
@@ -536,6 +588,7 @@ export function updateNodeUI(
 
 export function updateNavButton(
     nodeID: string,
+    viewID: string,
     buttonID: string,
     props: Record<string, string>
 ): void {
@@ -546,24 +599,27 @@ export function updateNavButton(
                     ...n,
                     data: {
                         ...n.data,
-                        uiElements: [...n.data.uiElements].map((e) => {
-                            if (e.type === 'NavigationButton') {
-                                return {
-                                    ...e,
-                                    config: {
-                                        ...e.config,
-                                        buttons: [...e.config.buttons].map((b) => {
-                                            if (b.id === buttonID) {
-                                                return {
-                                                    ...b,
-                                                    ...props
-                                                }
-                                            } else return b
-                                        })
+                        views: {
+                            ...n.data.views,
+                            [viewID]: [...n.data.views[viewID]].map((e) => {
+                                if (e.type === 'NavigationButton') {
+                                    return {
+                                        ...e,
+                                        config: {
+                                            ...e.config,
+                                            buttons: [...e.config.buttons].map((b) => {
+                                                if (b.id === buttonID) {
+                                                    return {
+                                                        ...b,
+                                                        ...props
+                                                    }
+                                                } else return b
+                                            })
+                                        }
                                     }
-                                }
-                            } else return e
-                        })
+                                } else return e
+                            })
+                        }
                     }
                 }
             } else return n
@@ -571,7 +627,7 @@ export function updateNavButton(
     })
 }
 
-export const addExtraNavButton = (nodeID: string, buttonID: string): void => {
+export const addExtraNavButton = (nodeID: string, viewID: string, buttonID: string): void => {
     try {
         store.set(FlowNodes, (nodes) => {
             return [...nodes]?.map((n) => {
@@ -580,25 +636,28 @@ export const addExtraNavButton = (nodeID: string, buttonID: string): void => {
                         ...n,
                         data: {
                             ...n.data,
-                            uiElements: [...n.data.uiElements].map((e: UIElement) => {
-                                if (e.type === 'NavigationButton') {
-                                    return {
-                                        ...e,
-                                        config: {
-                                            ...e.config,
-                                            buttons: [
-                                                ...e.config.buttons,
-                                                {
-                                                    text: '',
-                                                    onAction: '',
-                                                    position: 'left',
-                                                    id: buttonID
-                                                }
-                                            ]
+                            views: {
+                                ...n.data.views,
+                                [viewID]: [...n.data.views[viewID]].map((e: UIElement) => {
+                                    if (e.type === 'NavigationButton') {
+                                        return {
+                                            ...e,
+                                            config: {
+                                                ...e.config,
+                                                buttons: [
+                                                    ...e.config.buttons,
+                                                    {
+                                                        text: '',
+                                                        onAction: '',
+                                                        position: 'left',
+                                                        id: buttonID
+                                                    }
+                                                ]
+                                            }
                                         }
-                                    }
-                                } else return e
-                            })
+                                    } else return e
+                                })
+                            }
                         }
                     }
                 } else return n
@@ -608,7 +667,7 @@ export const addExtraNavButton = (nodeID: string, buttonID: string): void => {
         console.error(error)
     }
 }
-export const deleteNavButton = (nodeID: string, buttonID: string): void => {
+export const deleteNavButton = (nodeID: string, viewID: string, buttonID: string): void => {
     try {
         store.set(FlowNodes, (nodes) => {
             return [...nodes]?.map((n) => {
@@ -617,19 +676,22 @@ export const deleteNavButton = (nodeID: string, buttonID: string): void => {
                         ...n,
                         data: {
                             ...n.data,
-                            uiElements: [...n.data.uiElements].map((e) => {
-                                if (e.type === 'NavigationButton') {
-                                    return {
-                                        ...e,
-                                        config: {
-                                            ...e.config,
-                                            buttons: [...e.config.buttons].filter(
-                                                (b) => b.id !== buttonID
-                                            )
+                            views: {
+                                ...n.data.views,
+                                [viewID]: [...n.data.views[viewID]].map((e: UIElement) => {
+                                    if (e.type === 'NavigationButton') {
+                                        return {
+                                            ...e,
+                                            config: {
+                                                ...e.config,
+                                                buttons: [...e.config.buttons].filter(
+                                                    (b) => b.id !== buttonID
+                                                )
+                                            }
                                         }
-                                    }
-                                } else return e
-                            })
+                                    } else return e
+                                })
+                            }
                         }
                     }
                 } else return n
@@ -640,7 +702,7 @@ export const deleteNavButton = (nodeID: string, buttonID: string): void => {
     }
 }
 
-export const deleteNodeUI = (nodeID: string, element: UIElementType): void => {
+export const deleteNodeUI = (nodeID: string, viewID: string, element: UIElementType): void => {
     try {
         store.set(FlowNodes, (nodes) => {
             return [...nodes]?.map((n) => {
@@ -649,7 +711,12 @@ export const deleteNodeUI = (nodeID: string, element: UIElementType): void => {
                         ...n,
                         data: {
                             ...n.data,
-                            uiElements: [...n.data.uiElements].filter((e) => !(e.type === element))
+                            views: {
+                                ...n.data.views,
+                                [viewID]: [...n.data.views[viewID]].filter(
+                                    (e) => !(e.type === element)
+                                )
+                            }
                         }
                     }
                 } else return n
@@ -659,6 +726,8 @@ export const deleteNodeUI = (nodeID: string, element: UIElementType): void => {
         console.error(error)
     }
 }
+
+// Props
 
 export const updateNodeProps = (
     nodeID: string,
@@ -687,6 +756,8 @@ export const updateNodeProps = (
     }
 }
 
+// Logic Steps
+
 export const addLogicStep = (nodeID: string, actionID: string, newStep: LogicalStep): void => {
     try {
         store.set(FlowNodes, (nodes) => {
@@ -702,7 +773,11 @@ export const addLogicStep = (nodeID: string, actionID: string, newStep: LogicalS
                                         ...a,
                                         steps: [
                                             ...a.steps,
-                                            { ...newStep, id: new Date().getTime(), order: a.steps.length }
+                                            {
+                                                ...newStep,
+                                                id: new Date().getTime(),
+                                                order: a.steps.length
+                                            }
                                         ] as LogicalStep[]
                                     }
                                 } else return a

@@ -1,5 +1,5 @@
+import { FlowEdge, FlowNode } from '@renderer/types/types'
 import { getBezierPath, getHandlePosition } from './Geometry'
-import type { FlowEdge, FlowNode } from '../../types/fluid_types'
 
 interface Props {
     edge: FlowEdge

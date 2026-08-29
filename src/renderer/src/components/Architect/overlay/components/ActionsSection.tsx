@@ -28,6 +28,14 @@ const ActionsSection = ({ open, setOpen, openLogicFlow, node }: Props): React.JS
                 addNodeAction(node.id, ActionType.user)
                 break
 
+            case 'timeout':
+                addNodeAction(node.id, ActionType.timeout)
+                break
+         
+            case 'service':
+                addNodeAction(node.id, ActionType.service)
+                break
+
             default:
                 console.warn('Action type not implemented')
                 break
@@ -52,10 +60,6 @@ const ActionsSection = ({ open, setOpen, openLogicFlow, node }: Props): React.JS
                     <div
                         key={e}
                         className={`action-option ${e}`}
-                        style={{
-                            pointerEvents:
-                                e === ActionType.user || e === ActionType.terminal ? 'all' : 'none'
-                        }}
                     >
                         <a
                             target="_blank"
@@ -78,9 +82,7 @@ const ActionsSection = ({ open, setOpen, openLogicFlow, node }: Props): React.JS
                     </div>
 
                     <div key={a.actionID} className="action-container-data">
-                        <code>ID: {a.actionID}</code>
-                        <code>trigger: {a.trigger.type}</code>
-                        <ActionEditor type={a.type} />
+                        <ActionEditor data={a} type={a.type} />
                     </div>
 
                     <div className="action-container-header" style={{ margin: '15px 10px 10px 0' }}>
@@ -98,8 +100,7 @@ const ActionsSection = ({ open, setOpen, openLogicFlow, node }: Props): React.JS
                     </div>
                     {a.reactions.map((r) => (
                         <div key={r.id} className="action-container-data">
-                            <pre>{JSON.stringify(r, null, 2)}</pre>
-                            <ReactionEditor actionID={a.actionID} reactionID={r.id} />
+                            <ReactionEditor data={r} actionID={a.actionID} reactionID={r.id} />
                         </div>
                     ))}
                 </div>

@@ -23,98 +23,121 @@ import {
 
 export const initialNodes: FlowNode[] = [
     {
-        id: '1',
+        id: 'close',
         flowConfig: {
             x: 0,
-            y: 0,
+            y: -160,
+            width: 200,
+            height: 32,
+            color: '#588157'
+        },
+        data: {
+            screenName: '/Close',
+            screenType: 'close',
+            timeout: false,
+            storage: [],
+            actions: [],
+            views: {
+                __DEFAULT_VIEW__: [
+                    {
+                        type: 'Information',
+                        config: {
+                            order: 0,
+                            region: 'body',
+                            title: 'Espere por favor',
+                            text: 'configurando terminal',
+                            illustration: 'image_wait'
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        id: 'config',
+        flowConfig: {
+            x: 0,
+            y: -60,
+            width: 200,
+            height: 32,
+            color: '#588157'
+        },
+        data: {
+            screenName: '/Config',
+            screenType: 'config',
+            timeout: false,
+            storage: [],
+            actions: [
+                {
+                    type: 'service',
+                    actionID: 'settingup',
+                    reactions: [
+                        {
+                            reactionCode: 'ok',
+                            id: 'config.service.settingup.ok',
+                            label: 'ok',
+                            target: 'idle'
+                        },
+                        {
+                            reactionCode: 'error',
+                            id: 'config.service.settingup.error',
+                            label: 'error',
+                            target: 'outofservice'
+                        }
+                    ],
+                    trigger: {
+                        type: 'auto'
+                    },
+                    steps: [
+                        {
+                            id: '0',
+                            order: 0,
+                            type: 'callService',
+                            subtype: 'initial_config'
+                        }
+                    ]
+                }
+            ],
+            views: {
+                __DEFAULT_VIEW__: [
+                    {
+                        type: 'Information',
+                        config: {
+                            order: 0,
+                            region: 'body',
+                            title: 'Espere por favor',
+                            text: 'configurando terminal',
+                            illustration: 'image_wait'
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    {
+        id: 'idle',
+        flowConfig: {
+            x: 320,
+            y: -60,
             width: 200,
             height: 32,
             color: '#3d5a80'
         },
         data: {
-            screenName: 'Login',
-            screenType: ScreenType.idle,
+            screenName: 'Idle',
+            screenType: 'idle',
             timeout: false,
             storage: [],
             actions: [
                 {
-                    type: ActionType.user,
+                    type: 'user',
                     actionID: 'click',
                     reactions: [
                         {
                             reactionCode: 'start',
-                            id: '1.user.click.start',
-                            label: 'start'
-                        }
-                    ],
-                    trigger: {
-                        type: 'user'
-                    },
-                    steps: []
-                },
-                {
-                    type: ActionType.service,
-                    actionID: 'login',
-                    reactions: [
-                        {
-                            reactionCode: 'ok',
-                            id: '1.service.login.ok',
-                            label: 'ok'
-                        }
-                    ],
-                    trigger: {
-                        type: 'user'
-                    },
-                    steps: []
-                },
-                {
-                    type: ActionType.terminal,
-                    actionID: 'status',
-                    reactions: [
-                        {
-                            reactionCode: 'ok',
-                            id: '1.terminal.status.ok',
-                            label: 'ok'
-                        },
-                        {
-                            reactionCode: 'error',
-                            id: '1.terminal.status.error',
-                            label: 'error'
-                        }
-                    ],
-                    trigger: {
-                        type: 'user'
-                    },
-                    steps: []
-                },
-                {
-                    type: ActionType.terminal,
-                    actionID: 'start',
-                    reactions: [
-                        {
-                            reactionCode: 'ok',
-                            id: '1.terminal.start.ok',
-                            label: 'ok'
-                        },
-                        {
-                            reactionCode: 'error',
-                            id: '1.terminal.start.error',
-                            label: 'error'
-                        }
-                    ],
-                    trigger: {
-                        type: 'user'
-                    },
-                    steps: []
-                },
-                {
-                    type: ActionType.timeout,
-                    actionID: 'timeout',
-                    reactions: [
-                        {
-                            reactionCode: 'timeout',
-                            id: '1.timeout.timeout.timeout',
-                            label: 'timeout'
+                            id: 'idle.user.click.start',
+                            label: 'start',
+                            target: '2'
                         }
                     ],
                     trigger: {
@@ -123,84 +146,135 @@ export const initialNodes: FlowNode[] = [
                     steps: []
                 }
             ],
-            uiElements: []
+            views: {
+                __DEFAULT_VIEW__: [
+                    {
+                        type: 'Information',
+                        config: {
+                            order: 0,
+                            region: 'body',
+                            title: 'Bienvenido',
+                            subtitle: 'Presione el botón para iniciar'
+                        }
+                    },
+                    {
+                        type: 'NavigationButton',
+                        config: {
+                            order: 0,
+                            region: 'footer',
+                            buttons: [
+                                {
+                                    id: '1',
+                                    position: 'right',
+                                    text: 'Iniciar',
+                                    onAction: 'start'
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
         }
     },
     {
-        id: '2',
+        id: 'outofservice',
         flowConfig: {
-            x: 380,
-            y: -80,
+            x: 320,
+            y: 40,
             width: 200,
             height: 32,
             color: '#588157'
         },
         data: {
-            screenName: 'Dashboard',
-            screenType: ScreenType.userAction,
+            screenName: '/OutOfService',
+            screenType: 'OutOfService',
             timeout: false,
             storage: [],
             actions: [],
-            uiElements: []
+            views: {
+                __DEFAULT_VIEW__: [
+                    {
+                        type: 'Information',
+                        config: {
+                            order: 0,
+                            region: 'body',
+                            title: 'Terminal Fuera de serivicio',
+                            illustration: 'image_oos'
+                        }
+                    }
+                ]
+            }
         }
     },
     {
-        id: '3',
+        id: '2',
         flowConfig: {
-            x: 380,
-            y: 100,
+            x: 620,
+            y: -60,
             width: 200,
             height: 32,
-            color: '#bc4749'
+            color: '#588157'
         },
         data: {
-            screenName: 'Error',
-            screenType: ScreenType.errorScreen,
+            screenName: 'Menu',
+            screenType: 'userAction',
             timeout: false,
             storage: [],
             actions: [],
-            uiElements: []
+            views: {
+                __DEFAULT_VIEW__: []
+            }
         }
     }
 ]
 
 // Indexados por id desde el arranque, no como array
 export const initialEdges: EdgesById = {
-    e1: {
-        id: 'e1',
-        source: '1',
-        sourceHandle: '1.user.click.start',
-        target: '2',
+    'e-config.service.settingup.ok-idle.in-1787951241903': {
+        id: 'e-config.service.settingup.ok-idle.in-1787951241903',
+        source: 'config',
+        sourceHandle: 'config.service.settingup.ok',
+        target: 'idle',
         targetHandle: 'in'
     },
-    e2: {
-        id: 'e2',
-        source: '1',
-        sourceHandle: '1.timeout.timeout.timeout',
-        target: '3',
+    'e-config.service.settingup.error-outofservice.in-1787951243431': {
+        id: 'e-config.service.settingup.error-outofservice.in-1787951243431',
+        source: 'config',
+        sourceHandle: 'config.service.settingup.error',
+        target: 'outofservice',
+        targetHandle: 'in'
+    },
+    'e-idle.user.click.start-2.in-1787951338946': {
+        id: 'e-idle.user.click.start-2.in-1787951338946',
+        source: 'idle',
+        sourceHandle: 'idle.user.click.start',
+        target: '2',
         targetHandle: 'in'
     }
 }
 
 export const NodeColors: Record<ScreenType, string> = {
     [ScreenType.idle]: '#588157',
+    [ScreenType.config]: '#313131',
+    [ScreenType.close]: '#141414',
     [ScreenType.userAction]: '#8a7e39',
     [ScreenType.infoScreen]: '#3d5a80',
     [ScreenType.successScreen]: '#588157',
     [ScreenType.errorScreen]: '#bc4749',
-    [ScreenType.config]: '#313131',
-    [ScreenType.close]: '#141414'
+    [ScreenType.OutOfService]: '#bc4749'
 }
 
 export const newNode = (type: ScreenType, name?: string): void => {
     const id = store.get(newNodeID) + ''
+    const Xpos = 250
+    const Ypos = -80
 
     const NodePresets: Record<ScreenType, FlowNode> = {
         [ScreenType.idle]: {
-            id: id,
+            id: 'idle',
             flowConfig: {
-                x: 0,
-                y: -70,
+                x: Xpos,
+                y: Ypos,
                 width: 200,
                 height: 32,
                 color: NodeColors.idle
@@ -227,190 +301,14 @@ export const newNode = (type: ScreenType, name?: string): void => {
                         steps: []
                     }
                 ],
-                uiElements: []
-            }
-        },
-        [ScreenType.userAction]: {
-            id: id,
-            flowConfig: {
-                x: 0,
-                y: -70,
-                width: 200,
-                height: 32,
-                color: NodeColors.userAction
-            },
-            data: {
-                screenName: name || 'Confirmation',
-                screenType: ScreenType.userAction,
-                timeout: true,
-                storage: [],
-                actions: [
-                    {
-                        type: ActionType.user,
-                        actionID: 'click_button',
-                        reactions: [
-                            {
-                                reactionCode: 'continue',
-                                id: id + '.userInput.click_button.continue',
-                                label: 'Click continue'
-                            },
-                            {
-                                reactionCode: 'back',
-                                id: id + '.userInput.click_button.back',
-                                label: 'Click back'
-                            },
-                            {
-                                reactionCode: 'exit',
-                                id: id + '.userInput.click_button.exit',
-                                label: 'Click exit'
-                            }
-                        ],
-                        trigger: {
-                            type: 'user'
-                        },
-                        steps: []
-                    },
-                    {
-                        type: ActionType.timeout,
-                        actionID: 'timeout',
-                        reactions: [
-                            {
-                                reactionCode: 'timeout',
-                                id: id + '.timeout.timeout.timeout',
-                                label: 'timeout'
-                            }
-                        ],
-                        trigger: {
-                            type: 'user'
-                        },
-                        steps: []
-                    }
-                ],
-                uiElements: []
-            }
-        },
-        [ScreenType.infoScreen]: {
-            id: id,
-            flowConfig: {
-                x: 0,
-                y: -70,
-                width: 200,
-                height: 32,
-                color: NodeColors.infoScreen
-            },
-            data: {
-                screenName: name || 'Info',
-                screenType: ScreenType.infoScreen,
-                timeout: false,
-                storage: [],
-                actions: [
-                    {
-                        type: ActionType.service,
-                        actionID: 'login',
-                        reactions: [
-                            {
-                                reactionCode: 'ok',
-                                id: id + '.service.login.ok',
-                                label: 'ok'
-                            },
-                            {
-                                reactionCode: 'notOk',
-                                id: id + '.service.login.notOk',
-                                label: 'notOk'
-                            },
-                            {
-                                reactionCode: 'error',
-                                id: id + '.service.login.error',
-                                label: 'error'
-                            },
-                            {
-                                reactionCode: 'timeout',
-                                id: id + '.service.login.timeout',
-                                label: 'timeout'
-                            }
-                        ],
-                        trigger: {
-                            type: 'user'
-                        },
-                        steps: []
-                    }
-                ],
-                uiElements: []
-            }
-        },
-        [ScreenType.successScreen]: {
-            id: id,
-            flowConfig: {
-                x: 0,
-                y: -70,
-                width: 200,
-                height: 32,
-                color: NodeColors.successScreen
-            },
-            data: {
-                screenName: name || 'Success',
-                screenType: ScreenType.successScreen,
-                timeout: true,
-                storage: [],
-                actions: [
-                    {
-                        type: ActionType.timeout,
-                        actionID: 'timeout',
-                        reactions: [
-                            {
-                                reactionCode: 'timeout',
-                                id: id + '.timeout.timeout.timeout',
-                                label: 'timeout'
-                            }
-                        ],
-                        trigger: {
-                            type: 'user'
-                        },
-                        steps: []
-                    }
-                ],
-                uiElements: []
-            }
-        },
-        [ScreenType.errorScreen]: {
-            id: id,
-            flowConfig: {
-                x: 0,
-                y: -70,
-                width: 200,
-                height: 32,
-                color: NodeColors.errorScreen
-            },
-            data: {
-                screenName: name || 'Error',
-                screenType: ScreenType.errorScreen,
-                timeout: true,
-                storage: [],
-                actions: [
-                    {
-                        type: ActionType.timeout,
-                        actionID: 'timeout',
-                        reactions: [
-                            {
-                                reactionCode: 'timeout',
-                                id: id + '.timeout.timeout.timeout',
-                                label: 'timeout'
-                            }
-                        ],
-                        trigger: {
-                            type: 'user'
-                        },
-                        steps: []
-                    }
-                ],
-                uiElements: []
+                views: { __DEFAULT_VIEW__: [] }
             }
         },
         [ScreenType.config]: {
             id: id,
             flowConfig: {
-                x: 0,
-                y: -70,
+                x: Xpos,
+                y: Ypos,
                 width: 200,
                 height: 32,
                 color: NodeColors.config
@@ -423,33 +321,54 @@ export const newNode = (type: ScreenType, name?: string): void => {
                 actions: [
                     {
                         type: ActionType.service,
-                        actionID: 'bootup',
+                        actionID: 'initial_config',
                         reactions: [
                             {
                                 reactionCode: 'ok',
-                                id: id + '.service.bootup.ok',
-                                label: 'ok'
+                                id: id + '.service.initial_config.ok',
+                                label: 'ok',
+                                target: 'idle'
                             },
                             {
                                 reactionCode: 'error',
-                                id: id + '.service.bootup.error',
+                                id: id + '.service.initial_config.error',
                                 label: 'error'
                             }
                         ],
                         trigger: {
-                            type: 'user'
+                            type: 'auto'
                         },
-                        steps: []
+                        steps: [
+                            {
+                                id: '1',
+                                order: 0,
+                                type: 'callService',
+                                subtype: 'initial_config',
+                            }
+                        ]
                     }
                 ],
-                uiElements: []
+                views: {
+                    __DEFAULT_VIEW__: [
+                        {
+                            type: 'Information',
+                            config: {
+                                order: 0,
+                                region: 'body',
+                                title: 'Espere por favor',
+                                text: 'configurando terminal',
+                                illustration: 'image_wait'
+                            }
+                        }
+                    ]
+                }
             }
         },
         [ScreenType.close]: {
             id: id,
             flowConfig: {
-                x: 0,
-                y: -70,
+                x: Xpos,
+                y: Ypos,
                 width: 200,
                 height: 32,
                 color: NodeColors.close
@@ -467,7 +386,96 @@ export const newNode = (type: ScreenType, name?: string): void => {
                             {
                                 reactionCode: 'sessionClosed',
                                 id: id + '.terminal.closeSession.sessionClosed',
-                                label: 'ok'
+                                label: 'ok',
+                                target: 'config'
+                            }
+                        ],
+                        trigger: {
+                            type: 'auto'
+                        },
+                        steps: []
+                    }
+                ],
+                views: {
+                    __DEFAULT_VIEW__: [
+                        {
+                            type: 'Information',
+                            config: {
+                                order: 0,
+                                region: 'body',
+                                title: 'Espere por favor',
+                                text: 'cerrando sesión',
+                                illustration: 'image_wait'
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        [ScreenType.OutOfService]: {
+            id: id,
+            flowConfig: {
+                x: Xpos,
+                y: Ypos,
+                width: 200,
+                height: 32,
+                color: NodeColors.errorScreen
+            },
+            data: {
+                screenName: name || 'Out of Service',
+                screenType: ScreenType.OutOfService,
+                timeout: false,
+                storage: [],
+                actions: [],
+                views: {
+                    __DEFAULT_VIEW__: [
+                        {
+                            type: 'Information',
+                            config: {
+                                order: 0,
+                                region: 'body',
+                                title: 'Terminal Fuera de serivicio',
+                                illustration: 'image_oos'
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+
+        [ScreenType.userAction]: {
+            id: id,
+            flowConfig: {
+                x: Xpos,
+                y: Ypos,
+                width: 200,
+                height: 32,
+                color: NodeColors.userAction
+            },
+            data: {
+                screenName: name || 'User action',
+                screenType: ScreenType.userAction,
+                timeout: true,
+                storage: [],
+                actions: [
+                    {
+                        type: ActionType.user,
+                        actionID: 'click',
+                        reactions: [
+                            {
+                                reactionCode: 'continue',
+                                id: id + '.userInput.click.continue',
+                                label: 'Click continue'
+                            },
+                            {
+                                reactionCode: 'back',
+                                id: id + '.userInput.click.back',
+                                label: 'Click back'
+                            },
+                            {
+                                reactionCode: 'exit',
+                                id: id + '.userInput.click.exit',
+                                label: 'Click exit'
                             }
                         ],
                         trigger: {
@@ -476,7 +484,175 @@ export const newNode = (type: ScreenType, name?: string): void => {
                         steps: []
                     }
                 ],
-                uiElements: []
+                views: {
+                    __DEFAULT_VIEW__: [
+                        {
+                            type: 'NavigationButton',
+                            config: {
+                                order: 0,
+                                region: 'footer',
+                                buttons: [
+                                    {
+                                        id: '1',
+                                        text: 'Continuar',
+                                        onAction: 'continue',
+                                        position: 'right'
+                                    },
+                                    {
+                                        id: '2',
+                                        text: 'Volver',
+                                        onAction: 'back',
+                                        position: 'center'
+                                    },
+                                    {
+                                        id: '3',
+                                        text: 'Salir',
+                                        onAction: 'exit',
+                                        position: 'left'
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        [ScreenType.infoScreen]: {
+            id: id,
+            flowConfig: {
+                x: Xpos,
+                y: Ypos,
+                width: 200,
+                height: 32,
+                color: NodeColors.infoScreen
+            },
+            data: {
+                screenName: name || 'Info screen',
+                screenType: ScreenType.infoScreen,
+                timeout: false,
+                storage: [],
+                actions: [
+                    {
+                        type: ActionType.timeout,
+                        actionID: 'timeout',
+                        reactions: [
+                            {
+                                reactionCode: 'timeout',
+                                id: id + '.timeout.timeout.timeout',
+                                label: 'timeout'
+                            }
+                        ],
+                        trigger: {
+                            type: 'auto'
+                        },
+                        steps: []
+                    }
+                ],
+                views: {
+                    __DEFAULT_VIEW__: [
+                        {
+                            type: 'Information',
+                            config: {
+                                order: 0,
+                                region: 'body',
+                                title: 'Espere por favor',
+                                illustration: 'image_wait'
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        [ScreenType.successScreen]: {
+            id: id,
+            flowConfig: {
+                x: Xpos,
+                y: Ypos,
+                width: 200,
+                height: 32,
+                color: NodeColors.successScreen
+            },
+            data: {
+                screenName: name || 'Success',
+                screenType: ScreenType.successScreen,
+                timeout: false,
+                storage: [],
+                actions: [
+                    {
+                        type: ActionType.timeout,
+                        actionID: 'timeout',
+                        reactions: [
+                            {
+                                reactionCode: 'timeout',
+                                id: id + '.timeout.timeout.timeout',
+                                label: 'timeout'
+                            }
+                        ],
+                        trigger: {
+                            type: 'auto'
+                        },
+                        steps: []
+                    }
+                ],
+                views: {
+                    __DEFAULT_VIEW__: [
+                        {
+                            type: 'Information',
+                            config: {
+                                order: 0,
+                                region: 'body',
+                                title: 'Transacción exitosa',
+                                illustration: 'image_success'
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        [ScreenType.errorScreen]: {
+            id: id,
+            flowConfig: {
+                x: Xpos,
+                y: Ypos,
+                width: 200,
+                height: 32,
+                color: NodeColors.errorScreen
+            },
+            data: {
+                screenName: name || 'Error',
+                screenType: ScreenType.errorScreen,
+                timeout: false,
+                storage: [],
+                actions: [
+                    {
+                        type: ActionType.timeout,
+                        actionID: 'timeout',
+                        reactions: [
+                            {
+                                reactionCode: 'timeout',
+                                id: id + '.timeout.timeout.timeout',
+                                label: 'timeout'
+                            }
+                        ],
+                        trigger: {
+                            type: 'auto'
+                        },
+                        steps: []
+                    }
+                ],
+                views: {
+                    __DEFAULT_VIEW__: [
+                        {
+                            type: 'Information',
+                            config: {
+                                order: 0,
+                                region: 'body',
+                                title: 'Ocurrió un error',
+                                illustration: 'image_error'
+                            }
+                        }
+                    ]
+                }
             }
         }
     }
@@ -485,144 +661,6 @@ export const newNode = (type: ScreenType, name?: string): void => {
 
     store.set(FlowNodes, (prev) => [...prev, NodePresets[type]])
 }
-
-// TODO - generar flujo predefinido
-export const DispenseFlowNodes = [
-    {
-        id: '4',
-        flowConfig: {
-            x: 0,
-            y: -70,
-            width: 200,
-            height: 32,
-            color: '#313131'
-        },
-        data: {
-            screenName: 'Dispense',
-            screenType: 'config',
-            timeout: false,
-            storage: [],
-            actions: [
-                {
-                    type: 'terminal',
-                    actionID: 'dispenser',
-                    trigger: {
-                        type: 'auto'
-                    },
-                    steps: [],
-                    reactions: [
-                        {
-                            reactionCode: 'cashPresented',
-                            id: '4.terminal.dispenser.cashPresented',
-                            label: 'cashPresented',
-                            target: '5'
-                        },
-                        {
-                            reactionCode: 'cashTaken',
-                            id: '4.terminal.dispenser.cashTaken',
-                            label: 'cashTaken',
-                            target: '6'
-                        },
-                        {
-                            reactionCode: 'cashNotTaken',
-                            id: '4.terminal.dispenser.cashNotTaken',
-                            label: 'cashNotTaken',
-                            target: '6'
-                        },
-                        {
-                            reactionCode: 'cashRetracted',
-                            id: '4.terminal.dispenser.cashRetracted',
-                            label: 'cashRetracted',
-                            target: '6'
-                        },
-                        {
-                            reactionCode: 'cashRetractFailed',
-                            id: '4.terminal.dispenser.cashRetractFailed',
-                            label: 'cashRetractFailed',
-                            target: '6'
-                        },
-                        {
-                            reactionCode: '__EXIT__:cashDispensed',
-                            id: '4.terminal.dispenser.__EXIT__:cashDispensed',
-                            label: '__EXIT__:cashDispensed'
-                        },
-                        {
-                            reactionCode: '__EXIT__:cashDispenseFailed',
-                            id: '4.terminal.dispenser.__EXIT__:cashDispenseFailed',
-                            label: '__EXIT__:cashDispenseFailed'
-                        },
-                        {
-                            reactionCode: '__EXIT__:error',
-                            id: '4.terminal.dispenser.__EXIT__:error',
-                            label: '__EXIT__:error'
-                        }
-                    ]
-                }
-            ],
-            uiElements: []
-        }
-    },
-    {
-        id: '5',
-        flowConfig: {
-            x: 340,
-            y: -120,
-            width: 200,
-            height: 32,
-            color: '#3d5a80'
-        },
-        data: {
-            screenName: 'Take Money',
-            screenType: 'infoScreen',
-            timeout: false,
-            storage: [],
-            actions: [],
-            uiElements: [
-                {
-                    type: 'Information',
-                    config: {
-                        title: 'Tome su dinero',
-                        subtitle: '',
-                        text: '',
-                        illustration: 'image_take_bills',
-                        region: 'body',
-                        order: 0
-                    }
-                }
-            ]
-        }
-    },
-    {
-        id: '6',
-        flowConfig: {
-            x: 340,
-            y: -20,
-            width: 200,
-            height: 32,
-            color: '#3d5a80'
-        },
-        data: {
-            screenName: 'Wait',
-            screenType: 'infoScreen',
-            timeout: false,
-            storage: [],
-            actions: [],
-            uiElements: [
-                {
-                    type: 'Information',
-                    config: {
-                        title: 'Espere por favor',
-                        subtitle: 'estamos procesando la operación',
-                        text: '',
-                        illustration: 'image_wait',
-                        region: 'body',
-                        order: 0
-                    }
-                }
-            ]
-        }
-    }
-]
 
 // eslint-disable-next-line
 const LFSteps = [
@@ -637,6 +675,7 @@ const LFSteps = [
 type LFS = (typeof LFSteps)[number]
 
 export const LogicFlowSteps: Record<LFS, object> = {
+    initial_config: { type: 'callService', subtype: 'initial_config' } as ServiceStep,
     login: { type: 'callService', subtype: 'login' } as ServiceStep,
     dispense: { type: 'runService', subtype: 'dispense' } as TerminalStep,
     getVar: { type: 'getVar', subtype: '' } as StorageStep,

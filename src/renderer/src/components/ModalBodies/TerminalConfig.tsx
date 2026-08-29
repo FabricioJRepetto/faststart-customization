@@ -23,6 +23,12 @@ const TerminalModalConfig = ({ terminal, fireTask, closeModal }: Props): React.J
 
             <div className="theme-config-modal-options">
                 <AsyncOption
+                    title={'Sync Diagram'}
+                    action={() => fireTask(TASK.SYNC_DIAGRAM, [terminal.id])}
+                    status={loading}
+                    disabled={terminal.status === 2}
+                />
+                <AsyncOption
                     title={'Sync Theme'}
                     action={() => fireTask(TASK.SYNC_THEME, [terminal.id])}
                     status={loading}

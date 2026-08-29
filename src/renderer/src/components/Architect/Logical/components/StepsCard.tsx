@@ -25,7 +25,7 @@ import { removeLogicStep, sortLogicSteps, updateLogicStep } from '../../utils/up
 import { useState } from 'react'
 
 //__________________________________________________________________ CallServiceSteps
-export const ServiceSteps = allKeysOf<ServiceSubtype>()(['login'])
+export const ServiceSteps = allKeysOf<ServiceSubtype>()(['initial_config','login'])
 
 interface CallServiceProps {
     up: () => void
@@ -45,6 +45,21 @@ const CallServiceCards = ({ subtype, remove, up, down }: CallServiceProps): Reac
                 <div className="logic-step-card callService">
                     {subtype} <ArrowSvg />
                     <p>(previous 2 steps values)</p>
+                    <div className="logic-step-card-button" onClick={up}>
+                        <UpSvg />
+                    </div>
+                    <div className="logic-step-card-button" onClick={down}>
+                        <DownSvg />
+                    </div>
+                    <div className="logic-step-card-button" onClick={remove}>
+                        <CloseSvg />
+                    </div>
+                </div>
+            )
+        case 'initial_config':
+            return (
+                <div className="logic-step-card callService">
+                    {subtype} <ArrowSvg />
                     <div className="logic-step-card-button" onClick={up}>
                         <UpSvg />
                     </div>

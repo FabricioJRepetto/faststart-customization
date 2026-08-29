@@ -1,4 +1,4 @@
-import type { ActionType, FlowNode } from '../../types/fluid_types'
+import { ActionType, FlowNode } from '@renderer/types/types'
 import OptionsSvg from '../../assets/options.svg?react'
 import { NodeColors } from './utils/presets'
 

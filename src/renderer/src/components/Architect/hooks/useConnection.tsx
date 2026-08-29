@@ -1,5 +1,5 @@
+import { ConnectionDraft, FlowEdge, FlowNode } from '@renderer/types/types'
 import { useCallback, useState } from 'react'
-import type { ConnectionDraft, FlowEdge, FlowNode } from '../../../types/fluid_types'
 
 type Return = {
     draft: ConnectionDraft | null

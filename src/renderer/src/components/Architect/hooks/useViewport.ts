@@ -1,6 +1,6 @@
 import { RefObject, useCallback, useRef, useState } from 'react'
-import type { Viewport } from '../../../types/fluid_types'
 import { clamp } from '../Geometry'
+import { Viewport } from '@renderer/types/types'
 
 const MIN_ZOOM = 0.2
 const MAX_ZOOM = 2.5

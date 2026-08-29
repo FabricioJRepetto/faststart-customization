@@ -1,6 +1,6 @@
 import { useCallback, useRef } from 'react'
-import type { FlowNode } from '../../../types/fluid_types'
 import { snapToGrid } from '../Geometry'
+import { FlowNode } from '@renderer/types/types'
 
 type Return = {
     onPointerDown: (e: React.PointerEvent<HTMLDivElement>, node: FlowNode) => void

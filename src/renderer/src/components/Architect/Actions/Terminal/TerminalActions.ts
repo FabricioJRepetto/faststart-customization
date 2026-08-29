@@ -1,6 +1,10 @@
-import { ICashDispenseHandler } from '@terminal-services/cash-dispenser-service'
 import { allKeysOf } from '../../utils/typeAssertion'
-import { ActionType, NodeAction, ReactionType } from '@renderer/types/types.d'
+import {
+    ActionType,
+    NodeAction,
+    ReactionType,
+    TerminalRegistryResult
+} from '@renderer/types/types.d'
 
 export type TSService = 'dispenser'
 
@@ -11,18 +15,12 @@ interface TerminalAction extends NodeAction {
 
 const dispenser = (nodeID: string | number): TerminalAction => {
     const actionID: TSService = 'dispenser'
-    const reactions: ReactionType[] = [
-        ...allKeysOf<keyof ICashDispenseHandler>()([
-            'cashPresented',
-            'cashTaken',
-            'cashNotTaken',
-            'cashRetracted',
-            'cashRetractFailed',
-            'cashDispensed',
-            'cashDispenseFailed'
-        ]),
-        'error'
-    ].map((e) => ({
+    const reactions: ReactionType[] = allKeysOf<TerminalRegistryResult>()([
+        'OK',
+        'CANCELLED',
+        'TIMEOUT',
+        'ERROR',
+    ]).map((e) => ({
         reactionCode: e,
         id: `${nodeID}.${ActionType.terminal}.${actionID}.${e}`,
         label: e,
@@ -35,7 +33,14 @@ const dispenser = (nodeID: string | number): TerminalAction => {
         trigger: {
             type: 'auto'
         },
-        steps: [],
+        steps: [
+            {
+                order: 0,
+                id: actionID,
+                type: 'runService',
+                subtype: 'dispense'
+            }
+        ],
         reactions: [...reactions]
     }
 }

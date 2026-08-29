@@ -33,7 +33,6 @@ export const getLibraryThemesList = async (): Promise<IpcResponse<ThemeConfig[]>
                 )
                 const customEnabled = config.customEnabled
                 const isActive = config?.isActive ?? false
-                const isDefaultTheme = config?.isDefaultTheme ?? false
 
                 const aux: ThemeConfig = {
                     themeName,
@@ -45,8 +44,7 @@ export const getLibraryThemesList = async (): Promise<IpcResponse<ThemeConfig[]>
                         mime: logo.mime
                     },
                     customEnabled,
-                    isActive,
-                    isDefaultTheme
+                    isActive
                 } 
                 return aux
             })

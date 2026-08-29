@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import type { FlowEdge, FlowNode } from '../../types/fluid_types'
 import { useConnection } from './hooks/useConnection'
 import { NodeView } from './NodeView'
 import { EdgeView } from './EdgeView'
@@ -9,6 +8,7 @@ import { FlowEdges, FlowNodes, SelectedNodeId } from './FlowStorage'
 import { useViewport } from './hooks/useViewport'
 import { useNodeDrag } from './hooks/useOndrag'
 import { addHandleTarget, removeHandleTarget } from './utils/updateNode'
+import { FlowEdge, FlowNode } from '@renderer/types/types'
 
 const GRID_SIZE = 20
 

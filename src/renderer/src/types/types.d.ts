@@ -1,4 +1,4 @@
-import { FlowDiagram } from "./fluid_types"
+import { FlowDiagram } from './fluid_types'
 
 export type IpcResponse<T> = Promise<
     | {
@@ -360,6 +360,17 @@ export interface CustomConfig {
     language: LanguageData
 }
 
+export type Images =
+    | 'image_insert_bills'
+    | 'image_take_bills'
+    | 'image_take_ticket'
+    | 'image_warning'
+    | 'image_oos'
+    | 'image_error'
+    | 'image_success'
+    | 'image_thankyou'
+    | 'image_wait'
+
 export type CustomConfigKey = keyof CustomConfig
 interface ThmeBackground {
     base64: string
@@ -529,6 +540,7 @@ interface WSClientData {
 
 // Fire Task
 export enum TASK {
+    SYNC_DIAGRAM = 'SYNC_DIAGRAM',
     SYNC_THEME = 'SYNC_THEME',
     SYNC_ADS = 'SYNC_ADS',
     OOS = 'OOS',
@@ -574,9 +586,9 @@ export interface DefaultConfigurationsFile {
     } | null
 }
 
- //______________________________________________________________________
- //___________________________ FLOW DIAGRAM _____________________________
- //______________________________________________________________________
+//______________________________________________________________________
+//___________________________ FLOW DIAGRAM _____________________________
+//______________________________________________________________________
 
 export interface FlowDiagram {
     version: string
@@ -643,30 +655,32 @@ export interface ConnectionDraft {
 // Tipos de Pantalla. Incluye todos los tipo de pantalla
 export enum ScreenType {
     idle = 'idle',
+    config = 'config',
+    close = 'close',
+    OutOfService = 'OutOfService',
     userAction = 'userAction',
     infoScreen = 'infoScreen',
     successScreen = 'successScreen',
-    errorScreen = 'errorScreen',
-    config = 'config',
-    close = 'close'
+    errorScreen = 'errorScreen'
 }
 
 export interface NodeData {
-    screenType: ScreenType
+    screenType: Type<ScreenType>
     screenName: string
+    /** Flujo/Grupo al que pertenece */
     flow?: string
-    /** Timeout de cierre automatico */
+    /** Timeout de cierre automático */
     timeout: boolean
     /** Variables que necesita del storage */
     storage: string[]
     actions: NodeAction[]
-    uiElements: UIElement[]
+    views: Record<string, UIElement[]>
     subFlow?: FlowDiagram
 }
 
 export interface NodeAction {
     /** Apunta al registry necesario, Terminal, Service, etc. */
-    type: ActionType
+    type: Type<ActionType>
     /** TODO - Esta ID tiene que pegar contra el registry de service, terminal, etc.
      * @example Terminal: MixedMedia.Start - Dispenser.Start - etc
      * @example Service: Login.Qr - Login.Bio - etc
@@ -800,10 +814,18 @@ export interface InformationConfig {
     title?: string
     subtitle?: string
     text?: string
-    illustration?: string
+    illustration?: Images
     region: 'body'
     order: number
 }
+
+export type UIelementConfigs =
+    | NavigationButtonConfig
+    | NumericInputConfig
+    | TextInputConfig
+    | OptionsListConfig
+    | TableConfig
+    | InformationConfig
 
 export type UIElement =
     | UIElementNavigationButton
@@ -813,90 +835,89 @@ export type UIElement =
     | UIElementTable
     | UIElementInformation
 
+//______________________________________________________________________
+//____________________________ FLOW LOGIC ______________________________
+//______________________________________________________________________
 
- //______________________________________________________________________
- //____________________________ FLOW LOGIC ______________________________
- //______________________________________________________________________
+type StepType = 'getVar' | 'setVar' | 'callService' | 'runService' | 'math' | 'compare' | 'time'
 
- type StepType = 'getVar' | 'setVar' | 'callService' | 'runService' | 'math' | 'compare' | 'time'
+interface BaseLogicalStep {
+    id: string
+    order: number
+    type: StepType
+    subtype: string
+    value?: unknown
+    props?: unknown
+}
 
- interface BaseLogicalStep {
-     id: string
-     order: number
-     type: StepType
-     subtype: string
-     value?: unknown
-     props?: unknown
- }
+// _- Time -_
+interface TimeoutStep extends BaseLogicalStep {
+    type: 'time'
+    subtype: 'timeout'
+    value: number
+}
+interface DelayStep extends BaseLogicalStep {
+    type: 'time'
+    subtype: 'delay'
+    value: number
+}
 
- // _- Time -_
- interface TimeoutStep extends BaseLogicalStep {
-     type: 'time'
-     subtype: 'timeout'
-     value: number
- }
- interface DelayStep extends BaseLogicalStep {
-     type: 'time'
-     subtype: 'delay'
-     value: number
- }
+type TimeStep = TimeoutStep | DelayStep
+type TimeSubtype = 'timeout' | 'delay'
 
- type TimeStep = TimeoutStep | DelayStep
- type TimeSubtype = 'timeout' | 'delay'
+// _- Storage -_
+interface GetVarStep extends BaseLogicalStep {
+    type: 'getVar'
+    subtype: string
+}
+interface SetVarStep extends BaseLogicalStep {
+    type: 'setVar'
+    subtype: string
+    value?: unknown
+}
 
- // _- Storage -_
- interface GetVarStep extends BaseLogicalStep {
-     type: 'getVar'
-     subtype: string
- }
- interface SetVarStep extends BaseLogicalStep {
-     type: 'setVar'
-     subtype: string
-     value?: unknown
- }
+type StorageStep = GetVarStep | SetVarStep
+type StorageSubtype = 'getVar' | 'setVar'
 
- type StorageStep = GetVarStep | SetVarStep
- type StorageSubtype = 'getVar' | 'setVar'
+// _- Math -_
+interface MathStep extends BaseLogicalStep {
+    type: 'math'
+    subtype: MathSubtype
+}
+type MathSubtype = 'max' | 'min' | 'sum' | 'rest'
 
- // _- Math -_
- interface MathStep extends BaseLogicalStep {
-     type: 'math'
-     subtype: MathSubtype
- }
- type MathSubtype = 'max' | 'min' | 'sum' | 'rest'
+// _- Comparation -_
+interface CompareStep extends BaseLogicalStep {
+    type: 'compare'
+    subtype: CompareSubtype
+}
+type CompareSubtype = 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte'
 
- // _- Comparation -_
- interface CompareStep extends BaseLogicalStep {
-     type: 'compare'
-     subtype: CompareSubtype
- }
- type CompareSubtype = 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte'
+// _- Service -_
+interface ServiceStep extends BaseLogicalStep {
+    type: 'callService'
+    subtype: ServiceSubtype
+}
+type ServiceSubtype = 'initial_config' | 'login'
 
- // _- Service -_
- interface ServiceStep extends BaseLogicalStep {
-     type: 'callService'
-     subtype: ServiceSubtype
- }
- type ServiceSubtype = 'login'
+// _- Terminal -_
+interface TerminalDispenseStep extends BaseLogicalStep {
+    type: 'runService'
+    subtype: TerminalSubtype
+    props?: {
+        amount: number
+        currency: string
+    }
+}
+type TerminalSubtype = 'dispense'
+type TerminalStep = TerminalDispenseStep
+export type TerminalRegistryResult = 'OK' | 'ERROR' | 'TIMEOUT' | 'CANCELLED'
 
- //
- interface TerminalDispenseStep extends BaseLogicalStep {
-     type: 'runService'
-     subtype: TerminalSubtype
-     eventHandler: (v: string) => void
-     props?: {
-         amount: number
-         currency: string
-     }
- }
- type TerminalSubtype = 'dispense'
+export type LogicalStep =
+    | StorageStep
+    | MathStep
+    | CompareStep
+    | TimeStep
+    | TerminalStep
+    | ServiceStep
 
- type TerminalStep = TerminalDispenseStep
-
- export type LogicalStep =
-     | StorageStep
-     | MathStep
-     | CompareStep
-     | TimeStep
-     | TerminalStep
-     | ServiceStep

@@ -57,7 +57,6 @@ export const parseCustomConfig = async (
             themeName: rawConfig.themeName,
             customEnabled: rawConfig.customEnabled,
             isActive: true,
-            isDefaultTheme: false,
             styles: rawConfig.styles,
             language: rawConfig.language,
             icon: [],

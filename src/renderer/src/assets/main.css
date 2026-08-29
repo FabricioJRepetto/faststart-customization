@@ -2176,7 +2176,7 @@ input[type='number'] {
 
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    grid-template-rows: 1fr, 1fr, 1fr;
+    grid-template-rows: 1fr, 1fr, 1fr, 1fr;
     align-items: center;
     gap: 10px;
 }
@@ -2612,15 +2612,13 @@ input[type='number'] {
     color: orange;
 }
 .service {
-    color: grey;
-    /* color: skyblue; */
+    color: skyblue;
 }
 .terminal {
     color: lightgreen;
 }
 .timeout {
-    color: grey;
-    /* color: whitesmoke; */
+    color: whitesmoke;
 }
 
 .properties-menu-side-panel {
@@ -2672,6 +2670,15 @@ input[type='number'] {
     margin: 3px;
 }
 
+.view-id-header {
+    border-top: 1px solid var(--ev-c-gray-3);
+    width: 100%;
+}
+
+.view-section {
+    background-color: var(--ev-c-black-dark);
+}
+
 .action-container-header {
     color: var(--ev-c-text-1);
     text-transform: capitalize;
@@ -2680,6 +2687,11 @@ input[type='number'] {
     height: 25px;
     padding-left: 10px;
     margin: 15px 10px 10px 0px;
+
+    a {
+        display: flex;
+        align-items: center;
+    }
 
     svg {
         cursor: pointer;

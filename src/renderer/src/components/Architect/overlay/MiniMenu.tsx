@@ -22,11 +22,6 @@ const NewNodeMiniMenu = ({ visible, close }: Props): React.JSX.Element => {
             </div>
             <div className="actions">
                 <div className="action">
-                    <a target="_blank" rel="noreferrer" onClick={() => addNode(ScreenType.idle)}>
-                        Idle
-                    </a>
-                </div>
-                <div className="action">
                     <a
                         target="_blank"
                         rel="noreferrer"
@@ -60,16 +55,6 @@ const NewNodeMiniMenu = ({ visible, close }: Props): React.JSX.Element => {
                         onClick={() => addNode(ScreenType.errorScreen)}
                     >
                         Error Screen
-                    </a>
-                </div>
-                <div className="action">
-                    <a target="_blank" rel="noreferrer" onClick={() => addNode(ScreenType.config)}>
-                        Configuration
-                    </a>
-                </div>
-                <div className="action">
-                    <a target="_blank" rel="noreferrer" onClick={() => addNode(ScreenType.close)}>
-                        Close
                     </a>
                 </div>
             </div>

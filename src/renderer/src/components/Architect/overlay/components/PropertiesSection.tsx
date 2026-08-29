@@ -4,6 +4,13 @@ import { useEffect, useState } from 'react'
 import { updateNodeProps } from '../../utils/updateNode'
 import { FlowNode, ScreenType } from '@renderer/types/types.d'
 
+const bannedTypes: ScreenType[] = [
+    ScreenType.idle,
+    ScreenType.config,
+    ScreenType.close,
+    ScreenType.OutOfService
+]
+
 interface Props {
     open: boolean
     setOpen: (v: 'props' | null) => void
@@ -45,27 +52,33 @@ const PropertiesSection = ({ open, setOpen, node }: Props): React.JSX.Element =>
                         onChange={(e) => setNodeName(e.target.value)}
                     ></input>
                 </div>
-                <div>
-                    <p>type</p>
-                    <select
-                        value={node.data.screenType}
-                        onChange={(e) => setNodeType(e.target.value as ScreenType)}
-                    >
-                        {Object.keys(ScreenType).map((op) => (
-                            <option key={op} value={op}>
-                                {op}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-                <div>
-                    <p>close timeout</p>
-                    <input
-                        type="radio"
-                        value={nodeName}
-                        onChange={(e) => setNodeName(e.target.value)}
-                    ></input>
-                </div>
+                {!bannedTypes.includes(node.data.screenType) && (
+                    <>
+                        <div>
+                            <p>type</p>
+                            <select
+                                value={node.data.screenType}
+                                onChange={(e) => setNodeType(e.target.value as ScreenType)}
+                            >
+                                {Object.keys(ScreenType)
+                                    .filter((t) => !bannedTypes.includes(t as ScreenType))
+                                    .map((op) => (
+                                        <option key={op} value={op}>
+                                            {op}
+                                        </option>
+                                    ))}
+                            </select>
+                        </div>
+                        <div>
+                            <p>close timeout</p>
+                            <input
+                                type="radio"
+                                value={nodeName}
+                                onChange={(e) => setNodeName(e.target.value)}
+                            ></input>
+                        </div>
+                    </>
+                )}
                 <div
                     className="action-option"
                     style={{
