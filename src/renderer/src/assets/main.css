@@ -2466,6 +2466,10 @@ input[type='number'] {
     overflow: clip;
 }
 
+.architect-key-shortcuts {
+    font-size: .5rem;
+}
+
 .architect-blueprint-sidemenu-container {
     top: 0;
     left: 0;

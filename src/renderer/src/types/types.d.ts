@@ -594,6 +594,7 @@ export interface FlowDiagram {
     version: string
     entry: string
     nodes: Record<string, FlowNode>
+    edges: EdgesById
 }
 
 // Un handle es un punto de conexión con id propio (único dentro del nodo).

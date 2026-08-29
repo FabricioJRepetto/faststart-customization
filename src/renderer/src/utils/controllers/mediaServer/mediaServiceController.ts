@@ -2,9 +2,11 @@ import {
     BACKEND_BASE_TEMPLATE_PATH,
     BACKEND_BASE_URL,
     BACKEND_DEFAULT_CONFIG_PATH,
+    BACKEND_DIAGRAM_PATH,
     BACKEND_THEMES_ASSETS_PATH,
     BACKEND_THEMES_CONFIGS_PATH,
     DEFAULT_CONFIG_FILENAME,
+    DIAGRAM_FILENAME,
     TEMPLATE_CONFIG_FILENAME,
     THEME_CONFIG_FILENAME
 } from '@renderer/CONSTANTS'
@@ -14,6 +16,7 @@ import {
     DBFile,
     DefaultConfigurations,
     DefaultConfigurationsFile,
+    FlowDiagram,
     MediaServiceBase,
     TemplateRawConfig,
     ThemeConfig,
@@ -477,15 +480,70 @@ class MediaService {
             if (!config) return true
 
             if (config.theme?.name === themeName) {
-                const newConfig = {...config, theme: null}
+                const newConfig = { ...config, theme: null }
                 const res = await this.uploadDefaultConfig(newConfig, true)
-                if (!res) console.warn('Error al actualizar configuraciones por defecto');
+                if (!res) console.warn('Error al actualizar configuraciones por defecto')
             }
 
             return true
         } catch (error) {
             console.error(error)
             return null
+        }
+    }
+
+    public async uploadDiagram(config: FlowDiagram, diagramName: string): Promise<DBFile | null> {
+        try {
+            const asDefault = store.get(UploadSetAsDefaultThemeAtom)
+
+            const fileName = `${diagramName}${DIAGRAM_FILENAME}`
+            this.setFile = fileName
+            this.updateUploadProgress()
+
+            const jsonFile = this.objectToJsonFile(config, fileName)
+            const configRes = await this.service.uploadFile(
+                jsonFile,
+                BACKEND_DIAGRAM_PATH + '/' + diagramName,
+                fileName
+            )
+
+            if (!configRes) {
+                this.addFail = 1
+                console.error('Error al subir archivo de diagrama')
+
+                return null
+            }
+            this.addOk = 1
+
+            // _______________________!:
+            if (asDefault) {
+                this.setFile = DEFAULT_CONFIG_FILENAME
+                this.updateUploadProgress()
+
+                const oldConfig =
+                    (await this.getDefaultConfigurationsFile()) ||
+                    ({ theme: {} } as DefaultConfigurationsFile)
+                const newConfig: DefaultConfigurationsFile = {
+                    ...oldConfig,
+                    diagram: { available: true, name: diagramName, path: configRes.url }
+                }
+                const res = await this.uploadDefaultConfig(newConfig, true)
+                if (!res) {
+                    console.error('Error al definir diagrama como predeterminado')
+                    this.addFail = 1
+                } else {
+                    this.addOk = 1
+                }
+            }
+
+            return configRes
+        } catch (error) {
+            console.error(error)
+            this.addFail = 1
+            return null
+        } finally {
+            this.setFile = ''
+            this.updateUploadProgress()
         }
     }
 }
