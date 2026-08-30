@@ -5,23 +5,29 @@ import {
     UploadStageAtom
 } from '@renderer/utils/context/context'
 import { validName, permittedName, unicDiagramName } from '@renderer/utils/themesUtils'
-import { useAtom, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import UploadSvg from '../../assets/upload.svg?react'
 import SpinnerSvg from '../../assets/spinner.svg?react'
 import mediaServiceController from '@renderer/utils/controllers/mediaServer/mediaServiceController'
 import { FlowDiagram, Screens, UPLOAD_STAGE } from '@renderer/types/types.d'
 import { navigate } from '@renderer/utils/navigate'
-import { loadDefaultConfigurations, loadDiagramsCollection, loadThemesCollection } from '@renderer/utils/bootSequence'
-import { FlowEdges, FlowNodes } from '../Architect/FlowStorage'
+import {
+    loadDefaultConfigurations,
+    loadDiagramsCollection,
+    loadThemesCollection
+} from '@renderer/utils/bootSequence'
+import { CurrentDiagramData, FlowEdges, FlowNodes } from '../Architect/FlowStorage'
 
 interface Props {
     closeModal: () => void
 }
 
 const UploadDiagramDialog = ({ closeModal }: Props): React.JSX.Element => {
-    const [diagramName, setDiagramName] = useState<string>('')
-    const [version, setVersion] = useState<string>('')
+    const data = useAtomValue(CurrentDiagramData)
+
+    const [diagramName, setDiagramName] = useState<string>(data?.name ?? '')
+    const [version, setVersion] = useState<string>(data?.version ?? '')
     const setAsDefault = useSetAtom(UploadSetAsDefaultThemeAtom)
 
     const [loading, setLoading] = useState<boolean>(false)
@@ -89,7 +95,7 @@ const UploadDiagramDialog = ({ closeModal }: Props): React.JSX.Element => {
         }
     }
 
-    const uploadTheme = async (): Promise<void> => {
+    const upload = async (): Promise<void> => {
         if (!permittedName(diagramName)) return
 
         try {
@@ -207,7 +213,7 @@ const UploadDiagramDialog = ({ closeModal }: Props): React.JSX.Element => {
                             className="action primary"
                             style={{ pointerEvents: validName(diagramName) ? 'all' : 'none' }}
                         >
-                            <a onClick={uploadTheme}>
+                            <a onClick={upload}>
                                 Guardar
                                 <UploadSvg />
                             </a>

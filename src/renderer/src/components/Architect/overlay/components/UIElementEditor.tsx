@@ -80,7 +80,7 @@ const UIElementEditor = ({ viewID, config, type }: Props): React.JSX.Element => 
         })
 
         //: WARN - HARDCODEADO
-        aux['order'] = 0
+        // aux['order'] = 0
         aux['region'] = 'body'
 
         updateNodeUI(store.get(SelectedNodeId)!, viewID, type, aux as UIelementConfigs)
@@ -88,9 +88,9 @@ const UIElementEditor = ({ viewID, config, type }: Props): React.JSX.Element => 
 
     return (
         <div className="node-prop-editor">
-            <pre>{JSON.stringify(config, null, 2)}</pre>
+            {/* <pre>{JSON.stringify(config, null, 2)}</pre> */}
             {inputs[type]
-                .filter((k) => k !== 'region' && k !== 'order')
+                .filter((k) => k !== 'region')
                 .map((k, i) => (
                     <div key={type + k + i}>
                         <p>{k === 'storageAlias' ? 'alias' : k}</p>

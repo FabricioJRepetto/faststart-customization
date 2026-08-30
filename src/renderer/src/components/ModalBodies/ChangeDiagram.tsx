@@ -5,7 +5,7 @@ import {
 import { useAtomValue, useSetAtom } from 'jotai'
 import { FlowDiagram } from '@renderer/types/types.d'
 import DefaultSvg from '../../assets/star.svg?react'
-import { FlowEdges, FlowNodes } from '../Architect/FlowStorage'
+import { CurrentDiagramData, EditingDiagram, FlowEdges, FlowNodes } from '../Architect/FlowStorage'
 
 interface Props {
     closeModal: () => void
@@ -15,6 +15,9 @@ const ChangeDiagram = ({ closeModal }: Props): React.JSX.Element => {
     const defaultDiagram = useAtomValue(DefaultConfigurationsAtom)?.diagram?.name
     const collection = useAtomValue(DiagramsCollectionDataAtom)
 
+    const setEditing = useSetAtom(EditingDiagram)
+    const setData = useSetAtom(CurrentDiagramData)
+
     const setNodes = useSetAtom(FlowNodes)
     const setEdges = useSetAtom(FlowEdges)
 
@@ -22,6 +25,10 @@ const ChangeDiagram = ({ closeModal }: Props): React.JSX.Element => {
         console.log(
             `Setting diagram ${diagram.version} for edition.\n${Object.entries(diagram?.nodes)?.length} nodes - ${Object.entries(diagram.edges)?.length} edges`
         )
+        if (diagram) {
+            setEditing(true)
+            setData(diagram)
+        }
         if (diagram?.nodes) setNodes(Object.values(diagram.nodes))
         if (diagram?.edges) setEdges(diagram.edges)
     }

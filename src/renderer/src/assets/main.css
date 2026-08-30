@@ -2504,6 +2504,20 @@ input[type='number'] {
         width: stretch;
         padding: 0 20px;
         justify-content: end;
+
+        p {
+            margin: auto 20px;
+            font-style: italic;
+            opacity: .35;
+        }
+
+        .small-bolt {
+            position: absolute;
+            right: 5px;
+            bottom: 0px;
+            scale: .75;
+
+        }
     }
 
     .header-icon {

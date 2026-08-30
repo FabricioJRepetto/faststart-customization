@@ -21,7 +21,7 @@ const OptionsListElementEditor = ({ viewID, config }: Props): React.JSX.Element 
     const saveNodeUIProps = (): void => {
         const aux: OptionsListConfig = {
             region: 'body',
-            order: 0,
+            order: parseInt((document.getElementById('order') as HTMLInputElement)?.value ?? 0),
             overflow:
                 ((document.getElementById('overflow') as HTMLInputElement)?.value as
                     | 'scroll'
@@ -85,8 +85,11 @@ const OptionsListElementEditor = ({ viewID, config }: Props): React.JSX.Element 
         const aux: OptionsListOptions = {
             id: option.id,
             onAction:
-                (document.getElementById(`${option.id}-onAction`) as HTMLInputElement)?.value ?? option.onAction,
-            text: (document.getElementById(`${option.id}-text`) as HTMLInputElement)?.value ?? option.text,
+                (document.getElementById(`${option.id}-onAction`) as HTMLInputElement)?.value ??
+                option.onAction,
+            text:
+                (document.getElementById(`${option.id}-text`) as HTMLInputElement)?.value ??
+                option.text,
             icon: {
                 asset:
                     ((document.getElementById(`${option.id}-icon-asset`) as HTMLInputElement)
@@ -167,6 +170,11 @@ const OptionsListElementEditor = ({ viewID, config }: Props): React.JSX.Element 
                     <option value={'horizontal'}>Horizontal</option>
                     <option value={'vertical'}>Vertical</option>
                 </select>
+            </div>
+
+            <div>
+                <p>order</p>
+                <input id={'order'} type="number" min={0} defaultValue={config.order}></input>
             </div>
 
             <div>
