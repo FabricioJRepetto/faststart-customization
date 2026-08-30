@@ -14,6 +14,7 @@ import {
     DBFile,
     DefaultConfigurations,
     DefaultConfigurationsFile,
+    FlowDiagram,
     MediaServiceBase,
     RawDBFilesListRes,
     RawDBUploadFileRes,
@@ -104,6 +105,32 @@ export default class _TempMediaServer implements MediaServiceBase {
                 const aux: CustomConfig[] = []
                 for await (const file of filesList) {
                     const res = await this.getFile<CustomConfig>(file.path)
+                    if (res) aux.push(res)
+                }
+                return aux
+            } else {
+                return null
+            }
+        } catch (error) {
+            console.error(error)
+            return null
+        }
+    }
+
+    async getDiagramsList(): Promise<FlowDiagram[] | null> {
+        try {
+            const res = await this.getFilesList()
+
+            if (res?.files) {
+                const regEx = new RegExp(/[\w-]+_diagram.json$/)
+                console.log(res.files);                
+                const filesList = res.files.filter((file) => regEx.test(file.name))
+
+                if (filesList.length === 0) return null
+
+                const aux: FlowDiagram[] = []
+                for await (const file of filesList) {
+                    const res = await this.getFile<FlowDiagram>(file.path)
                     if (res) aux.push(res)
                 }
                 return aux

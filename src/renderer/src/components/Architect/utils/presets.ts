@@ -209,7 +209,7 @@ export const initialNodes: FlowNode[] = [
     {
         id: '2',
         flowConfig: {
-            x: 620,
+            x: 640,
             y: -60,
             width: 200,
             height: 32,
@@ -291,7 +291,7 @@ export const newNode = (type: ScreenType, name?: string): void => {
                         reactions: [
                             {
                                 reactionCode: 'start',
-                                id: id + '.userInput.click.start',
+                                id: `${id}.${ActionType.user}.click.start`,
                                 label: 'Click start'
                             }
                         ],
@@ -325,13 +325,13 @@ export const newNode = (type: ScreenType, name?: string): void => {
                         reactions: [
                             {
                                 reactionCode: 'ok',
-                                id: id + '.service.initial_config.ok',
+                                id: `${id}.${ActionType.service}.initial_config.ok`,
                                 label: 'ok',
                                 target: 'idle'
                             },
                             {
                                 reactionCode: 'error',
-                                id: id + '.service.initial_config.error',
+                                id: `${id}.${ActionType.service}.initial_config.error`,
                                 label: 'error'
                             }
                         ],
@@ -343,7 +343,7 @@ export const newNode = (type: ScreenType, name?: string): void => {
                                 id: '1',
                                 order: 0,
                                 type: 'callService',
-                                subtype: 'initial_config',
+                                subtype: 'initial_config'
                             }
                         ]
                     }
@@ -385,7 +385,7 @@ export const newNode = (type: ScreenType, name?: string): void => {
                         reactions: [
                             {
                                 reactionCode: 'sessionClosed',
-                                id: id + '.terminal.closeSession.sessionClosed',
+                                id: `${id}.${ActionType.terminal}.closeSession.sessionClosed`,
                                 label: 'ok',
                                 target: 'config'
                             }
@@ -442,7 +442,6 @@ export const newNode = (type: ScreenType, name?: string): void => {
                 }
             }
         },
-
         [ScreenType.userAction]: {
             id: id,
             flowConfig: {
@@ -464,17 +463,17 @@ export const newNode = (type: ScreenType, name?: string): void => {
                         reactions: [
                             {
                                 reactionCode: 'continue',
-                                id: id + '.userInput.click.continue',
+                                id: `${id}.${ActionType.user}.click.continue`,
                                 label: 'Click continue'
                             },
                             {
                                 reactionCode: 'back',
-                                id: id + '.userInput.click.back',
+                                id: `${id}.${ActionType.user}.click.back`,
                                 label: 'Click back'
                             },
                             {
                                 reactionCode: 'exit',
-                                id: id + '.userInput.click.exit',
+                                id: `${id}.${ActionType.user}.click.exit`,
                                 label: 'Click exit'
                             }
                         ],
@@ -538,7 +537,7 @@ export const newNode = (type: ScreenType, name?: string): void => {
                         reactions: [
                             {
                                 reactionCode: 'timeout',
-                                id: id + '.timeout.timeout.timeout',
+                                id: `${id}.${ActionType.timeout}.timeout.timeout`,
                                 label: 'timeout'
                             }
                         ],
@@ -555,8 +554,7 @@ export const newNode = (type: ScreenType, name?: string): void => {
                             config: {
                                 order: 0,
                                 region: 'body',
-                                title: 'Espere por favor',
-                                illustration: 'image_wait'
+                                title: 'Espere por favor'
                             }
                         }
                     ]
@@ -584,7 +582,7 @@ export const newNode = (type: ScreenType, name?: string): void => {
                         reactions: [
                             {
                                 reactionCode: 'timeout',
-                                id: id + '.timeout.timeout.timeout',
+                                id: `${id}.${ActionType.timeout}.timeout.timeout`,
                                 label: 'timeout'
                             }
                         ],
@@ -630,7 +628,7 @@ export const newNode = (type: ScreenType, name?: string): void => {
                         reactions: [
                             {
                                 reactionCode: 'timeout',
-                                id: id + '.timeout.timeout.timeout',
+                                id: `${id}.${ActionType.timeout}.timeout.timeout`,
                                 label: 'timeout'
                             }
                         ],

@@ -360,6 +360,19 @@ export interface CustomConfig {
     language: LanguageData
 }
 
+export type Icons =
+    | 'icon_logo'
+    | 'icon_qr_logo'
+    | 'icon_left_arrow'
+    | 'icon_right_arrow'
+    | 'icon_bills'
+    | 'icon_exchange'
+    | 'icon_return'
+    | 'icon_world'
+    | 'icon_button_continue'
+    | 'icon_button_confirm'
+    | 'icon_button_exit'
+
 export type Images =
     | 'image_insert_bills'
     | 'image_take_bills'
@@ -407,6 +420,7 @@ export const DefaultThirdConfigData: ThirdScreenConfig = {
 export interface MediaServiceBase {
     getFiles: () => Promise<DBFile[] | null>
     getThemesList: () => Promise<CustomConfig[] | null>
+    getDiagramsList: () => Promise<FlowDiagram[] | null>
     getTemplateConfig: () => Promise<TemplateConfig | null>
     getDefaultConfigs: () => Promise<DefaultConfigurations | null>
     getDefaultConfigsFile: () => Promise<DefaultConfigurationsFile | null>
@@ -591,6 +605,7 @@ export interface DefaultConfigurationsFile {
 //______________________________________________________________________
 
 export interface FlowDiagram {
+    name: string
     version: string
     entry: string
     nodes: Record<string, FlowNode>
@@ -787,12 +802,22 @@ interface UIElementOptionsList extends UIElementBase {
     style?: string
 }
 export interface OptionsListConfig {
-    /** Referencia a un actionID */
-    onAction: string
-    data: string
-    overflow?: 'scroll' | 'pagination'
     region: 'body'
     order: number
+    options: OptionsListOptions[]
+    overflow?: 'scroll' | 'pagination'
+    optionsDirection?: 'horizontal' | 'vertical'
+    display?:
+        | { type: 'grid'; columns: number; rows: number }
+        | { type: 'flex'; direction: 'column' | 'row' }
+}
+export interface OptionsListOptions {
+    /** Solo necesario para el Architect */
+    id: string
+    /** Referencia a un reactionCode (el actionID siempre va a ser 'click') */
+    onAction: string
+    text: string
+    icon?: { asset: Icons; order?: 'first' | 'last' }
 }
 
 interface UIElementTable extends UIElementBase {

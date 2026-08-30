@@ -14,7 +14,8 @@ import {
     UPLOAD_STAGE,
     TemplateConfig,
     WSConnectedClient,
-    DefaultConfigurations
+    DefaultConfigurations,
+    FlowDiagram
 } from '@renderer/types/types.d'
 
 export const store = createStore()
@@ -78,8 +79,11 @@ export const EditedThirdScreenAssetsDataAtom = atom<AssetData[]>()
 /** Nueva conffig para el carousel de la Tercera pantalla */
 export const EditedThirdScreenConfigDataAtom = atom<ThirdScreenConfig>(DefaultThirdConfigData)
 
-/** Lista de temas previamente guardados en la libreria */
+/** Lista de temas guardados en el servidor */
 export const ThemesLibraryDataAtom = atom<ThemeConfig[]>()
+
+/** Lista de diagramas guardados en el servidor */
+export const DiagramsCollectionDataAtom = atom<FlowDiagram[]>()
 
 /** Estado del servidor */
 export const ServerStatusAtom = atom<boolean>()

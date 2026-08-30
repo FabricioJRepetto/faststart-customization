@@ -20,8 +20,6 @@ export function EdgeView({ edge, nodes, selected, onSelect }: Props): React.JSX.
 
     return (
         <g style={{ cursor: 'pointer' }}>
-            {/* Path invisible más ancho: agranda el área de click sin agrandar
-          el trazo visible (clickear un bezier de 2px es muy poco margen) */}
             <path
                 d={d}
                 fill="none"

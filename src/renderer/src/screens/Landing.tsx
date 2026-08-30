@@ -2,10 +2,7 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import Versions from '../components/Versions'
 import NATL from '../assets/NATL-logo.svg?react'
-import {
-    CurrentScreenAtom,
-    ServerStatusAtom
-} from '@renderer/utils/context/context'
+import { CurrentScreenAtom, ServerStatusAtom } from '@renderer/utils/context/context'
 import { Screens } from '@renderer/types/types.d'
 import { BACKEND_BASE_URL, WS_BASE_URL } from '../CONSTANTS'
 import SpinnerSvg from '../assets/spinner.svg?react'
@@ -27,7 +24,7 @@ const Landing = (): React.JSX.Element => {
         const retries = r
         setStatus(undefined)
 
-        const res = await fetch(BACKEND_BASE_URL+ '/ping', {
+        const res = await fetch(BACKEND_BASE_URL + '/ping', {
             method: 'HEAD',
             mode: 'no-cors',
             cache: 'no-cache'
@@ -93,7 +90,10 @@ const Landing = (): React.JSX.Element => {
             <NATL className={`logo ${loading ? 'logo-loading logo-loading-position' : ''}`} />
             <div className={`creator ${loading ? 'fade-out' : ''}`}>Versión de escritorio</div>
             <div className={`text ${loading ? 'fade-out' : ''}`}>
-                <h1 style={{display: 'flex', justifyContent: 'center', transform: 'skew(350deg)'}}>
+                <h1
+                    className="gradient-text big-gradient"
+                    style={{ display: 'flex', justifyContent: 'center', transform: 'skew(350deg)' }}
+                >
                     <code style={{ background: 'none', fontSize: '4rem' }}>ƒ</code>
                     <p
                         style={{

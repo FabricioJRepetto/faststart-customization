@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react'
 import SpinnerSvg from '../assets/spinner.svg?react'
 import NewSvg from '../assets/theme.svg?react'
 import FilesSvg from '../assets/folder_management.svg?react'
-import RocketSvg from '../assets/rocket.svg?react'
+import DiagramSvg from '../assets/automation.svg?react'
 import TestSvg from '../assets/test.svg?react'
 import ExitSvg from '../assets/logout.svg?react'
 import PowerSvg from '../assets/powerb.svg?react'
@@ -142,8 +142,8 @@ const NewMain = (): React.JSX.Element => {
                         Nuevo Tema
                     </div>
                     <div style={{ opacity: '.75', pointerEvents: 'none' }}>
-                        <RocketSvg />
-                        Carga Rápida
+                        <DiagramSvg />
+                        Nuevo Diagrama
                     </div>
                     <div style={{ color: 'lime' }} onClick={() => setScreen(Screens.test)}>
                         <TestSvg />

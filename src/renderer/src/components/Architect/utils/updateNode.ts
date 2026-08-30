@@ -9,7 +9,8 @@ import {
     UIElementType,
     LogicalStep,
     FlowEdge,
-    UIelementConfigs
+    UIelementConfigs,
+    OptionsListOptions
 } from '@renderer/types/types.d'
 import TerminalActions, { TSService } from '../Actions/Terminal/TerminalActions'
 import TerminalViews from '../Actions/Terminal/TerminalViews'
@@ -30,10 +31,20 @@ export const addHandleTarget = (
         const actionType = handleID.split('.')[1]
         const actionID = handleID.split('.')[2]
 
+        console.log('addHandleTarget - sourceNodeID', sourceNodeID)
+        console.log('sourceNode', sourceNode)
+        console.log('actionType', actionType)
+        console.log('actionID', actionID)
+        console.log('handleID', handleID)
+
         if (!sourceNode) throw new Error(`Source Node not found: ${sourceNodeID}`)
 
         const newActions = sourceNode.data.actions.map((a) => {
             if (a.actionID === actionID && a.type === actionType) {
+                console.log(
+                    'reactions:',
+                    a.reactions.map((r) => r.id)
+                )
                 return {
                     ...a,
                     reactions: a.reactions.map((r) => {
@@ -215,7 +226,7 @@ export function addNodeAction(nodeID: string, action: ActionType, serviceID?: TS
             case ActionType.service:
                 _action = presetAct[action]
                 break
-                
+
             case ActionType.timeout:
                 _action = presetAct[action]
                 break
@@ -477,11 +488,8 @@ export const removeNodeView = (nodeID: string, viewID: string): void => {
 }
 
 // UI
-
 export const addNodeUI = (nodeID: string, viewID: string, element: UIElementType): void => {
     try {
-        console.log(`add ui element, node:`, nodeID, 'element:', element)
-
         const presetUI: Record<UIElementType, UIElement> = {
             NavigationButton: {
                 type: 'NavigationButton',
@@ -516,16 +524,29 @@ export const addNodeUI = (nodeID: string, viewID: string, element: UIElementType
             },
             OptionsList: {
                 type: 'OptionsList',
-                config: { onAction: '', data: '', region: 'body', order: 0 }
+                config: {
+                    region: 'body',
+                    order: 0,
+                    display: { type: 'flex', direction: 'column' },
+                    optionsDirection: 'horizontal',
+                    options: [
+                        {
+                            id: 'default',
+                            onAction: '',
+                            text: 'Option A',
+                            icon: {
+                                asset: 'icon_button_continue',
+                                order: 'first'
+                            }
+                        }
+                    ]
+                }
             },
             Table: { type: 'Table', config: { data: '', region: 'body', order: 0 } },
             Information: {
                 type: 'Information',
                 config: {
                     title: 'Titulo informativo',
-                    subtitle: 'Subtitulo informativo',
-                    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                    illustration: 'image_thankyou',
                     region: 'body',
                     order: 0
                 }
@@ -573,6 +594,7 @@ export function updateNodeUI(
                                     return {
                                         ...e,
                                         config: {
+                                            ...e.config,
                                             ...props
                                         }
                                     } as UIElement
@@ -585,7 +607,32 @@ export function updateNodeUI(
         })
     })
 }
+export const deleteNodeUI = (nodeID: string, viewID: string, element: UIElementType): void => {
+    try {
+        store.set(FlowNodes, (nodes) => {
+            return [...nodes]?.map((n) => {
+                if (n.id === nodeID) {
+                    return {
+                        ...n,
+                        data: {
+                            ...n.data,
+                            views: {
+                                ...n.data.views,
+                                [viewID]: [...n.data.views[viewID]].filter(
+                                    (e) => !(e.type === element)
+                                )
+                            }
+                        }
+                    }
+                } else return n
+            })
+        })
+    } catch (error) {
+        console.error(error)
+    }
+}
 
+// NavigationButton
 export function updateNavButton(
     nodeID: string,
     viewID: string,
@@ -626,7 +673,6 @@ export function updateNavButton(
         })
     })
 }
-
 export const addExtraNavButton = (nodeID: string, viewID: string, buttonID: string): void => {
     try {
         store.set(FlowNodes, (nodes) => {
@@ -702,7 +748,8 @@ export const deleteNavButton = (nodeID: string, viewID: string, buttonID: string
     }
 }
 
-export const deleteNodeUI = (nodeID: string, viewID: string, element: UIElementType): void => {
+// OptionsList
+export const addOptionsListOption = (nodeID: string, viewID: string, optionID: string): void => {
     try {
         store.set(FlowNodes, (nodes) => {
             return [...nodes]?.map((n) => {
@@ -713,9 +760,101 @@ export const deleteNodeUI = (nodeID: string, viewID: string, element: UIElementT
                             ...n.data,
                             views: {
                                 ...n.data.views,
-                                [viewID]: [...n.data.views[viewID]].filter(
-                                    (e) => !(e.type === element)
-                                )
+                                [viewID]: [...n.data.views[viewID]].map((e: UIElement) => {
+                                    if (e.type === 'OptionsList') {
+                                        return {
+                                            ...e,
+                                            config: {
+                                                ...e.config,
+                                                options: [
+                                                    ...e.config.options,
+                                                    {
+                                                        id: optionID,
+                                                        text: '',
+                                                        onAction: '',
+                                                        icon: {
+                                                            asset: 'icon_button_continue',
+                                                            order: 'first'
+                                                        }
+                                                    } as OptionsListOptions
+                                                ]
+                                            }
+                                        }
+                                    } else return e
+                                })
+                            }
+                        }
+                    }
+                } else return n
+            })
+        })
+    } catch (error) {
+        console.error(error)
+    }
+}
+export function updateOptionsListOption(
+    nodeID: string,
+    viewID: string,
+    optionID: string,
+    props: OptionsListOptions
+): void {
+    store.set(FlowNodes, (nodes) => {
+        return [...nodes]?.map((n) => {
+            if (n.id === nodeID) {
+                return {
+                    ...n,
+                    data: {
+                        ...n.data,
+                        views: {
+                            ...n.data.views,
+                            [viewID]: [...n.data.views[viewID]].map((e) => {
+                                if (e.type === 'OptionsList') {
+                                    return {
+                                        ...e,
+                                        config: {
+                                            ...e.config,
+                                            options: [...e.config.options].map((opt) => {
+                                                if (opt.id === optionID) {
+                                                    return {
+                                                        ...props
+                                                    }
+                                                } else return opt
+                                            })
+                                        }
+                                    }
+                                } else return e
+                            })
+                        }
+                    }
+                }
+            } else return n
+        })
+    })
+}
+export const deleteOptionsListOption = (nodeID: string, viewID: string, optionID: string): void => {
+    try {
+        store.set(FlowNodes, (nodes) => {
+            return [...nodes]?.map((n) => {
+                if (n.id === nodeID) {
+                    return {
+                        ...n,
+                        data: {
+                            ...n.data,
+                            views: {
+                                ...n.data.views,
+                                [viewID]: [...n.data.views[viewID]].map((e: UIElement) => {
+                                    if (e.type === 'OptionsList') {
+                                        return {
+                                            ...e,
+                                            config: {
+                                                ...e.config,
+                                                options: [...e.config.options].filter(
+                                                    (opt) => opt.id !== optionID
+                                                )
+                                            }
+                                        }
+                                    } else return e
+                                })
                             }
                         }
                     }
@@ -728,7 +867,6 @@ export const deleteNodeUI = (nodeID: string, viewID: string, element: UIElementT
 }
 
 // Props
-
 export const updateNodeProps = (
     nodeID: string,
     name: string,

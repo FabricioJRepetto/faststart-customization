@@ -58,9 +58,11 @@ export default function Canvas(): React.JSX.Element {
                             !(e.source === edge.source && e.sourceHandle === edge.sourceHandle)
                     )
                 )
+                console.log('set edge', edge);                
                 return { ...withoutPreviousFromSameSource, [edge.id]: edge }
             })
             setNodes((prev) => {
+                console.log('set node =>', edge.target)                
                 return addHandleTarget(prev, edge.source, edge.sourceHandle, edge.target) || prev
             })
         },

@@ -8,7 +8,7 @@ import BackgroundsSvg from '../assets/image.svg?react'
 import LanguageSvg from '../assets/translate.svg?react'
 import ScreenSvg from '../assets/screen.svg?react'
 import AudioSvg from '../assets/audio.svg?react'
-import UploadDialogTheme from '@renderer/components/ModalBodies/UploadDialogTheme'
+import UploadThemeDialog from '@renderer/components/ModalBodies/UploadThemeDialog'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { CurrentScreenAtom, EditingThemeAtom } from '@renderer/utils/context/context'
 import { Screens } from '@renderer/types/types.d'
@@ -117,7 +117,7 @@ export const Preview = (): React.JSX.Element => {
                             confirm={() => !loadingUpload && setModalUpload(false)}
                             close={() => !loadingUpload && setModalUpload(false)}
                         >
-                            <UploadDialogTheme
+                            <UploadThemeDialog
                                 closeModal={() => {
                                     setModalUpload(false)
                                     setLoadingUpload(false)

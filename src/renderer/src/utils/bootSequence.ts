@@ -1,5 +1,6 @@
 import {
     BACKEND_DEFAULT_CONFIG_PATH,
+    BACKEND_DIAGRAM_PATH,
     BACKEND_THEMES_CONFIGS_PATH,
     DEFAULT_CONFIG_FILENAME,
     TEMPLATE_CONFIG_FILENAME
@@ -30,7 +31,8 @@ import {
     TemplateConfigAtom,
     ThemeConfigAtom,
     ThemesLibraryDataAtom,
-    DefaultConfigurationsAtom
+    DefaultConfigurationsAtom,
+    DiagramsCollectionDataAtom
 } from './context/context'
 import { objectFullStructure } from './LangStructureBuilder'
 import mediaServiceController from './controllers/mediaServer/mediaServiceController'
@@ -139,10 +141,10 @@ export const loadThemesCollection = async (): Promise<void> => {
 
             store.set(ThemesLibraryDataAtom, cachedThemes)
         } else {
-            console.warn(`- Libreria de temas vacía\n`)
+            console.warn(`- Themes Collection empty\n`)
         }
     } catch (error) {
-        console.error(`- Error al libreria de temas:\n`, error)
+        console.error(`- Error getting Themes Collection:\n`, error)
     }
 }
 
@@ -233,6 +235,24 @@ const parseToAssetData = (
     )
 }
 
+export const loadDiagramsCollection = async (): Promise<void> => {
+    try {
+        console.log('-----------------------------\n', `- fetching ${BACKEND_DIAGRAM_PATH}...\n`)
+        const res = await mediaServiceController.getDiagrams()
+
+        if (res.length) {
+            console.log(`- Diagrams Collection. data OK\n`, '- Saving data')
+            console.log(`Collection found (${res.length} diagrams):`)
+
+            store.set(DiagramsCollectionDataAtom, res)
+        } else {
+            console.warn(`- Diagrams Collection empty\n`)
+        }
+    } catch (error) {
+        console.error(`- Error getting Diagrams Collection:\n`, error)
+    }
+}
+
 export const BootSequence = async (): Promise<void> => {
     try {
         //* LOAD : template_assets.json
@@ -251,6 +271,8 @@ export const BootSequence = async (): Promise<void> => {
         parseAssets()
         //* Libreria de temas
         await loadThemesCollection()
+        //* Libreria de diagramas
+        await loadDiagramsCollection()
     } catch (error) {
         console.error('Remote Boot Sequence Error')
         throw error

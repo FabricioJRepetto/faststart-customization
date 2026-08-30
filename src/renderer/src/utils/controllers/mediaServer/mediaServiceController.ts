@@ -546,6 +546,20 @@ class MediaService {
             this.updateUploadProgress()
         }
     }
+
+    public async getDiagrams(): Promise<FlowDiagram[]> {
+        try {
+            const res = await this.service.getDiagramsList()
+            console.log('getDiagramsList')
+            console.log(res)
+
+            if (!res) return []
+            return res
+        } catch (error) {
+            console.error(error)
+            return []
+        }
+    }
 }
 
 export default new MediaService()

@@ -19,7 +19,7 @@ interface Props {
     closeModal: () => void
 }
 
-const UploadDialogTheme = ({ closeModal }: Props): React.JSX.Element => {
+const UploadThemeDialog = ({ closeModal }: Props): React.JSX.Element => {
     const defaultConfig = useAtomValue(DefaultThemeConfigAtom)
     const [themeName, setThemeName] = useState<string>(defaultConfig?.themeName || '')
     const setAsDefault = useSetAtom(UploadSetAsDefaultThemeAtom)
@@ -250,4 +250,4 @@ const UploadDialogTheme = ({ closeModal }: Props): React.JSX.Element => {
     )
 }
 
-export default UploadDialogTheme
+export default UploadThemeDialog

@@ -4,7 +4,7 @@ import {
     UploadSetAsDefaultThemeAtom,
     UploadStageAtom
 } from '@renderer/utils/context/context'
-import { validName, unicName, permittedName } from '@renderer/utils/themesUtils'
+import { validName, permittedName, unicDiagramName } from '@renderer/utils/themesUtils'
 import { useAtom, useSetAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import UploadSvg from '../../assets/upload.svg?react'
@@ -12,15 +12,16 @@ import SpinnerSvg from '../../assets/spinner.svg?react'
 import mediaServiceController from '@renderer/utils/controllers/mediaServer/mediaServiceController'
 import { FlowDiagram, Screens, UPLOAD_STAGE } from '@renderer/types/types.d'
 import { navigate } from '@renderer/utils/navigate'
-import { loadDefaultConfigurations, loadThemesCollection } from '@renderer/utils/bootSequence'
+import { loadDefaultConfigurations, loadDiagramsCollection, loadThemesCollection } from '@renderer/utils/bootSequence'
 import { FlowEdges, FlowNodes } from '../Architect/FlowStorage'
 
 interface Props {
     closeModal: () => void
 }
 
-const UploadDialogDiagram = ({ closeModal }: Props): React.JSX.Element => {
+const UploadDiagramDialog = ({ closeModal }: Props): React.JSX.Element => {
     const [diagramName, setDiagramName] = useState<string>('')
+    const [version, setVersion] = useState<string>('')
     const setAsDefault = useSetAtom(UploadSetAsDefaultThemeAtom)
 
     const [loading, setLoading] = useState<boolean>(false)
@@ -77,11 +78,11 @@ const UploadDialogDiagram = ({ closeModal }: Props): React.JSX.Element => {
             default:
                 return (
                     <p
-                        className={`info-message ${!validName(diagramName) ? 'error-messagge' : !unicName(diagramName) ? 'warning-messagge' : ''}`}
+                        className={`info-message ${!validName(diagramName) ? 'error-messagge' : !unicDiagramName(diagramName) ? 'warning-messagge' : ''}`}
                     >
                         {!validName(diagramName) &&
                             'Solo se permiten letras, números, puntos y guiones'}
-                        {!unicName(diagramName) && 'Se actualizará el diagrama actual'}
+                        {!unicDiagramName(diagramName) && 'Se actualizará el diagrama actual'}
                         {!permittedName(diagramName) && 'Nombre no permitido'}
                     </p>
                 )
@@ -100,8 +101,9 @@ const UploadDialogDiagram = ({ closeModal }: Props): React.JSX.Element => {
             })
 
             const _diagram: FlowDiagram = {
-                version: '1.0-TEST',
+                version: version,
                 entry: 'idle',
+                name: diagramName,
                 nodes,
                 // TODO - Generar edges a partir de los nodos al descargar el diagrama para que no haga falta agregarlos al diagrama final?
                 edges: store.get(FlowEdges)
@@ -111,9 +113,11 @@ const UploadDialogDiagram = ({ closeModal }: Props): React.JSX.Element => {
             const uploadRes = await mediaServiceController.uploadDiagram(_diagram, diagramName)
             if (!uploadRes) console.warn('Ningún archivo subido')
 
-            // //* Actualizar Collection
+            //* Actualizar Themes Collection
             await loadThemesCollection()
-            // //* Actualizar Default Configs
+            //* Actualizar Diagrams Collection
+            await loadDiagramsCollection()
+            //* Actualizar Default Configs
             await loadDefaultConfigurations()
 
             setStage(UPLOAD_STAGE.DONE)
@@ -170,13 +174,27 @@ const UploadDialogDiagram = ({ closeModal }: Props): React.JSX.Element => {
 
                     <input
                         style={{
-                            pointerEvents: loading ? 'none' : 'all'
+                            pointerEvents: loading ? 'none' : 'all',
+                            marginRight: '25px',
+                            width: '200px'
                         }}
                         type="text"
                         autoFocus
                         value={diagramName}
-                        id="lang-value-input"
+                        id="diagram-name-value-input"
+                        placeholder="name"
                         onChange={(e) => !loading && setDiagramName(e.target.value)}
+                    />
+                    <input
+                        style={{
+                            pointerEvents: loading ? 'none' : 'all',
+                            width: '200px'
+                        }}
+                        type="text"
+                        value={version}
+                        placeholder="version"
+                        id="diagram-version-value-input"
+                        onChange={(e) => !loading && setVersion(e.target.value)}
                     />
 
                     <div className="upload-modal-info-box">{infoMessage(stage)}</div>
@@ -255,4 +273,4 @@ const UploadDialogDiagram = ({ closeModal }: Props): React.JSX.Element => {
     )
 }
 
-export default UploadDialogDiagram
+export default UploadDiagramDialog

@@ -24,6 +24,8 @@ export const DEFAULT_THEME = 'FastStart'
 
 export const DEFAULT_VIEW = '__DEFAULT_VIEW__'
 export const EXIT_TARGET = '__EXIT__:'
+export const NO_ASSET = '__NO_ASSET__'
+export const INSERT_VARIABLE = '__INSERT_VARIABLE__:'
 
 export const BACKEND_BASE_URL = 'https://localhost:4005' // 'https://153.81.238.232:4005' - 'https://localhost:4005' - 'https://192.168.1.36:4005'
 export const WS_BASE_URL = 'wss://localhost:5500' // 'wss://153.81.238.232:5500' - 'wss://localhost:5500' - 'wss://192.168.1.36:5500'

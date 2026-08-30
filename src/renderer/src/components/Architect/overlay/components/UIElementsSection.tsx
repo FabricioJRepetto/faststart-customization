@@ -2,16 +2,12 @@ import DropUpSvg from '../../../../assets/arrow_drop_up.svg?react'
 import DropDownSvg from '../../../../assets/arrow_drop_down.svg?react'
 import AddSvg from '../../../../assets/add_box.svg?react'
 import DeleteSvg from '../../../../assets/close_small.svg?react'
-import {
-    addExtraNavButton,
-    addNodeUI,
-    addNodeView,
-    deleteNodeUI,
-    removeNodeView
-} from '../../utils/updateNode'
+import { addNodeUI, addNodeView, deleteNodeUI, removeNodeView } from '../../utils/updateNode'
 import UIElementEditor from './UIElementEditor'
 import { FlowNode, UIElementType } from '@renderer/types/types'
 import { DEFAULT_VIEW } from '@renderer/CONSTANTS'
+import OptionsListElementEditor from './UIElements/OptionsListEditor'
+import NavigationButtonsEditor from './UIElements/NavigationButtonsEditor'
 
 const UIElementList: Record<UIElementType, undefined> = {
     NavigationButton: undefined,
@@ -28,11 +24,6 @@ interface Props {
 }
 
 const UIElementsSection = ({ open, setOpen, node }: Props): React.JSX.Element => {
-    const addNavButton = (viewID: string): void => {
-        const _id = node.id + '_nav_btn_' + new Date().getTime()
-        addExtraNavButton(node.id, viewID, _id)
-    }
-
     const addView = (): void => {
         const viewID = new Date().getTime() + ''
         addNodeView(node.id, viewID)
@@ -97,39 +88,20 @@ const UIElementsSection = ({ open, setOpen, node }: Props): React.JSX.Element =>
                                     <DeleteSvg />
                                 </span>
                             </div>
+
                             <div className="action-container-data">
-                                {/* <pre>{JSON.stringify(e.config, null, 2)}</pre> */}
-                                {e.type === 'NavigationButton' ? (
-                                    <>
-                                        <div >
-                                            <div
-                                                style={{
-                                                    margin: '15px 0',
-                                                    width: 'max-content',
-                                                    pointerEvents:
-                                                        e.config.buttons?.length >= 3
-                                                            ? 'none'
-                                                            : 'all',
-                                                    opacity:
-                                                        e.config.buttons?.length >= 3 ? '.25' : '1'
-                                                }}
-                                                className="action-option action-container-header"
-                                                onClick={() => addNavButton(viewID)}
-                                            >
-                                                + Add button
-                                            </div>
-                                        </div>
-                                        {e.config.buttons?.map((b) => (
-                                            <UIElementEditor
-                                                key={b.id}
-                                                type={e.type}
-                                                viewID={viewID}
-                                                buttonID={b.id}
-                                                config={b}
-                                            />
-                                        ))}
-                                    </>
-                                ) : (
+                                {e.type === 'OptionsList' && (
+                                    <OptionsListElementEditor config={e.config} viewID={viewID} />
+                                )}
+                                {e.type === 'NavigationButton' && (
+                                    <NavigationButtonsEditor
+                                        nodeID={node.id}
+                                        viewID={viewID}
+                                        config={e.config}
+                                    />
+                                )}
+
+                                {e.type !== 'NavigationButton' && e.type !== 'OptionsList' && (
                                     <UIElementEditor
                                         type={e.type}
                                         viewID={viewID}
