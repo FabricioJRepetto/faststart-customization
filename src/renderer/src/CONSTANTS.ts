@@ -27,8 +27,8 @@ export const EXIT_TARGET = '__EXIT__:'
 export const NO_ASSET = '__NO_ASSET__'
 export const INSERT_VARIABLE = '__INSERT_VARIABLE__:'
 
-export const BACKEND_BASE_URL = 'https://localhost:4005' // 'https://153.81.238.232:4005' - 'https://localhost:4005' - 'https://192.168.1.36:4005'
-export const WS_BASE_URL = 'wss://localhost:5500' // 'wss://153.81.238.232:5500' - 'wss://localhost:5500' - 'wss://192.168.1.36:5500'
+export const BACKEND_BASE_URL = 'https://153.81.238.232:4005' // 'https://153.81.238.232:4005' - 'https://localhost:4005' - 'https://192.168.1.36:4005'
+export const WS_BASE_URL = 'wss://153.81.238.232:5500' // 'wss://153.81.238.232:5500' - 'wss://localhost:5500' - 'wss://192.168.1.36:5500'
 export const BACKEND_GET_FILELIST = `${BACKEND_BASE_URL}/files-list`
 export const BACKEND_GET_FILE = `${BACKEND_BASE_URL}/files`
 export const BACKEND_GET_CONFIGURATIONS = `${BACKEND_BASE_URL}/configurations`

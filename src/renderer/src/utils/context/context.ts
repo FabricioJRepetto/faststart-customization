@@ -32,8 +32,9 @@ export const ClientAppVersionDirAtom = atom<string>('')
 export const SupervisorAppVersionDirAtom = atom<string>('')
 /** Directorio base de la version de ThirdScreen */
 export const ThirdAppVersionDirAtom = atom<string>('')
-/** Activar o desactivar la configuración customizada */
-export const CustomEnabledAtom = atom<boolean>(true)
+
+/** @deprecado Activar o desactivar la configuración customizada */
+// export const CustomEnabledAtom = atom<boolean>(true)
 
 /** Lista de Assets actuales, basado en el template y el tema seleccionado si se está editando uno. */
 export const AssetsDataAtom = atom<AssetList>()

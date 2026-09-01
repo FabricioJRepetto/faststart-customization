@@ -16,7 +16,6 @@ import {
 } from '@renderer/types/types.d'
 import {
     AssetsDataAtom,
-    CustomEnabledAtom,
     DefaultThemeConfigAtom,
     DefaultLanguageDataAtom,
     DefaultStylesDataAtom,
@@ -73,7 +72,7 @@ export const applyTemplate = (data: TemplateRawConfig): void => {
         styles: objectFullStructure(data.styles),
         language: data.language
     }
-    
+
     store.set(TemplateConfigAtom, aux)
 }
 
@@ -91,6 +90,9 @@ export const loadDefaultConfigurations = async (): Promise<void> => {
                 '- Saving data'
             )
             console.log(res)
+            
+            console.log('TOGGLE RES:', res.theme)
+
             store.set(DefaultConfigurationsAtom, res)
         } else {
             throw new Error(
@@ -111,7 +113,6 @@ export const loadDefaultThemeConfig = async (): Promise<void> => {
             console.log(`- fetching ${DEFAULT_CONFIG_FILENAME}. data OK\n`, '- Saving data')
             console.log(res)
             store.set(DefaultThemeConfigAtom, res)
-            store.set(CustomEnabledAtom, res.customEnabled)
 
             if (res.thirdscreen?.config) {
                 store.set(EditedThirdScreenConfigDataAtom, res.thirdscreen.config)
@@ -176,7 +177,7 @@ export const parseThemeToEdit = (): void => {
 
         const templateData = store.get(TemplateConfigAtom)!
         const themeData = store.get(ThemeConfigAtom)!
-        
+
         // Adapta la configuración del tema para que tenga la mismos assets que indica el template
         const dataUnion = (template: AssetData[], theme: AssetData[]): AssetData[] => {
             const aux: AssetData[] = []
@@ -192,7 +193,6 @@ export const parseThemeToEdit = (): void => {
                 return aux
             }
         }
-
 
         if (themeData) {
             const updatedThemeData: TemplateConfig = {
@@ -280,7 +280,7 @@ export const BootSequence = async (): Promise<void> => {
 }
 
 /** Parsea {@link FinalStylesData} (como viene del template) a {@link StylesData} (formateado para edición). Modifica algunos valores, principalmente Booleans a Strings*/
-export const defaultStylesParser = (styles: FinalStylesData): StylesData => { 
+export const defaultStylesParser = (styles: FinalStylesData): StylesData => {
     return {
         ...styles,
         button: {
@@ -296,7 +296,7 @@ export const defaultStylesParser = (styles: FinalStylesData): StylesData => {
             border: styles.inputButton?.border.toString()
         }
     }
- }
+}
 
 /** Valída que no falten archivos necesarios. Ejecutar LUEGO de obtener el template */
 export const loadStylesLanguageData = (): void => {

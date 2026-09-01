@@ -333,7 +333,7 @@ class MediaService {
                     ({ diagram: {} } as DefaultConfigurationsFile)
                 const newConfig: DefaultConfigurationsFile = {
                     ...oldConfig,
-                    theme: { available: true, name: themeName, path: configRes.url }
+                    theme: { enabled: true, name: themeName, path: configRes.url }
                 }
                 const res = await this.uploadDefaultConfig(newConfig, true)
                 if (!res) {
@@ -404,16 +404,28 @@ class MediaService {
     public async toggleCustomization(): Promise<DBFile | null> {
         try {
             const config = await this.getDefaultConfigurationsFile()
+            console.log('toogle customs - og config', config)
 
             const newConfig =
                 config && !config?.error
-                    ? { ...config, theme: { ...config.theme, available: !config.theme?.available } }
+                    ? {
+                          ...config,
+                          theme: {
+                              name: config.theme?.name,
+                              path: config.theme?.path,
+                              enabled: !config.theme?.enabled
+                          }
+                      }
                     : {
-                          theme: { available: false, name: '', path: '' },
+                          theme: { enabled: false, name: '', path: '' },
                           diagram: null
                       }
 
+            console.log('toogle customs - new config', newConfig)
+
             const res = await this.uploadDefaultConfig(newConfig as DefaultConfigurationsFile, true)
+
+            console.log('toogle customs - uploadDefaultConfig res', res)
 
             if (!res) {
                 console.error('Error al definir tema como predeterminado')
@@ -441,7 +453,7 @@ class MediaService {
             const newConfig: DefaultConfigurationsFile = {
                 ...baseConfig,
                 theme: {
-                    available: true,
+                    enabled: true,
                     name: themeName,
                     path: `/files/${BACKEND_THEMES_CONFIGS_PATH}/${themeName}${THEME_CONFIG_FILENAME}` //! CUIDADO HARDCODEADO
                 }
@@ -525,7 +537,7 @@ class MediaService {
                     ({ theme: {} } as DefaultConfigurationsFile)
                 const newConfig: DefaultConfigurationsFile = {
                     ...oldConfig,
-                    diagram: { available: true, name: diagramName, path: configRes.url }
+                    diagram: { enabled: true, name: diagramName, path: configRes.url }
                 }
                 const res = await this.uploadDefaultConfig(newConfig, true)
                 if (!res) {

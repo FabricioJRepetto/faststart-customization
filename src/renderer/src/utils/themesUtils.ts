@@ -17,5 +17,5 @@ export const permittedName = (themeName: string): boolean => {
 
 export const unicDiagramName = (diagramName: string): boolean => {
     const diagrams = store.get(DiagramsCollectionDataAtom)
-    return !diagrams?.map((t) => t.name.toLowerCase()).includes(diagramName.toLowerCase())
+    return !diagrams?.map((t) => t.name?.toLowerCase()).includes(diagramName.toLowerCase())
 }

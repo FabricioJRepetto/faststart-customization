@@ -1,6 +1,5 @@
 import {
     CurrentScreenAtom,
-    CustomEnabledAtom,
     DefaultConfigurationsAtom,
     EditingThemeAtom,
     FirstLoadAtom,
@@ -31,8 +30,11 @@ const NewMain = (): React.JSX.Element => {
     const WsStatus = useAtomValue(WebSocketStatusAtom, { store })
     const setScreen = useSetAtom(CurrentScreenAtom)
 
-    const [customEnabled, setCustomEnabled] = useAtom(CustomEnabledAtom)
-    const defaultTheme = useAtomValue(DefaultConfigurationsAtom)?.theme?.name
+    const customEnabled = useAtomValue(DefaultConfigurationsAtom)?.theme?.enabled
+
+    useEffect(() => {
+        console.log('ENABLED:', customEnabled)
+    }, [customEnabled])
 
     const [loadingApply, setLoadingApply] = useState<boolean>(false)
     const [firstLoad, setFirstLoad] = useAtom(FirstLoadAtom)
@@ -50,9 +52,8 @@ const NewMain = (): React.JSX.Element => {
         const res = await mediaServiceController.toggleCustomization()
         if (res) {
             console.log('Customization toggled')
-            setCustomEnabled(!customEnabled)
         } else console.log('Error toggling customizations')
-        
+
         await loadDefaultConfigurations()
         setLoadingApply(false)
     }
@@ -68,7 +69,7 @@ const NewMain = (): React.JSX.Element => {
     return (
         <div className={`screen-content new-main-screen-container ${firstLoad ? 'fade-in' : ''}`}>
             <div className="screen-header">
-                <h1 style={{transform: 'skew(350deg)'}}>
+                <h1 style={{ transform: 'skew(350deg)' }}>
                     <code style={{ background: 'none', fontSize: '3rem' }}>ƒ</code>
                     <p
                         style={{
@@ -120,10 +121,7 @@ const NewMain = (): React.JSX.Element => {
                 <div className="shortcuts-container">
                     <div
                         className={customEnabled ? 'custom-enabled' : ''}
-                        onClick={() => !loadingApply && defaultTheme && toggleCustomEnabled()}
-                        style={{
-                            pointerEvents: defaultTheme ? 'all' : 'none'
-                        }}
+                        onClick={() => !loadingApply && toggleCustomEnabled()}
                     >
                         <p>Customización</p>
                         <div className={customEnabled ? '' : 'power-off'}>

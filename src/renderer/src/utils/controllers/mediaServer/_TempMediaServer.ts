@@ -123,7 +123,6 @@ export default class _TempMediaServer implements MediaServiceBase {
 
             if (res?.files) {
                 const regEx = new RegExp(/[\w-]+_diagram.json$/)
-                console.log(res.files);                
                 const filesList = res.files.filter((file) => regEx.test(file.name))
 
                 if (filesList.length === 0) return null
@@ -173,8 +172,7 @@ export default class _TempMediaServer implements MediaServiceBase {
             if (!res || res?.error) {
                 console.warn(res?.error || 'Error fetching Default configs')
                 return null
-            }
-            console.log(res);            
+            }         
             return res
         } catch (error) {
             console.error(error)

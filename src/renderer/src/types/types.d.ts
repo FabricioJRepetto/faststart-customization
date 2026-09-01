@@ -576,12 +576,12 @@ export type WSMessagePayload =
 
 export interface DefaultConfigurations {
     theme: {
-        available: boolean
+        enabled: boolean
         name: string
         data: CustomConfig
     } | null
     diagram: {
-        available: boolean
+        enabled: boolean
         name: string
         data: FlowDiagram
     } | null
@@ -589,12 +589,12 @@ export interface DefaultConfigurations {
 export interface DefaultConfigurationsFile {
     error?: string
     theme: {
-        available: boolean
+        enabled: boolean
         name: string
         path: string
     } | null
     diagram: {
-        available: boolean
+        enabled: boolean
         name: string
         path: string
     } | null
