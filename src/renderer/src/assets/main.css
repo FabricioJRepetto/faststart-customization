@@ -946,6 +946,13 @@ input[type='number'] {
         width: auto;
     }
 
+    .terminal-name {
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
     p:first-child {
         font-weight: 600;
         color: var(--ev-c-text-1);

@@ -1,5 +1,5 @@
 import { store } from '@renderer/utils/context/context'
-import { FlowNodes, newNodeID } from '../FlowStorage'
+import { FlowNodes } from '../FlowStorage'
 import {
     ActionType,
     CompareStep,
@@ -265,7 +265,7 @@ export const NodeColors: Record<ScreenType, string> = {
 }
 
 export const newNode = (type: ScreenType, name?: string): void => {
-    const id = store.get(newNodeID) + ''
+    const id = crypto.randomUUID()
     const Xpos = 250
     const Ypos = -80
 
@@ -654,8 +654,6 @@ export const newNode = (type: ScreenType, name?: string): void => {
             }
         }
     }
-
-    store.set(newNodeID, (prev) => prev + 1)
 
     store.set(FlowNodes, (prev) => [...prev, NodePresets[type]])
 }

@@ -5,7 +5,7 @@ import {
     ThemesLibraryDataAtom,
     WebSocketStatusAtom
 } from '@renderer/utils/context/context'
-import { smallDate, stateStyle, terminalSmallState } from '@renderer/utils/stringUtils'
+import { smallDate, stateStyle } from '@renderer/utils/stringUtils'
 import { Screens, WSConnectedClient } from '@renderer/types/types.d'
 import { useAtomValue, useSetAtom } from 'jotai'
 import DynamicSvg from './DynSvg'
@@ -39,11 +39,11 @@ export const TerminalsCardRow = ({ cardClick }: Props): React.JSX.Element => {
                             key={i}
                             onClick={() => cardClick(e)}
                         >
-                            <p>{e.name}</p>
+                            <p className="terminal-name">{e.name}</p>
                             <p className="terminal-ip">{e.ip}</p>
                             <p
                                 className={stateStyle(e.status)}
-                            >{`${terminalSmallState(e.status)} ${e.description ?? ''}`}</p>
+                            >{`${e.status} ${e.description ?? ''}`}</p>
                             <p className="terminal-small-date">{smallDate(e.lastUpdate)}</p>
                         </div>
                     ))
@@ -62,10 +62,7 @@ export const ThemesCardRow = (): React.JSX.Element => {
 
     return (
         <div>
-            <div
-                onClick={() => setScreen(Screens.collections)}
-                className="card-row-header"
-            >
+            <div onClick={() => setScreen(Screens.collections)} className="card-row-header">
                 <p>Temas</p>
                 {!defaultTheme && (
                     <div className="header-group">
@@ -77,8 +74,11 @@ export const ThemesCardRow = (): React.JSX.Element => {
             <div className="card-row-container">
                 {themes?.length ? (
                     themes?.map((e, i) => (
-                        <div className={`assets-container card-row-card ${defaultTheme === e.themeName ? 'highlighted-theme-card' : ''}`} key={i}>
-                            <p>{e.themeName}</p>
+                        <div
+                            className={`assets-container card-row-card ${defaultTheme === e.themeName ? 'highlighted-theme-card' : ''}`}
+                            key={i}
+                        >
+                            <p className='terminal-name'>{e.themeName}</p>
                             <div className="logo-container">
                                 {e.logo.mime.match('svg') ? (
                                     <DynamicSvg
